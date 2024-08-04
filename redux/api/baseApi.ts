@@ -7,7 +7,8 @@ import { RootState } from "../store";
 const baseQueryWithToken = fetchBaseQuery({
   baseUrl:
     // "https://detox-dopamine-backend.onrender.com/api" ||
-    "http://localhost:1337/api",
+    // "http://localhost:1337/api", ||
+    "http://10.0.2.2:1337/api",
 
   prepareHeaders: async (
     headers: Headers,
@@ -23,7 +24,6 @@ const baseQueryWithToken = fetchBaseQuery({
     if (token) {
       headers.set("authorization", `Bearer ${token}`);
     }
-
     return headers;
   },
 });

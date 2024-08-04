@@ -1,13 +1,43 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
+import React, { useEffect, useState } from "react";
 
-import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { TabBarIcon } from "@/components/navigation/TabBarIcon";
+import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { getTokenFromSecureStore } from "@/lib/auth/token";
+import { useGetUserInfoQuery } from "@/redux/api/authApi";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { storeAuthToken, storeUserInfo } from "@/redux/slice/authSlice";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const [token, setToken] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
+  const {
+    data: userData,
+    isError,
+    isFetching,
+    isLoading,
+    isSuccess,
+  } = useGetUserInfoQuery();
+
+  const userInfo = useAppSelector((store) => store.auth.userInfo);
+  const userToken = useAppSelector((store) => store.auth.authToken);
+  console.log(userToken, userInfo);
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      const tokenFromSecureStore = await getTokenFromSecureStore();
+      if (tokenFromSecureStore) {
+        dispatch(storeUserInfo(userData));
+        setToken(tokenFromSecureStore);
+        dispatch(storeAuthToken(tokenFromSecureStore));
+      }
+    };
+
+    fetchToken(); // Fetch the token on component mount
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

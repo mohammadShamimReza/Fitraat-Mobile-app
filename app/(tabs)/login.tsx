@@ -67,7 +67,6 @@ function LoginPage() {
   const authTokenFromRedux = useAppSelector((state) => state.auth.authToken);
 
   const handleSubmit = async () => {
-    console.log("first");
     try {
       // Validate form data with Zod
       loginSchema.parse(formData);
@@ -76,8 +75,6 @@ function LoginPage() {
         try {
           const result: any | Error = await loginUser(formData);
           if (result?.error) {
-            console.log("error");
-
             Toast.show({
               type: "error",
               text1: "Error",
@@ -89,10 +86,10 @@ function LoginPage() {
               text1: "Success",
               text2: "Login successful",
             });
-            storeTokenInSecureStore(result?.data?.jwt);
+            await storeTokenInSecureStore(result?.data?.jwt);
             dispatch(storeAuthToken(result?.data?.jwt));
             dispatch(storeUserInfo(result?.data?.user));
-            router.push("/");
+            // router.push("/");
           }
         } catch (error) {
           console.log(error);

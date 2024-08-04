@@ -3,6 +3,7 @@ import toastConfig from "@/lib/ToastConfig";
 import { useRegisterUserMutation } from "@/redux/api/authApi";
 import { useAppDispatch } from "@/redux/hooks";
 import { storeAuthToken, storeUserInfo } from "@/redux/slice/authSlice";
+import { Picker } from "@react-native-picker/picker";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -73,20 +74,26 @@ function RegisterPage({
     });
   };
 
-  const showToast = () => {
-    Toast.show({
-      type: "success",
-      text1: "Hello",
-      text2: "This is some something 👋",
-    });
-  };
-
   const handleSubmit = async () => {
     try {
       // Validate form data with Zod
       registerSchema.parse(formData);
+      console.log(formData);
 
       const result: any = await registerUser(formData);
+      // const result: any = await fetch("http://localhost:1337/api/auth/local", {
+      //   headers: {
+      //     Accept: "application/json",
+      //     "Content-Type": "application/json",
+      //   },
+      //   method: "POST",
+      //   body: JSON.stringify(formData), // Stringify the formData object
+      // })
+      //   .then((res) => res.json()) // Call .json() to parse the response
+      //   .then((data) => console.log(data)) // Log the parsed data
+      //   .catch((error) => console.error("Error:", error)); // Handle errors
+
+      console.log(result);
       if (result?.error) {
         if (result?.error?.error?.message === "This attribute must be unique") {
           Toast.show({
@@ -110,7 +117,7 @@ function RegisterPage({
         storeTokenInSecureStore(result?.data?.jwt);
         dispatch(storeAuthToken(result?.data?.jwt));
         dispatch(storeUserInfo(result?.data?.user));
-        router.push("/myTasks");
+        router.push("/");
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -217,27 +224,35 @@ function RegisterPage({
                 value={formData.phone}
               />
             </View>
-            {/* Gender Input */}
+            {/* Gender Dropdown */}
             <View style={styles.inputContainer}>
               <Text style={styles.label}>
                 Gender<Text style={styles.required}>*</Text>
               </Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your gender"
-                onChangeText={(value) => handleChange("gender", value)}
-                value={formData.gender}
-              />
+              <Picker
+                selectedValue={formData.gender}
+                onValueChange={(value) => handleChange("gender", value)}
+                style={styles.picker}
+              >
+                <Picker.Item label="Select Gender" value="" />
+                <Picker.Item label="Male" value="male" />
+                <Picker.Item label="Female" value="female" />
+              </Picker>
             </View>
-            {/* Language Input */}
+            {/* Language Dropdown */}
             <View style={styles.inputContainer}>
-              <Text style={styles.label}>Language</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your language"
-                onChangeText={(value) => handleChange("language", value)}
-                value={formData.language}
-              />
+              <Text style={styles.label}>
+                Language<Text style={styles.required}>*</Text>
+              </Text>
+              <Picker
+                selectedValue={formData.language}
+                onValueChange={(value) => handleChange("language", value)}
+                style={styles.picker}
+              >
+                <Picker.Item label="Select Language" value="" />
+                <Picker.Item label="English" value="English" />
+                <Picker.Item label="Bangla" value="Bangla" />
+              </Picker>
             </View>
             {/* Submit Button */}
             <TouchableOpacity style={styles.button} onPress={handleSubmit}>
@@ -280,7 +295,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
-    marginBottom: 16,
+    marginBottom: 10,
   },
   inputContainer: {
     marginBottom: 16,
@@ -328,6 +343,12 @@ const styles = StyleSheet.create({
   link: {
     color: "#007bff",
     fontWeight: "bold",
+  },
+  picker: {
+    height: 40,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 4,
   },
 });
 
