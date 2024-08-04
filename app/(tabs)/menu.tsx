@@ -1,14 +1,14 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-const index = () => {
+const menu = () => {
   return (
     <View>
-      <Text>index</Text>
+      <Text>menu</Text>
     </View>
   );
 };
 
-export default index;
+export default menu;
 
 const styles = StyleSheet.create({});

@@ -9,7 +9,10 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
 
+
+
 import { useColorScheme } from "@/hooks/useColorScheme";
+import Providers from "@/lib/Providers";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -22,22 +25,25 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (loaded) {
+      console.log("Fonts loaded successfully.");
       SplashScreen.hideAsync();
+    } else {
+      console.log("Fonts not yet loaded.");
     }
   }, [loaded]);
 
   if (!loaded) {
-    return null;
+    return null; // Ensure not to render until fonts are loaded.
   }
 
-  return (
-    // <SafeAreaView>
+return (
+  <Providers>
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
     </ThemeProvider>
-    // </SafeAreaView>
-  );
+  </Providers>
+);
 }
