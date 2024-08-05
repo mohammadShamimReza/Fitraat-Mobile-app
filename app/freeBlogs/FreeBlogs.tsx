@@ -9,7 +9,6 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { z } from "zod";
@@ -23,69 +22,26 @@ const FreeBlogs: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [pageCount, setPageCount] = useState<number>(1);
   const [error, setError] = useState<string | null>(null);
-  const [blogs, setBlogs] = useState<any[]>([]); // Store blogs separately
-  const [refreshing, setRefreshing] = useState<boolean>(false); // State for pull-to-refresh
+  const [blogs, setBlogs] = useState<any[]>([]);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
-  // Adjust the query to fetch data with the page and search term
   const {
     data: blogData,
     isLoading,
     isSuccess,
-    refetch, // Function to manually trigger refetching
+    refetch,
   } = useGetFreeBlogsQuery({ searchTerm, pageCount });
-
-  useEffect(() => {
-    console.log(blogs);
-    if (isSuccess && blogData?.data) {
-      // Filter out duplicates before appending
-      const newBlogs = blogData.data.filter(
-        (newBlog) =>
-          !blogs.some((existingBlog) => existingBlog.id === newBlog.id)
-      );
-
-      if (pageCount === 1) {
-        setBlogs(newBlogs); // Reset blogs on new search
-      } else {
-        setBlogs((prevBlogs) => [...prevBlogs, ...newBlogs]); // Append new unique blogs
-      }
-    }
-  }, [blogData, isSuccess, pageCount, searchTerm, refetch]);
 
   const handleSearchTermChange = (text: string) => {
     setSearchTerm(text);
   };
 
-  const handleSearch = () => {
-    try {
-      validationSchema.parse({ searchTerm });
-      setPageCount(1); // Reset page count on new search
-      // setBlogs([]); // Clear existing blogs for new search
-      refetch(); // Trigger a refetch on search
-    } catch (e) {
-      if (e instanceof z.ZodError) {
-        setError(e.message);
-      }
-    }
-  };
-
-  const loadMoreBlogs = useCallback(() => {
-    if (
-      !isLoading &&
-      isSuccess &&
-      pageCount < (blogData.meta.pagination.pageCount || 0)
-    ) {
-      setPageCount((prevPage) => prevPage + 1); // Increment page count to fetch next page if available
-      console.log(pageCount);
-    }
-  }, [isLoading, isSuccess, blogData, pageCount]);
-
   const handleRefresh = useCallback(() => {
-    console.log("refetch");
+    console.log("refreashing");
     setSearchTerm("");
-    setPageCount(1); // Reset page count to start from the first page
-    // setBlogs([]); // Clear current blogs
-    setRefreshing(true);
-    refetch(); // Trigger a refetch
+    setPageCount(1);
+    setRefreshing(!refreshing);
+    refetch();
   }, [refetch]);
 
   useEffect(() => {
@@ -93,8 +49,6 @@ const FreeBlogs: React.FC = () => {
       setRefreshing(false);
     }
   }, [isLoading, refreshing]);
-
-  const total = blogData?.meta?.pagination?.total || 0;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -105,9 +59,7 @@ const FreeBlogs: React.FC = () => {
           value={searchTerm}
           onChangeText={handleSearchTermChange}
         />
-        <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
-          <Text style={styles.searchButtonText}>Search</Text>
-        </TouchableOpacity>
+
         {error && <Text style={styles.error}>{error}</Text>}
       </View>
 
@@ -115,13 +67,13 @@ const FreeBlogs: React.FC = () => {
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
         <FlatList
-          data={blogs}
+          data={blogData?.data}
           renderItem={({ item }) => <ShowBLog blog={item} />}
           keyExtractor={(item, index) => {
             // Generate a unique key based on item.id and index
             return item.id ? `blog-${item.id}-${index}` : `index-${index}`;
           }}
-          onEndReached={loadMoreBlogs}
+          // onEndReached={loadMoreBlogs}
           onEndReachedThreshold={0.5} // Trigger loadMoreBlogs when 50% from end
           ListFooterComponent={
             isLoading ? (
