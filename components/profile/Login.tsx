@@ -7,7 +7,7 @@ import {
   View,
 } from "react-native";
 
-import RegisterPage from "@/components/Register";
+import RegisterPage from "@/components/profile/Register";
 import { storeTokenInSecureStore } from "@/lib/auth/token";
 import toastConfig from "@/lib/ToastConfig";
 import { useLoginUserMutation } from "@/redux/api/authApi";
@@ -39,7 +39,7 @@ const loginSchema = z.object({
     ),
 });
 
-function LoginPage() {
+function Login() {
   const [login, setLogin] = useState(true);
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -251,4 +251,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginPage;
+export default Login;

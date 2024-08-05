@@ -1,20 +1,13 @@
-import { getTokenFromSecureStore } from "@/lib/auth/token";
 import { useAppSelector } from "@/redux/hooks";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
+import FreeBlogs from "../freeBlogs/FreeBlogs";
 
-const tasks = () => {
+const Blog = () => {
   const userInfo = useAppSelector((store) => store.auth.userInfo);
-  const tokenFronSecureStore = getTokenFromSecureStore();
-  console.log(tokenFronSecureStore, "this is token from secure store ");
-  console.log(userInfo, "this is user info");
-  return (
-    <View>
-      <Text>tasks</Text>
-    </View>
-  );
+  return <FreeBlogs />;
 };
 
-export default tasks;
+export default Blog;
 
 const styles = StyleSheet.create({});

@@ -7,7 +7,7 @@ export const blogApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getFreeBlogs: builder.query({
       query: (body: { searchTerm: string; pageCount: number }) =>
-        `${BLOG}?filters[title][$containsi]=${body.searchTerm}&pagination[page]=${body.pageCount}&pagination[pageSize]=10`,
+        `${BLOG}?filters[title][$containsi]=${body.searchTerm}&pagination[page]=${body.pageCount}`,
       transformResponse: (rawResult: BlogData) => {
         return rawResult;
       },

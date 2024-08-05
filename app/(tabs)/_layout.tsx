@@ -24,7 +24,6 @@ export default function TabLayout() {
 
   const userInfo = useAppSelector((store) => store.auth.userInfo);
   const userToken = useAppSelector((store) => store.auth.authToken);
-  console.log(userToken, userInfo);
 
   useEffect(() => {
     const fetchToken = async () => {
@@ -84,12 +83,20 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="login"
+          name="profile"
           options={{
-            title: "Login",
+            title: userToken ? "Profile" : "Login",
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon
-                name={focused ? "log-in" : "log-in-outline"}
+                name={
+                  focused
+                    ? token
+                      ? "person"
+                      : "log-in"
+                    : token
+                    ? "person-outline"
+                    : "log-in-outline"
+                }
                 color={color}
               />
             ),
