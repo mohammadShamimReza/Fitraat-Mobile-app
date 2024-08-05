@@ -1,5 +1,6 @@
+import useSetNavigationTitle from "@/hooks/useCustomStackName";
 import { useGetFreeBlogsByIdQuery } from "@/redux/api/freeBlogApi"; // Adjust import based on your setup
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import {
   ActivityIndicator,
@@ -12,7 +13,7 @@ import {
 
 const Page = ({ params }: { params: { slug: string } }) => {
   const { slug } = useLocalSearchParams();
-  const navigation = useNavigation().setOptions({ title: "Blog" });
+  useSetNavigationTitle("Blog");
 
   // Ensure slug is a string or handle undefined case
   if (typeof slug !== "string") {
@@ -36,7 +37,7 @@ const Page = ({ params }: { params: { slug: string } }) => {
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.content}>
-        <Text style={styles.title}>{blogData?.title}</Text>
+        <Text style={styles.title}>{blogData?.title} free</Text>
         <Image
           source={
             blogData?.imageURL

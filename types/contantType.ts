@@ -276,6 +276,7 @@ export interface UserData {
   videoComplete: boolean;
   tran_id: string;
   varifiedSine: boolean;
+  paid: boolean;
 }
 
 export interface UserDataWithDay {

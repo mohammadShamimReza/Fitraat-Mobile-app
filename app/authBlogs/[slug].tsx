@@ -1,6 +1,8 @@
+import useSetNavigationTitle from "@/hooks/useCustomStackName";
 import { useGetBlogsByIdQuery } from "@/redux/api/blogApi";
-import { useLocalSearchParams, useNavigation } from "expo-router";
-import React from "react";
+import { useAppSelector } from "@/redux/hooks";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useEffect } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -11,10 +13,19 @@ import {
 } from "react-native";
 
 const Page = ({ params }: { params: { slug: string } }) => {
-  const { slug } = useLocalSearchParams();
-  const navigation = useNavigation().setOptions({ title: "Blog" });
+  const userInfo = useAppSelector((store) => store.auth.userInfo);
+  const userToken = useAppSelector((store) => store.auth.authToken);
+  useSetNavigationTitle("Blog");
+  useEffect(() => {
+    if (!userToken) {
+      router.replace("/profile");
+    } else if (!userInfo?.paid) {
+      router.replace("/promember");
+    }
+  });
 
-  // Ensure slug is a string or handle undefined case
+  const { slug } = useLocalSearchParams();
+
   if (typeof slug !== "string") {
     return (
       <View style={styles.container}>
