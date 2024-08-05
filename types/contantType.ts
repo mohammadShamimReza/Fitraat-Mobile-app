@@ -132,6 +132,7 @@ export interface Blog {
     publishedAt: string;
     updatedAt: string;
     viewCount: string;
+    authorName: string;
   };
   id: number;
 }
