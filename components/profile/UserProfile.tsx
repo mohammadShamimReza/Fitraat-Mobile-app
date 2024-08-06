@@ -3,12 +3,11 @@ import {
   useUpdateUserDayMutation,
 } from "@/redux/api/authApi";
 import {
-  useDeletePostMutation,
   useGetPostsByUserIdQuery,
   useUpdatePostMutation,
 } from "@/redux/api/postApi";
 import { useUpdateUserPasswordMutation } from "@/redux/api/userApi";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   Alert,
   ScrollView,
@@ -18,10 +17,9 @@ import {
   View,
 } from "react-native";
 import { Button, Modal, Portal, Provider } from "react-native-paper";
-import { WebView } from "react-native-webview";
 import ChengePassword from "./profileData/ChengePassword";
 import CompletedDay from "./profileData/CompletedDay";
-import EditPost from "./profileData/EditPost";
+import MyPosts from "./profileData/MyPosts";
 import RestartJourney from "./profileData/RestartJourney";
 import UserInfo from "./profileData/UserInfo";
 
@@ -30,15 +28,12 @@ function ProfilePage() {
   const [updateUserDay] = useUpdateUserDayMutation();
   const [updateUserPassword] = useUpdateUserPasswordMutation();
   const [updatePost] = useUpdatePostMutation();
-  const [deletePost] = useDeletePostMutation();
   const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
   const [isPasswordModalVisible, setIsPasswordModalVisible] = useState(false);
-  const [isPostModalVisible, setIsPostModalVisible] = useState(false);
-  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [isImageUploadModalVisible, setIsImageUploadModalVisible] =
     useState(false);
   const [currentPost, setCurrentPost] = useState(null);
-  const [valueEditor, setValueEditor] = useState("<p>Start writing...</p>");
+
   const [profileImage, setProfileImage] = useState(null);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -55,7 +50,6 @@ function ProfilePage() {
   const { data: posts } = useGetPostsByUserIdQuery({
     userId: 13 || 0,
   });
-  const richText = useRef();
 
   const postsByUser = posts?.data;
 
@@ -143,65 +137,29 @@ function ProfilePage() {
     setIsPasswordModalVisible(false);
   };
 
-  const showPostModal = (post: any) => {
-    setCurrentPost(post);
-    setValueEditor(post.attributes.description);
-    setIsPostModalVisible(true);
-  };
-
-  const handlePostOk = async () => {
-    if (currentPost) {
-      try {
-        const result = await updatePost({
-          body: {
-            data: {
-              description: valueEditor,
-            },
-          },
-        });
-        console.log(result);
-        if (result) {
-          Alert.alert("Success", "Post updated successfully!");
-        } else {
-          Alert.alert("Error", "Something went wrong. Please try again later.");
-        }
-        setIsPostModalVisible(false);
-        setValueEditor("");
-      } catch (error) {
-        Alert.alert("Error", "Something went wrong. Please try again later.");
-      }
-    }
-  };
-
-  const handlePostCancel = () => {
-    setValueEditor("");
-    setIsPostModalVisible(false);
-  };
-
-  const showDeletePostModal = (post: any) => {
-    setCurrentPost(post);
-    setIsDeleteModalVisible(true);
-  };
-
-  const handleDeleteOk = async () => {
-    try {
-      const result = await deletePost({ id: currentPost });
-      if (result) {
-        Alert.alert("Success", "Post deleted successfully!");
-      } else {
-        Alert.alert("Error", "Something went wrong. Please try again later.");
-      }
-      setIsDeleteModalVisible(false);
-      setCurrentPost(null);
-    } catch (error) {
-      Alert.alert("Error", "Something went wrong. Please try again later.");
-    }
-  };
-
-  const handleDeleteCancel = () => {
-    setIsDeleteModalVisible(false);
-    setCurrentPost(null);
-  };
+  // const handlePostOk = async () => {
+  //   if (currentPost) {
+  //     try {
+  //       const result = await updatePost({
+  //         body: {
+  //           data: {
+  //             description: valueEditor,
+  //           },
+  //         },
+  //       });
+  //       console.log(result);
+  //       if (result) {
+  //         Alert.alert("Success", "Post updated successfully!");
+  //       } else {
+  //         Alert.alert("Error", "Something went wrong. Please try again later.");
+  //       }
+  //       setIsPostModalVisible(false);
+  //       setValueEditor("");
+  //     } catch (error) {
+  //       Alert.alert("Error", "Something went wrong. Please try again later.");
+  //     }
+  //   }
+  // };
 
   const handleImageUploadModal = () => {
     setIsImageUploadModalVisible(true);
@@ -238,39 +196,6 @@ function ProfilePage() {
     // }
   };
 
-  console.log(valueEditor);
-
-  const editorHTML = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <style>
-        body {
-          font-family: Arial, sans-serif;
-          margin: 0;
-          padding: 0;
-          height: 100%;
-        }
-        #editor {
-          height: 100%;
-          padding: 10px;
-          border: 1px solid #ccc;
-          box-sizing: border-box;
-        }
-      </style>
-    </head>
-    <body>
-      <div id="editor" contenteditable="true">${valueEditor}</div>
-      <script>
-        const editor = document.getElementById('editor');
-        editor.addEventListener('input', function() {
-          window.ReactNativeWebView.postMessage(editor.innerHTML);
-        });
-      </script>
-    </body>
-    </html>
-  `;
-
   return (
     <Provider>
       <ScrollView contentContainerStyle={styles.container}>
@@ -306,88 +231,9 @@ function ProfilePage() {
           <CompletedDay progressData={progressData} />
         </View>
         <Text style={styles.mainTexts}>My Posts</Text>
-        {postsByUser &&
-          postsByUser.map((post) => (
-            <View key={post.id} style={styles.postContainer}>
-              <WebView
-                source={{
-                  html: `
-                  <!DOCTYPE html>
-                  <html>
-                    <head>
-                      <meta name="viewport" content="width=device-width, initial-scale=1">
-                      <style>
-                        body {
-                          font-size: 18px;
-                          font-family: Arial, sans-serif;
-                          margin: 0;
-                          padding: 0;
-                          color: #333;
-                          overflow: hidden;
-                        }
-                      </style>
-                    </head>
-                    <body>
-                      ${post.attributes.description
-                        .split(" ")
-                        .slice(0, 5)
-                        .join(" ")}
-                    
-                    </body>
-                  </html>
-                `,
-                }}
-                style={styles.webView}
-              />
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => showPostModal(post)}
-              >
-                <Text style={styles.buttonText}>Edit Post</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => showDeletePostModal(post.id)}
-              >
-                <Text style={styles.buttonText}>Delete Post</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
+        <MyPosts postsByUser={postsByUser} />
       </ScrollView>
 
-      <Portal>
-        <Modal
-          visible={isPostModalVisible}
-          onDismiss={handlePostCancel}
-          contentContainerStyle={styles.modalContainer}
-        >
-          <Text style={styles.modalTitle}>Edit Post</Text>
-          <EditPost defaultValue="" />
-
-          <Button mode="contained" onPress={handlePostOk}>
-            Save
-          </Button>
-          <Button mode="text" onPress={handlePostCancel}>
-            Cancel
-          </Button>
-        </Modal>
-      </Portal>
-      <Portal>
-        <Modal
-          visible={isDeleteModalVisible}
-          onDismiss={handleDeleteCancel}
-          contentContainerStyle={styles.modalContainer}
-        >
-          <Text style={styles.modalTitle}>Delete Post</Text>
-          <Text>Are you sure you want to delete this post?</Text>
-          <Button mode="contained" onPress={handleDeleteOk}>
-            Delete
-          </Button>
-          <Button mode="text" onPress={handleDeleteCancel}>
-            Cancel
-          </Button>
-        </Modal>
-      </Portal>
       <Portal>
         <Modal
           visible={isImageUploadModalVisible}
@@ -446,17 +292,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 
-  postContainer: {
-    marginBottom: 20,
-    borderWidth: 0.2,
-    padding: 7,
-    borderRadius: 5,
-  },
-  webView: {
-    height: 150, // Adjust height as needed
-    borderWidth: 0.2,
-    marginBottom: 10,
-  },
   modalContainer: {
     padding: 20,
     backgroundColor: "white",
