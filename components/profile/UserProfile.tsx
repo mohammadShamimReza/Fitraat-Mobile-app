@@ -8,20 +8,22 @@ import {
   useUpdatePostMutation,
 } from "@/redux/api/postApi";
 import { useUpdateUserPasswordMutation } from "@/redux/api/userApi";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Alert,
-  Button,
-  Image,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import { Modal, Portal, Provider } from "react-native-paper";
+import { Button, Modal, Portal, Provider } from "react-native-paper";
 import { WebView } from "react-native-webview";
+import ChengePassword from "./profileData/ChengePassword";
+import CompletedDay from "./profileData/CompletedDay";
+import EditPost from "./profileData/EditPost";
+import RestartJourney from "./profileData/RestartJourney";
+import UserInfo from "./profileData/UserInfo";
 
 function ProfilePage() {
   const { data: getUserInfoData } = useGetUserInfoQuery();
@@ -51,8 +53,9 @@ function ProfilePage() {
   const paid = getUserInfoData?.paid || false;
 
   const { data: posts } = useGetPostsByUserIdQuery({
-    userId: userId || 0,
+    userId: 13 || 0,
   });
+  const richText = useRef();
 
   const postsByUser = posts?.data;
 
@@ -147,8 +150,6 @@ function ProfilePage() {
   };
 
   const handlePostOk = async () => {
-    console.log("hi", valueEditor);
-
     if (currentPost) {
       try {
         const result = await updatePost({
@@ -237,6 +238,8 @@ function ProfilePage() {
     // }
   };
 
+  console.log(valueEditor);
+
   const editorHTML = `
     <!DOCTYPE html>
     <html>
@@ -268,221 +271,210 @@ function ProfilePage() {
     </html>
   `;
 
-  const handleWebViewMessage = (event: any) => {
-    setValueEditor(event.nativeEvent.data);
-  };
-
   return (
     <Provider>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.header}>Profile</Text>
+        <Text style={styles.profileBigText}> Profile</Text>
+        <View style={styles.profileSection}>
+          <UserInfo
+            name={name || ""}
+            email={email || ""}
+            age={age || 0}
+            compliteDay={compliteDay || 0}
+            location={location || ""}
+          />
+          <RestartJourney handleRestart={handleRestart} />
+          <ChengePassword
+            showPasswordModal={showPasswordModal}
+            confirmPassword={confirmPassword}
+            currentPassword={currentPassword}
+            handlePasswordCancel={handlePasswordCancel}
+            handlePasswordOk={handlePasswordOk}
+            isPasswordModalVisible={isPasswordModalVisible}
+            newPassword={newPassword}
+            setConfirmPassword={setConfirmPassword}
+            setCurrentPassword={setCurrentPassword}
+            setNewPassword={setNewPassword}
+          />
 
-        <View style={styles.userInfo}>
-          <Text style={styles.userInfoText}>Name: {name}</Text>
-          <Text style={styles.userInfoText}>Age: {age}</Text>
-          <Text style={styles.userInfoText}>Email: {email}</Text>
-          <Text style={styles.userInfoText}>Location: {location}</Text>
-          <Text style={styles.userInfoText}>Days Completed: {compliteDay}</Text>
-          <Text style={styles.userInfoText}>Paid: {paid ? "Yes" : "No"}</Text>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleImageUploadModal}
+          >
+            <Text style={styles.buttonText}>Upload Profile Image</Text>
+          </TouchableOpacity>
+          <CompletedDay progressData={progressData} />
         </View>
-
-        <Button title="Restart Journey" onPress={handleRestart} />
-
-        <TouchableOpacity
-          style={styles.uploadImageButton}
-          onPress={handleImageUploadModal}
-        >
-          <Text style={styles.uploadImageButtonText}>Upload Profile Image</Text>
-        </TouchableOpacity>
-
-        <View style={styles.profileImageContainer}>
-          {profileImage ? (
-            <Image source={{ uri: profileImage }} style={styles.profileImage} />
-          ) : (
-            <Text>No profile image uploaded</Text>
-          )}
-        </View>
-
-        <View style={styles.postsContainer}>
-          {postsByUser?.map((post) => (
-            <View key={post.id} style={styles.post}>
-              <Text>{post.attributes.description}</Text>
-              <Button title="Edit" onPress={() => showPostModal(post)} />
-              <Button
-                title="Delete"
-                onPress={() => showDeletePostModal(post.id)}
+        <Text style={styles.mainTexts}>My Posts</Text>
+        {postsByUser &&
+          postsByUser.map((post) => (
+            <View key={post.id} style={styles.postContainer}>
+              <WebView
+                source={{
+                  html: `
+                  <!DOCTYPE html>
+                  <html>
+                    <head>
+                      <meta name="viewport" content="width=device-width, initial-scale=1">
+                      <style>
+                        body {
+                          font-size: 18px;
+                          font-family: Arial, sans-serif;
+                          margin: 0;
+                          padding: 0;
+                          color: #333;
+                          overflow: hidden;
+                        }
+                      </style>
+                    </head>
+                    <body>
+                      ${post.attributes.description
+                        .split(" ")
+                        .slice(0, 5)
+                        .join(" ")}
+                    
+                    </body>
+                  </html>
+                `,
+                }}
+                style={styles.webView}
               />
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => showPostModal(post)}
+              >
+                <Text style={styles.buttonText}>Edit Post</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => showDeletePostModal(post.id)}
+              >
+                <Text style={styles.buttonText}>Delete Post</Text>
+              </TouchableOpacity>
             </View>
           ))}
-        </View>
-
-        <View style={styles.progressContainer}>
-          <Text style={styles.progressHeader}>Progress</Text>
-          {progressData.map(({ day, completed }) => (
-            <View key={day} style={styles.progressItem}>
-              <Text style={styles.progressDay}>Day {day}</Text>
-              <Text style={styles.progressStatus}>
-                {completed ? "Completed" : "Not Completed"}
-              </Text>
-            </View>
-          ))}
-        </View>
-
-        <Portal>
-          <Modal
-            visible={isPostModalVisible}
-            onDismiss={handlePostCancel}
-            contentContainerStyle={styles.modalContainer}
-          >
-            <Text>Edit Post</Text>
-            <WebView
-              originWhitelist={["*"]}
-              source={{ html: editorHTML }}
-              style={{ height: 300, width: "100%" }}
-              onMessage={handleWebViewMessage}
-            />
-            <Button title="Save" onPress={handlePostOk} />
-            <Button title="Cancel" onPress={handlePostCancel} />
-          </Modal>
-
-          <Modal
-            visible={isDeleteModalVisible}
-            onDismiss={handleDeleteCancel}
-            contentContainerStyle={styles.modalContainer}
-          >
-            <Text>Are you sure you want to delete this post?</Text>
-            <Button title="Yes" onPress={handleDeleteOk} />
-            <Button title="No" onPress={handleDeleteCancel} />
-          </Modal>
-
-          <Modal
-            visible={isImageUploadModalVisible}
-            onDismiss={handleImageUploadModalCancel}
-            contentContainerStyle={styles.modalContainer}
-          >
-            <Button title="Choose Image" onPress={handleImageUpload} />
-            <Button title="Cancel" onPress={handleImageUploadModalCancel} />
-          </Modal>
-
-          <Modal
-            visible={isPasswordModalVisible}
-            onDismiss={handlePasswordCancel}
-            contentContainerStyle={styles.modalContainer}
-          >
-            <Text>Change Password</Text>
-            <TextInput
-              placeholder="Current Password"
-              value={currentPassword}
-              onChangeText={setCurrentPassword}
-              secureTextEntry
-              style={styles.input}
-            />
-            <TextInput
-              placeholder="New Password"
-              value={newPassword}
-              onChangeText={setNewPassword}
-              secureTextEntry
-              style={styles.input}
-            />
-            <TextInput
-              placeholder="Confirm New Password"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              secureTextEntry
-              style={styles.input}
-            />
-            <Button title="Save" onPress={handlePasswordOk} />
-            <Button title="Cancel" onPress={handlePasswordCancel} />
-          </Modal>
-        </Portal>
       </ScrollView>
+
+      <Portal>
+        <Modal
+          visible={isPostModalVisible}
+          onDismiss={handlePostCancel}
+          contentContainerStyle={styles.modalContainer}
+        >
+          <Text style={styles.modalTitle}>Edit Post</Text>
+          <EditPost defaultValue="" />
+
+          <Button mode="contained" onPress={handlePostOk}>
+            Save
+          </Button>
+          <Button mode="text" onPress={handlePostCancel}>
+            Cancel
+          </Button>
+        </Modal>
+      </Portal>
+      <Portal>
+        <Modal
+          visible={isDeleteModalVisible}
+          onDismiss={handleDeleteCancel}
+          contentContainerStyle={styles.modalContainer}
+        >
+          <Text style={styles.modalTitle}>Delete Post</Text>
+          <Text>Are you sure you want to delete this post?</Text>
+          <Button mode="contained" onPress={handleDeleteOk}>
+            Delete
+          </Button>
+          <Button mode="text" onPress={handleDeleteCancel}>
+            Cancel
+          </Button>
+        </Modal>
+      </Portal>
+      <Portal>
+        <Modal
+          visible={isImageUploadModalVisible}
+          onDismiss={handleImageUploadModalCancel}
+          contentContainerStyle={styles.modalContainer}
+        >
+          <Text style={styles.modalTitle}>Upload Profile Image</Text>
+          {/* Include ImagePicker code or similar here */}
+          <Button mode="contained" onPress={handleImageUpload}>
+            Upload
+          </Button>
+          <Button mode="text" onPress={handleImageUploadModalCancel}>
+            Cancel
+          </Button>
+        </Modal>
+      </Portal>
     </Provider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    flexGrow: 1,
+    padding: 16,
   },
-  header: {
-    fontSize: 24,
+  profileSection: {
+    marginBottom: 20,
+  },
+  profileBigText: {
+    fontSize: 25,
+    textAlign: "center",
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 10,
   },
-  userInfo: {
-    marginBottom: 20,
+  mainTexts: {
+    fontSize: 22,
+    textAlign: "center",
+    fontWeight: "bold",
+    marginBottom: 10,
+    marginTop: 10,
   },
-  userInfoText: {
+  profileText: {
     fontSize: 18,
+    marginBottom: 8,
   },
-  uploadImageButton: {
-    padding: 10,
-    backgroundColor: "#007bff",
-    borderRadius: 5,
-    marginBottom: 20,
+  button: {
+    backgroundColor: "#676c73",
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: "center",
+    marginBottom: 5,
   },
-  uploadImageButtonText: {
+  buttonText: {
     color: "#fff",
     textAlign: "center",
-  },
-  profileImageContainer: {
-    marginBottom: 20,
-  },
-  profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-  },
-  postsContainer: {
-    marginBottom: 20,
-  },
-  post: {
-    marginBottom: 10,
-  },
-  progressContainer: {
-    marginTop: 20,
-    padding: 10,
-    borderRadius: 8,
-    backgroundColor: "#f0f8ff",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  progressHeader: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "#333",
-  },
-  progressItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-  },
-  progressDay: {
     fontSize: 16,
-    fontWeight: "500",
-    color: "#333",
   },
-  progressStatus: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#007bff",
+
+  postContainer: {
+    marginBottom: 20,
+    borderWidth: 0.2,
+    padding: 7,
+    borderRadius: 5,
+  },
+  webView: {
+    height: 150, // Adjust height as needed
+    borderWidth: 0.2,
+    marginBottom: 10,
   },
   modalContainer: {
     padding: 20,
     backgroundColor: "white",
+    borderRadius: 10,
+  },
+  modalTitle: {
+    fontSize: 18,
+    marginBottom: 10,
   },
   input: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    marginBottom: 10,
     padding: 10,
+  },
+  toolbar: {
+    backgroundColor: "#f1f1f1",
   },
 });
 
