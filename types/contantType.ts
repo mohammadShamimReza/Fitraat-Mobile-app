@@ -359,6 +359,7 @@ export interface UserDataWithDay {
   username: string;
   videoComplete: boolean;
   paid: boolean;
+  varifiedSine: boolean;
 }
 
 export interface UserAuthData {

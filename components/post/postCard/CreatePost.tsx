@@ -1,9 +1,7 @@
-import SinglePost from "@/components/post/SinglePost";
-import { useGetUserInfoQuery } from "@/redux/api/authApi";
-import { useCreatePostMutation, useGetPostQuery } from "@/redux/api/postApi";
-import { useAppSelector } from "@/redux/hooks";
+import { useCreatePostMutation } from "@/redux/api/postApi";
+import { UserData } from "@/types/contantType";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
   Alert,
@@ -14,34 +12,28 @@ import {
   View,
 } from "react-native";
 import {
-  ActivityIndicator,
   Button,
   Modal,
   Provider as PaperProvider,
   Portal,
 } from "react-native-paper";
 import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
+import { z } from "zod";
 
-const FeedPost = () => {
-  const [pageCount, setPageCount] = useState<number>(1);
+// Define the schema using Zod
+const postSchema = z.object({
+  content: z.string().min(1, "Post content cannot be empty."),
+});
+
+const CreatePost = ({ user }: { user: UserData | null }) => {
+  const router = useRouter();
+  const userId = user ? user.id : null;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [content, setContent] = useState("");
   const richText = useRef<RichEditor>(null);
   const scrollRef = useRef<ScrollView>(null);
 
-  const {
-    data: feedPosts,
-    isLoading,
-    isFetching,
-  } = useGetPostQuery({ pageCount });
-  const total = feedPosts?.meta.pagination.total || 0;
-  const [createPost] = useCreatePostMutation();
-  const { data: getUserInfoData } = useGetUserInfoQuery();
-
-  const userToken = useAppSelector((store) => store.auth.authToken);
-  const userId = getUserInfoData?.id;
-  const varifiedSine = getUserInfoData?.varifiedSine;
-  const posts = feedPosts?.data;
+  const [createPost, { isLoading }] = useCreatePostMutation();
 
   const handleInputClick = () => {
     setIsModalVisible(true);
@@ -53,9 +45,15 @@ const FeedPost = () => {
   };
 
   const handleCreatePost = async () => {
-    if (content !== "") {
-      try {
-        const post = { description: content, user: userId };
+    // Trim the content before validation
+    const trimmedContent = content.trim();
+
+    try {
+      // Validate content using Zod schema
+      postSchema.parse({ content: trimmedContent });
+
+      if (trimmedContent) {
+        const post = { description: trimmedContent, user: userId };
         const result = await createPost({ data: post });
         if (result) {
           setIsModalVisible(false);
@@ -67,37 +65,22 @@ const FeedPost = () => {
         } else {
           Alert.alert("Error", "Something went wrong. Please try again later.");
         }
-      } catch (error) {
+      } else {
+        Alert.alert("Validation Error", "Post content cannot be empty.");
+      }
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        Alert.alert("Validation Error", error.errors[0].message);
+      } else {
         console.error("Error creating post:", error);
         Alert.alert("Error", "An error occurred while creating the post.");
       }
-    } else {
-      Alert.alert("Validation Error", "Post content cannot be empty.");
     }
   };
 
   return (
     <PaperProvider>
       <View style={styles.container}>
-        {isLoading || isFetching ? (
-          <ActivityIndicator
-            size="large"
-            color="#0000ff"
-            style={styles.loadingIndicator}
-          />
-        ) : (
-          <ScrollView>
-            {posts?.map((post) => (
-              <SinglePost
-                key={post.id}
-                post={post}
-                userId={userId}
-                varifiedSine={varifiedSine}
-              />
-            ))}
-          </ScrollView>
-        )}
-
         <TouchableOpacity style={styles.fab} onPress={handleInputClick}>
           <Ionicons name="add-circle" size={30} color="#4B5563" />
         </TouchableOpacity>
@@ -108,7 +91,7 @@ const FeedPost = () => {
             onDismiss={handleModalCancel}
             contentContainerStyle={styles.modalContainer}
           >
-            {userToken ? (
+            {userId ? (
               <View>
                 <Text style={styles.modalTitle}>Create Post</Text>
                 <ScrollView
@@ -180,13 +163,7 @@ const FeedPost = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: "#fff",
-  },
-  loadingIndicator: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "flex-end",
   },
   fab: {
     position: "absolute",
@@ -248,4 +225,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FeedPost;
+export default CreatePost;

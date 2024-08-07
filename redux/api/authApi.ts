@@ -38,7 +38,7 @@ export const daysApi = baseApi.injectEndpoints({
       transformResponse: (rawResult: UserDataWithDay) => {
         return rawResult;
       },
-      providesTags: ["updateUserDay", "updateUser"],
+      providesTags: ["updateUserDay", "updateUser", "createPost"],
     }),
     updateUserDay: builder.mutation({
       query: (body) => ({

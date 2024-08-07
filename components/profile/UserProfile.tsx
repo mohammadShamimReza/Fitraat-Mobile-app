@@ -44,7 +44,7 @@ function ProfilePage() {
   const paid = getUserInfoData?.paid || false;
 
   const { data: posts } = useGetPostsByUserIdQuery({
-    userId: 13 || 0,
+    userId: userId || 0,
   });
 
   const postsByUser = posts?.data;
