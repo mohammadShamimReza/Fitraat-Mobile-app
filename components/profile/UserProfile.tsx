@@ -1,7 +1,4 @@
-import {
-  useGetUserInfoQuery,
-  useUpdateUserDayMutation,
-} from "@/redux/api/authApi";
+import { useGetUserInfoQuery } from "@/redux/api/authApi";
 import {
   useGetPostsByUserIdQuery,
   useUpdatePostMutation,
@@ -25,7 +22,6 @@ import UserInfo from "./profileData/UserInfo";
 
 function ProfilePage() {
   const { data: getUserInfoData } = useGetUserInfoQuery();
-  const [updateUserDay] = useUpdateUserDayMutation();
   const [updateUserPassword] = useUpdateUserPasswordMutation();
   const [updatePost] = useUpdatePostMutation();
   const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
@@ -58,55 +54,6 @@ function ProfilePage() {
     day,
     completed: day <= compliteDay,
   }));
-
-  const handleRestart = async () => {
-    Alert.alert("Restart Journey", "Do you want to restart?", [
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
-      {
-        text: "OK",
-        onPress: async () => {
-          try {
-            const result = await updateUserDay({
-              currentDay: 1,
-              compliteDay: 0,
-              userId: userId,
-            });
-            console.log(result);
-            localStorage.setItem(
-              "AuthDay",
-              JSON.stringify({
-                video: false,
-                kagel: false,
-                quiz: false,
-                Blog: false,
-              })
-            );
-            console.log(result);
-            if (result) {
-              Alert.alert(
-                "Success",
-                "You have successfully started your journey again!"
-              );
-            } else {
-              Alert.alert(
-                "Error",
-                "Something went wrong. Please try again later."
-              );
-            }
-          } catch (error) {
-            console.error(error);
-            Alert.alert(
-              "Error",
-              "Something went wrong. Please try again later."
-            );
-          }
-        },
-      },
-    ]);
-  };
 
   const showPasswordModal = () => {
     setIsPasswordModalVisible(true);
@@ -208,7 +155,7 @@ function ProfilePage() {
             compliteDay={compliteDay || 0}
             location={location || ""}
           />
-          <RestartJourney handleRestart={handleRestart} />
+          <RestartJourney userId={userId || 0} />
           <ChengePassword
             showPasswordModal={showPasswordModal}
             confirmPassword={confirmPassword}
