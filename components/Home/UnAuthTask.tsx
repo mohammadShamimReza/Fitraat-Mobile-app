@@ -1,7 +1,7 @@
 import { useGetDaysByDayIdQuery } from "@/redux/api/dayApi";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { storeCurrentTask } from "@/redux/slice/taskSlice";
-import { saveUserDayData } from "@/shared/StoreDayData";
+import { getUserDayData, saveUserDayData } from "@/shared/StoreDayData";
 import { KegelTimes, Quizzes } from "@/types/contantType";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
@@ -22,11 +22,10 @@ function UnAuthTask({ paid }: { paid: boolean | undefined }) {
 
   useEffect(() => {
     const loadDayId = async () => {
-      const dayId = (await AsyncStorage.getItem("unAuthDayId")) || "1"; // Use AsyncStorage
+      const dayId = (await AsyncStorage.getItem("unAuthDayId")) || "1";
       if (parseInt(dayId) > 3) {
         router.replace("/CompletedFreeTask");
       }
-      console.log(dayId);
       setUnAuthDayId(dayId);
     };
 
@@ -41,21 +40,31 @@ function UnAuthTask({ paid }: { paid: boolean | undefined }) {
   const [selectedTaskIndex, setSelectedTaskIndex] = useState(0);
   const selectedTask = currentTask || tasks[selectedTaskIndex];
 
-  const [localStorageData, setLocalStorageData] = useState({
+  const defaultLocalStorageData = {
     video: false,
     kagel: false,
     quiz: false,
     Blog: false,
-  });
+  };
 
-  // Update local storage whenever localStorageData changes
+  const [localStorageData, setLocalStorageData] = useState(
+    defaultLocalStorageData
+  );
+  useEffect(() => {
+    const loadLocalStorageData = async () => {
+      const data = await getUserDayData("UnAuthDay");
+      setLocalStorageData(data || defaultLocalStorageData);
+    };
+
+    loadLocalStorageData();
+  }, []);
+
   useEffect(() => {
     const storeData = async () => {
-      await saveUserDayData("UnAuthDay", localStorageData); // Use AsyncStorage function
+      await saveUserDayData("UnAuthDay", localStorageData);
     };
     storeData();
   }, [localStorageData]);
-  console.log(localStorageData);
 
   const handleTaskClick = (index: number) => {
     setSelectedTaskIndex(index);
@@ -71,10 +80,9 @@ function UnAuthTask({ paid }: { paid: boolean | undefined }) {
 
   const [isFinishModalOpen, setIsFinishModalOpen] = useState(false);
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (selectedTask === "Blog") {
       setIsFinishModalOpen(true);
-
       dispatch(storeCurrentTask(tasks[0]));
       setLocalStorageData({
         video: false,
@@ -83,29 +91,25 @@ function UnAuthTask({ paid }: { paid: boolean | undefined }) {
         Blog: false,
       });
 
-      if (unAuthDayId === null) {
-        AsyncStorage.setItem("unAuthDayId", "1"); // Use AsyncStorage
-      } else if (unAuthDayId !== null) {
-        let parsedUnAuthDayId = parseInt(unAuthDayId) + 1;
+      let parsedUnAuthDayId = parseInt(unAuthDayId);
+      if (parsedUnAuthDayId >= 3) {
+        Toast.show({
+          type: "success",
+          text1: "Congratulations",
+          text2: "You have completed your tasks for the free days.",
+        });
+        router.replace("/CompletedFreeTask");
+      } else {
+        parsedUnAuthDayId += 1;
         if (parsedUnAuthDayId === 3) {
           Toast.show({
             type: "success",
             text1: "This is your last day of free task.",
             text2: "Upgrade membership to access pro content.",
           });
-          AsyncStorage.setItem("unAuthDayId", parsedUnAuthDayId.toString()); // Use AsyncStorage
-          router.replace("/freeBlogs");
-        } else if (parsedUnAuthDayId > 3) {
-          Toast.show({
-            type: "success",
-            text1: "Congratulations",
-            text2: "You have successfully completed your tasks for 3 days.",
-          });
-          router.replace("/CompletedFreeTask");
         }
-        if (parsedUnAuthDayId <= 4) {
-          AsyncStorage.setItem("unAuthDayId", parsedUnAuthDayId.toString()); // Use AsyncStorage
-        }
+        await AsyncStorage.setItem("unAuthDayId", parsedUnAuthDayId.toString());
+        setUnAuthDayId(parsedUnAuthDayId.toString());
       }
     } else {
       setLocalStorageData((prevState) => ({
@@ -113,6 +117,7 @@ function UnAuthTask({ paid }: { paid: boolean | undefined }) {
         [selectedTask]: true,
       }));
     }
+
     if (selectedTaskIndex < tasks.length - 1) {
       setSelectedTaskIndex(selectedTaskIndex + 1);
       dispatch(storeCurrentTask(tasks[selectedTaskIndex + 1]));
@@ -136,12 +141,9 @@ function UnAuthTask({ paid }: { paid: boolean | undefined }) {
 
   const [kegel, setKegel] = useState<KegelTimes[] | undefined>(undefined);
   const [quiz, setQuiz] = useState<Quizzes[] | undefined>(undefined);
-
   const [video, setVideo] = useState<{ videoUrl: string | undefined }>({
     videoUrl: "",
   });
-
-  console.log(quiz);
 
   useEffect(() => {
     if (unAuthenticatedDayData) {
@@ -173,7 +175,7 @@ function UnAuthTask({ paid }: { paid: boolean | undefined }) {
             Hurra! You have finished another Day! Congratulations
           </Text>
           <Image
-            source="../../assets/images/dayFinish.gif"
+            source={require("../../assets/images/dayFinish.gif")}
             style={styles.finishImage}
             resizeMode="contain"
           />
@@ -181,7 +183,6 @@ function UnAuthTask({ paid }: { paid: boolean | undefined }) {
         </View>
       )}
       {DayCount > 4 ? (
-        // <CompliteTask auth={false} daysCompleted={40} />
         ""
       ) : (
         <TaskPage

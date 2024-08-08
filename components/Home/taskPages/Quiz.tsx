@@ -59,6 +59,7 @@ function Quiz({ selectedTask, quiz }: QuizProps) {
     <View>
       {selectedTask === "quiz" && (
         <View style={styles.container}>
+          <Text style={styles.title}>Quiz</Text>
           <Text style={styles.question}>
             {quiz && quiz[currentQuizIndex]?.attributes.question}
           </Text>
@@ -72,7 +73,14 @@ function Quiz({ selectedTask, quiz }: QuizProps) {
                 ]}
                 onPress={() => handleOptionClick(option)}
               >
-                <Text style={styles.optionText}>{option}</Text>
+                <Text
+                  style={[
+                    styles.optionText,
+                    { color: showAnswer || selectedAnswer ? "white" : "black" },
+                  ]}
+                >
+                  {option}
+                </Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -111,7 +119,6 @@ function Quiz({ selectedTask, quiz }: QuizProps) {
               onPress={handlePrevious}
               disabled={currentQuizIndex === 0 || !quiz || quiz.length === 0}
             >
-              <Ionicons name="arrow-back" size={24} color="white" />
               <Text style={styles.navButtonText}>Previous</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -124,7 +131,6 @@ function Quiz({ selectedTask, quiz }: QuizProps) {
               disabled={!quiz || currentQuizIndex === quiz.length - 1}
             >
               <Text style={styles.navButtonText}>Next</Text>
-              <Ionicons name="arrow-forward" size={24} color="white" />
             </TouchableOpacity>
           </View>
         </View>
@@ -148,6 +154,10 @@ const styles = StyleSheet.create({
     elevation: 5,
     borderRadius: 8,
     marginTop: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "700",
   },
   question: {
     fontSize: 18,
@@ -197,6 +207,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 16,
+    gap: 10,
   },
   navButton: {
     flexDirection: "row",
@@ -205,6 +216,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     backgroundColor: "#757575",
     borderRadius: 8,
+    width: 100,
+    justifyContent: "center",
   },
   navButtonText: {
     color: "white",

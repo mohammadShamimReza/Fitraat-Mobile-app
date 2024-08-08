@@ -155,6 +155,8 @@ function Kagel({
     <View style={styles.container}>
       {selectedTask === "kagel" && (
         <View style={styles.innerContainer}>
+          <Text style={styles.title}>Kagel</Text>
+
           <Text style={styles.taskText}>
             <Text style={{ color: "red" }}>{type}</Text>, {times + 1}/
             {kegel?.length}
@@ -220,6 +222,11 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
+  title: {
+    fontSize: 24,
+    fontWeight: "700",
+    marginBottom: 20,
+  },
   innerContainer: {
     flex: 1,
     justifyContent: "center",
@@ -241,6 +248,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     marginBottom: 20,
+    gap: 10,
   },
   navigationContainer: {
     flexDirection: "row",

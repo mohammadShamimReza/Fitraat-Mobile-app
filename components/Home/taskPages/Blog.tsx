@@ -34,7 +34,9 @@ function SuggestedBlog({
     <View>
       {selectedTask === "Blog" && (
         <>
-          <Text style={styles.title}>{blog?.title}</Text>
+          <Text style={styles.title}>Blog</Text>
+
+          <Text style={styles.blogTitle}>{blog?.title}</Text>
           <Text style={styles.content}>
             {blog?.content?.split(" ").map((word, index) => (
               <Text
@@ -67,7 +69,7 @@ function SuggestedBlog({
 export default SuggestedBlog;
 
 const styles = StyleSheet.create({
-  title: {
+  blogTitle: {
     textAlign: "center",
     margin: 7,
     fontSize: 24,
@@ -92,5 +94,9 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontWeight: "bold",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "700",
   },
 });

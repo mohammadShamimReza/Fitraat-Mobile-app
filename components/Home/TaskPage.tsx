@@ -46,6 +46,12 @@ type TaskPageProps = {
   paid: boolean | undefined;
 };
 
+// AsyncStorage keys
+const ALLOWED_KEYS = {
+  AUTH_DAY: "AuthDay",
+  UNAUTH_DAY: "UnAuthDay",
+};
+
 const TaskPage: React.FC<TaskPageProps> = ({
   localStorageData,
   handleTaskClick,
@@ -69,12 +75,14 @@ const TaskPage: React.FC<TaskPageProps> = ({
     "Blog",
   ];
   const [collapsed, setCollapsed] = useState(true); // Sidebar starts collapsed
-  const [sidebarWidth] = useState(new Animated.Value(55)); // Initial width
+  const [sidebarWidth] = useState(new Animated.Value(60)); // Initial width
+
+  console.log(localStorageData, "this is localStorageData");
 
   const toggleSidebar = () => {
     setCollapsed(!collapsed);
     Animated.timing(sidebarWidth, {
-      toValue: collapsed ? 300 : 55, // Change the width accordingly
+      toValue: collapsed ? 300 : 60, // Change the width accordingly
       duration: 300,
       useNativeDriver: false,
     }).start();
@@ -213,7 +221,13 @@ const TaskPage: React.FC<TaskPageProps> = ({
                     </Text>
                   )}
                   {!collapsed && (
-                    <>
+                    <View
+                      style={{
+                        width: "100%",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                      }}
+                    >
                       <Text
                         style={{
                           color:
@@ -231,14 +245,12 @@ const TaskPage: React.FC<TaskPageProps> = ({
                             : "Demo"
                           : ""}
                       </Text>
-                    </>
-                  )}
-                  {!collapsed && (
-                    <FontAwesome
-                      name="check-circle"
-                      size={20}
-                      color={DayCount >= day ? "blue" : "gray"}
-                    />
+                      <FontAwesome
+                        name="check-circle"
+                        size={20}
+                        color={DayCount >= day ? "blue" : "gray"}
+                      />
+                    </View>
                   )}
                 </TouchableOpacity>
               ))}
@@ -264,14 +276,7 @@ const TaskPage: React.FC<TaskPageProps> = ({
                 />
               </View>
             </View>
-
-            <ScrollView contentContainerStyle={styles.taskContainer}>
-              <Text style={[styles.taskHeader, { color: colors.text }]}>
-                {tasks[selectedTaskIndex].replace(/^\w/, (c) =>
-                  c.toUpperCase()
-                )}
-              </Text>
-              {/* Render the appropriate component based on selectedTask */}
+            <View style={styles.taksContainer}>
               {selectedTask === "Blog" && (
                 <SuggestedBlog blog={blog} selectedTask={selectedTask} />
               )}
@@ -284,8 +289,7 @@ const TaskPage: React.FC<TaskPageProps> = ({
               {selectedTask === "video" && (
                 <VideoComponent video={video} selectedTask={selectedTask} />
               )}
-            </ScrollView>
-
+            </View>
             <View style={styles.navigationButtons}>
               <TouchableOpacity
                 onPress={handlePrevious}
@@ -309,58 +313,59 @@ const TaskPage: React.FC<TaskPageProps> = ({
 
 const styles = StyleSheet.create({
   sidebar: {
-    padding: 8,
+    width: 55,
     borderRadius: 8,
+    overflow: "hidden",
   },
   sidebarContent: {
-    justifyContent: "space-between",
-  },
-  sidebarTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 16,
+    paddingHorizontal: 8,
+    alignItems: "center",
   },
   closeButton: {
-    alignItems: "flex-end",
-    marginBottom: 8,
+    padding: 8,
+    alignItems: "center",
+  },
+  sidebarTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 16,
+    alignSelf: "flex-start",
   },
   taskItem: {
-    padding: 8,
-    marginBottom: 8,
+    padding: 10,
     borderRadius: 8,
+    marginBottom: 8,
+    alignSelf: "stretch",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
   taskText: {
-    fontSize: 16,
-    fontWeight: "bold",
     marginLeft: 8,
+    fontSize: 14,
+    fontWeight: "bold",
   },
   dayItem: {
-    padding: 8,
-    marginBottom: 8,
+    padding: 10,
     borderRadius: 8,
-    flexDirection: "row",
-    justifyContent: "space-between",
+    marginBottom: 8,
     alignItems: "center",
+    justifyContent: "space-between",
+    flexDirection: "row",
+    paddingHorizontal: 15,
   },
   mainContent: {
     flex: 1,
-    borderRadius: 8,
-    padding: 8,
-    justifyContent: "space-between",
+    paddingLeft: 16,
   },
   mainHeader: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-  },
-  toggleButton: {
-    marginRight: 16,
+    justifyContent: "space-between",
+    marginBottom: 16,
   },
   dayText: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: "bold",
   },
   rankContainer: {
@@ -371,14 +376,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginRight: 4,
   },
-  taskHeader: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginVertical: 16,
-  },
-  taskContainer: {
+  taksContainer: {
     flex: 1,
-    marginTop: 16,
+    maxHeight: 500,
   },
   navigationButtons: {
     flexDirection: "row",
@@ -390,6 +390,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     justifyContent: "center",
     alignItems: "center",
+    width: 100,
   },
   navButtonText: {
     fontSize: 16,
