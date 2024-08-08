@@ -1,11 +1,12 @@
+import Main from "@/components/Home/Main";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 
 const index = () => {
   return (
-    <View>
-      <Text>index</Text>
-    </View>
+    <>
+      <Main />
+    </>
   );
 };
 
