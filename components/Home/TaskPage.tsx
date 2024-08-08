@@ -121,7 +121,7 @@ const TaskPage: React.FC<TaskPageProps> = ({
               style={styles.closeButton}
             >
               <Ionicons
-                name={collapsed ? "arrow-forward" : "arrow-back"}
+                name={collapsed ? "menu" : "close"}
                 size={24}
                 color={colors.text}
               />
@@ -250,16 +250,6 @@ const TaskPage: React.FC<TaskPageProps> = ({
         {collapsed === true && (
           <View style={styles.mainContent}>
             <View style={styles.mainHeader}>
-              <TouchableOpacity
-                onPress={toggleSidebar}
-                style={styles.toggleButton}
-              >
-                <Ionicons
-                  name={collapsed ? "menu" : "close"}
-                  size={24}
-                  color={colors.text}
-                />
-              </TouchableOpacity>
               <Text style={[styles.dayText, { color: colors.text }]}>
                 Day: {DayCount}
               </Text>

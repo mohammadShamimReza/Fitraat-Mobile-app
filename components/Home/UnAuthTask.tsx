@@ -55,6 +55,7 @@ function UnAuthTask({ paid }: { paid: boolean | undefined }) {
     };
     storeData();
   }, [localStorageData]);
+  console.log(localStorageData);
 
   const handleTaskClick = (index: number) => {
     setSelectedTaskIndex(index);
