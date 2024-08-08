@@ -19,7 +19,7 @@ const Menu: React.FC = () => {
 
       {/* Second Row of Buttons */}
       <View style={styles.buttonRow}>
-        <Link href="/privacy" style={styles.button}>
+        <Link href="/privecy" style={styles.button}>
           <Text style={styles.buttonText}>Privacy Policy</Text>
         </Link>
       </View>

@@ -15,7 +15,6 @@ export const saveUserDayData = async (
   try {
     const jsonValue = JSON.stringify(value);
     await AsyncStorage.setItem(key, jsonValue);
-    console.log("Data saved successfully!");
   } catch (error) {
     console.error("Error saving data", error);
   }

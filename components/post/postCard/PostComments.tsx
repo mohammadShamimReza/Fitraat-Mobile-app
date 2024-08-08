@@ -47,26 +47,30 @@ const PostComments = ({
 
   const isValidComment = (comment: string) => /\w/.test(comment);
 
-  const handleAddComment = async () => {
-    if (!currentUserId) {
-      return Alert.alert("Please log in first to comment");
-    }
-    if (!isValidComment(newComment)) {
-      return Alert.alert("Please write something meaningfull");
-    }
-    try {
-      await createComment({
-        data: { user: currentUserId, post: postId, comment: newComment },
-      });
-      setNewComment("");
-    } catch (error) {
-      console.error("Error adding comment:", error);
-    }
-  };
+  // const handleAddComment = async () => {
+  //   if (!currentUserId) {
+  //     return Alert.alert("Please log in first to comment");
+  //   }
+  //   if (!isValidComment(newComment)) {
+  //     return Alert.alert("Please write something meaningfull");
+  //   }
+  //   try {
+  //     await createComment({
+  //       data: { user: currentUserId, post: postId, comment: newComment },
+  //     });
+  //     setNewComment("");
+  //   } catch (error) {
+  //     console.error("Error adding comment:", error);
+  //   }
+  // };
 
   const handleModalAddComment = async () => {
     setModalVisible(false);
     setEditModalVisible(false);
+    if (!userId) {
+      return Alert.alert("Please log in first to comment");
+    }
+
     if (!isValidComment(modalComment)) {
       return Alert.alert("Please write something meaningfull");
     }
@@ -74,6 +78,7 @@ const PostComments = ({
       const result = await createComment({
         data: { user: currentUserId, post: postId, comment: modalComment },
       });
+      console.log(result, modalComment);
       if (result) {
         Alert.alert("Comment successful");
       } else {
@@ -186,18 +191,19 @@ const PostComments = ({
   return (
     <TouchableWithoutFeedback onPress={handlePressOutside}>
       <View style={styles.container}>
-        <View style={styles.inputContainer}>
+        <TouchableOpacity
+          style={styles.inputContainer}
+          onPress={() => setModalVisible(true)}
+        >
           <TextInput
             style={styles.input}
             placeholder="Write a comment..."
             value={newComment}
             onChangeText={setNewComment}
-            multiline={true} // This allows the input to be multiline
-            numberOfLines={4} // You can adjust the number of lines based on your needs
-            textAlignVertical="top" // Ensures text starts from the top of the input field
+            editable={false}
           />
-        </View>
-        <View style={styles.commentButons}>
+        </TouchableOpacity>
+        {/* <View style={styles.commentButons}>
           <TouchableOpacity onPress={handleAddComment} style={[styles.button]}>
             <Text style={styles.buttonText}>Comment</Text>
           </TouchableOpacity>
@@ -207,18 +213,21 @@ const PostComments = ({
           >
             <Ionicons name="expand" size={20} color="white" />
           </TouchableOpacity>
-        </View>
+        </View> */}
         <ScrollView contentContainerStyle={styles.commentList}>
           {commentsToShow?.map(renderComment)}
           {postComment && postComment.length > 1 && (
-            <TouchableOpacity
+            <Text
               onPress={() => setShowAllComments(!showAllComments)}
               style={styles.showMoreButton}
             >
-              <Text style={styles.showMoreText}>
+              <Text
+                style={styles.showMoreText}
+                onPress={() => setShowAllComments(!showAllComments)}
+              >
                 {showAllComments ? "Show Less comment" : "Show More comment"}
               </Text>
-            </TouchableOpacity>
+            </Text>
           )}
         </ScrollView>
         <Modal visible={modalVisible} animationType="slide">
@@ -289,7 +298,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     padding: 8,
     marginRight: 8,
-    height: 100, // Adjust height to fit your needs
 
     marginBottom: 10,
     textAlignVertical: "top",
@@ -356,9 +364,11 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   showMoreButton: {
+    textAlign: "center",
+    width: 100,
     marginVertical: 8,
     padding: 8,
-    backgroundColor: "#007bff",
+    backgroundColor: "#4B5563",
     borderRadius: 4,
   },
   showMoreText: {

@@ -77,7 +77,6 @@ const TaskPage: React.FC<TaskPageProps> = ({
   const [collapsed, setCollapsed] = useState(true); // Sidebar starts collapsed
   const [sidebarWidth] = useState(new Animated.Value(60)); // Initial width
 
-  console.log(localStorageData, "this is localStorageData");
 
   const toggleSidebar = () => {
     setCollapsed(!collapsed);
@@ -278,7 +277,11 @@ const TaskPage: React.FC<TaskPageProps> = ({
             </View>
             <View style={styles.taksContainer}>
               {selectedTask === "Blog" && (
-                <SuggestedBlog blog={blog} selectedTask={selectedTask} />
+                <SuggestedBlog
+                  blog={blog}
+                  selectedTask={selectedTask}
+                  paid={paid}
+                />
               )}
               {selectedTask === "kagel" && (
                 <Kagel kegel={kegel} selectedTask={selectedTask} />

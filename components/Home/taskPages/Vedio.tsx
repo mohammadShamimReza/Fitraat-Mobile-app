@@ -38,11 +38,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    borderWidth: 0.2,
+    padding: 5,
+    borderRadius: 10,
   },
   title: {
     fontSize: 24,
     fontWeight: "700",
     marginBottom: 20,
+    textAlign: "center",
   },
   videoContainer: {
     width: "100%",

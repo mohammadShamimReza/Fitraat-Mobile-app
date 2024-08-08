@@ -56,7 +56,7 @@ function Quiz({ selectedTask, quiz }: QuizProps) {
   };
 
   return (
-    <View>
+    <View style={styles.quizContainer}>
       {selectedTask === "quiz" && (
         <View style={styles.container}>
           <Text style={styles.title}>Quiz</Text>
@@ -142,6 +142,11 @@ function Quiz({ selectedTask, quiz }: QuizProps) {
 export default Quiz;
 
 const styles = StyleSheet.create({
+  quizContainer: {
+    borderWidth: 0.2,
+    padding: 5,
+    borderRadius: 10,
+  },
   container: {
     maxWidth: 600,
     marginHorizontal: "auto",
@@ -154,10 +159,12 @@ const styles = StyleSheet.create({
     elevation: 5,
     borderRadius: 8,
     marginTop: 16,
+    marginBottom: 16,
   },
   title: {
     fontSize: 24,
     fontWeight: "700",
+    textAlign: "center",
   },
   question: {
     fontSize: 18,

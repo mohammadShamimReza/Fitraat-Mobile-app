@@ -1,10 +1,11 @@
-import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
+import { router } from "expo-router";
+import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 function SuggestedBlog({
   selectedTask,
   blog,
+  paid,
 }: {
   selectedTask: string;
   blog: {
@@ -12,46 +13,27 @@ function SuggestedBlog({
     title: string | undefined;
     content: string | undefined;
   };
+  paid: boolean | undefined;
 }) {
-  const [hoveredWords, setHoveredWords] = useState<number[]>([]);
-  const navigation = useNavigation();
-
-  const handleWordHover = (index: number) => {
-    if (!hoveredWords.includes(index)) {
-      setHoveredWords([...hoveredWords, index]);
-    }
-  };
-
-  //   const resetHoveredWord = () => {
-  //     setHoveredWords([]);
-  //   };
-
   const handleReadFullBlog = () => {
-    // navigation.navigate("BlogDetail", { blogId: blog.id });
+    if (paid === true) {
+      router.push(`/authBlogs/${blog.id}`);
+    } else {
+      router.push(`/freeBlogs/${blog.id}`);
+    }
   };
 
   return (
     <View>
       {selectedTask === "Blog" && (
-        <>
+        <View style={styles.blogContainer}>
           <Text style={styles.title}>Blog</Text>
 
           <Text style={styles.blogTitle}>{blog?.title}</Text>
           <Text style={styles.content}>
-            {blog?.content?.split(" ").map((word, index) => (
-              <Text
-                key={index}
-                onPress={() => handleWordHover(index)}
-                // onMouseLeave={resetHoveredWord}
-                style={{
-                  color: hoveredWords.includes(index) ? "red" : "inherit",
-                  cursor: "pointer",
-                }}
-              >
-                {word}{" "}
-              </Text>
-            ))}
+            {blog?.content?.split(" ").slice(0, 50).join(" ")}
           </Text>
+
           <TouchableOpacity
             style={styles.buttonContainer}
             onPress={handleReadFullBlog}
@@ -60,7 +42,7 @@ function SuggestedBlog({
               <Text style={styles.buttonText}>Read Full Blog</Text>
             </View>
           </TouchableOpacity>
-        </>
+        </View>
       )}
     </View>
   );
@@ -69,9 +51,14 @@ function SuggestedBlog({
 export default SuggestedBlog;
 
 const styles = StyleSheet.create({
+  blogContainer: {
+    borderWidth: 0.2,
+    padding: 5,
+    borderRadius: 10,
+  },
   blogTitle: {
     textAlign: "center",
-    margin: 7,
+
     fontSize: 24,
     textDecorationLine: "underline",
   },
@@ -79,6 +66,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 24,
     textAlign: "justify",
+    marginTop: 10,
   },
   buttonContainer: {
     justifyContent: "center",
@@ -90,6 +78,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
+    marginBottom: 10,
   },
   buttonText: {
     color: "white",
@@ -98,5 +87,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "700",
+    marginVertical: 20,
+    textAlign: "center",
   },
 });

@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { Button, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import WebView from "react-native-webview";
 
 const PostContent = ({ postDescription }: { postDescription: string }) => {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <WebView
         source={{
           html: `
@@ -21,7 +21,6 @@ const PostContent = ({ postDescription }: { postDescription: string }) => {
                     margin: 0;
                     padding: 0;
                     color: #333;
-                    overflow: hidden; /* Hide overflow to manage scroll */
                   }
                 </style>
               </head>
@@ -35,12 +34,12 @@ const PostContent = ({ postDescription }: { postDescription: string }) => {
         scrollEnabled={expanded} // Allow scroll when expanded
         nestedScrollEnabled={true} // Ensure nested scrolling works
       />
-      <Button
+      {/* <Button
         title={expanded ? "Show Less" : "See More"}
         onPress={() => setExpanded(!expanded)}
         color="#1e3a8a" // Change the color to match your design
-      />
-    </View>
+      /> */}
+    </ScrollView>
   );
 };
 
