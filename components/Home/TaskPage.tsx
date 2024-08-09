@@ -296,13 +296,13 @@ const TaskPage: React.FC<TaskPageProps> = ({
             <View style={styles.navigationButtons}>
               <TouchableOpacity
                 onPress={handlePrevious}
-                style={[styles.navButton, { backgroundColor: colors.primary }]}
+                style={[styles.navButton, { backgroundColor: "#4B5563" }]}
               >
                 <Text style={styles.navButtonText}>Previous</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={handleNext}
-                style={[styles.navButton, { backgroundColor: colors.primary }]}
+                style={[styles.navButton, { backgroundColor: "#4B5563" }]}
               >
                 <Text style={styles.navButtonText}>Next</Text>
               </TouchableOpacity>

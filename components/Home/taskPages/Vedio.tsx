@@ -11,17 +11,39 @@ interface VideoProps {
 
 const VideoComponent: React.FC<VideoProps> = ({ selectedTask, video }) => {
   const videoUrl =
-    video?.videoUrl || "https://www.youtube.com/embed/7WUKdCV8J34"; // Use your default URL here
+    video?.videoUrl || "https://www.youtube.com/embed/7WUKdCV8J34"; // Default URL
+
+  // HTML string with an iframe
+  const htmlContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
+        body { margin: 0; }
+        iframe { width: 100%; height: 100%; border: 1 solid black; border-radius: 8px; }
+      </style>
+    </head>
+    <body>
+      <iframe 
+        src="${videoUrl}" 
+        title="Video" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen
+      ></iframe>
+    </body>
+    </html>
+  `;
 
   return (
     <View style={styles.container}>
       {selectedTask === "video" && (
         <View style={styles.videoContainer}>
           <Text style={styles.title}>Video</Text>
-
           <WebView
             style={styles.video}
-            source={{ uri: videoUrl }}
+            originWhitelist={["*"]}
+            source={{ html: htmlContent }}
             javaScriptEnabled
             domStorageEnabled
           />
@@ -31,16 +53,12 @@ const VideoComponent: React.FC<VideoProps> = ({ selectedTask, video }) => {
   );
 };
 
-export default VideoComponent;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 0.2,
-    padding: 5,
-    borderRadius: 10,
+    // padding: 10,
   },
   title: {
     fontSize: 24,
@@ -49,11 +67,16 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   videoContainer: {
-    width: "100%",
-    alignItems: "center",
+    width: 330,
+    height: 230,
+    padding: 10,
+    borderWidth: 0.2,
+    borderRadius: 10,
   },
   video: {
     width: "100%",
-    height: 300,
+    height: "100%",
   },
 });
+
+export default VideoComponent;

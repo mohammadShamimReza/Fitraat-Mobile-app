@@ -1,13 +1,11 @@
-import { Tabs } from 'expo-router';
-import React, { useEffect, useState } from "react";
-
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
-import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { getTokenFromSecureStore } from "@/lib/auth/token";
 import { useGetUserInfoQuery } from "@/redux/api/authApi";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { storeAuthToken, storeUserInfo } from "@/redux/slice/authSlice";
+import { Tabs } from "expo-router";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TabLayout() {
@@ -42,7 +40,8 @@ export default function TabLayout() {
     <SafeAreaView style={{ flex: 1 }}>
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+          tabBarActiveTintColor: "#4B5563", // Set active tab text color
+          tabBarInactiveTintColor: "#A0A3B1", // Optional: Set inactive tab text color
           headerShown: false,
         }}
       >
@@ -53,7 +52,7 @@ export default function TabLayout() {
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon
                 name={focused ? "home" : "home-outline"}
-                color={color}
+                color={"#4B5563"}
               />
             ),
           }}
@@ -65,7 +64,7 @@ export default function TabLayout() {
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon
                 name={focused ? "albums" : "albums-outline"}
-                color={color}
+                color={"#4B5563"}
               />
             ),
           }}
@@ -77,7 +76,7 @@ export default function TabLayout() {
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon
                 name={focused ? "book" : "book-outline"}
-                color={color}
+                color={"#4B5563"}
               />
             ),
           }}
@@ -97,7 +96,7 @@ export default function TabLayout() {
                     ? "person-outline"
                     : "log-in-outline"
                 }
-                color={color}
+                color={"#4B5563"}
               />
             ),
           }}
@@ -105,11 +104,11 @@ export default function TabLayout() {
         <Tabs.Screen
           name="menu"
           options={{
-            title: "menu",
+            title: "Menu",
             tabBarIcon: ({ color, focused }) => (
               <TabBarIcon
                 name={focused ? "menu" : "menu-outline"}
-                color={color}
+                color={"#4B5563"}
               />
             ),
           }}

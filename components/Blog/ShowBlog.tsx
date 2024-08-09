@@ -45,6 +45,7 @@ const ShowBlog: React.FC<BlogsProps> = ({ blog }) => {
 
 const styles = StyleSheet.create({
   blogContainer: {
+    marginHorizontal: 10,
     marginTop: 20,
     marginBottom: 20,
     backgroundColor: "#f9f9f9", // Light background for contrast
