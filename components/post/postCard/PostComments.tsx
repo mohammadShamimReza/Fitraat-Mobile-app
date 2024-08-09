@@ -225,7 +225,7 @@ const PostComments = ({
                 style={styles.showMoreText}
                 onPress={() => setShowAllComments(!showAllComments)}
               >
-                {showAllComments ? "Show Less comment" : "Show More comment"}
+                {showAllComments ? "Show comments" : "Show comments"}
               </Text>
             </Text>
           )}
@@ -365,7 +365,7 @@ const styles = StyleSheet.create({
   },
   showMoreButton: {
     textAlign: "center",
-    width: 100,
+    width: 130,
     marginVertical: 8,
     padding: 8,
     backgroundColor: "#4B5563",

@@ -1,13 +1,36 @@
-import React, { useState } from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import WebView from "react-native-webview";
 
 const PostContent = ({ postDescription }: { postDescription: string }) => {
   const [expanded, setExpanded] = useState(false);
+  const [isExpandable, setIsExpandable] = useState(false);
+  const [height, setHeight] = useState(0);
+  const webViewRef = useRef<WebView>(null);
+
+  useEffect(() => {
+    // Set up the WebView to calculate height once content is loaded
+    const calculateContentHeight = () => {
+      if (webViewRef.current) {
+        webViewRef.current.injectJavaScript(
+          `window.ReactNativeWebView.postMessage(document.body.scrollHeight.toString());`
+        );
+      }
+    };
+
+    calculateContentHeight();
+  }, [postDescription]);
+
+  const handleMessage = (event: any) => {
+    const contentHeight = parseInt(event.nativeEvent.data, 10);
+    setHeight(contentHeight);
+    setIsExpandable(contentHeight > 160);
+  };
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <WebView
+        ref={webViewRef}
         source={{
           html: `
             <!DOCTYPE html>
@@ -30,27 +53,49 @@ const PostContent = ({ postDescription }: { postDescription: string }) => {
             </html>
           `,
         }}
-        style={[styles.webView, { height: expanded ? undefined : 160 }]} // Adjust height dynamically
-        scrollEnabled={expanded} // Allow scroll when expanded
-        nestedScrollEnabled={true} // Ensure nested scrolling works
+        style={[styles.webView, { height: expanded ? height : 160 }]} // Adjust height dynamically
+        scrollEnabled={false} // Disable scrolling in WebView
+        nestedScrollEnabled={false} // Disable nested scrolling
+        onMessage={handleMessage}
+        onLoadEnd={() => {
+          if (webViewRef.current) {
+            webViewRef.current.injectJavaScript(
+              `window.ReactNativeWebView.postMessage(document.body.scrollHeight.toString());`
+            );
+          }
+        }}
+        javaScriptEnabled={true} // Ensure JavaScript is enabled for scrollHeight calculation
       />
-      {/* <Button
-        title={expanded ? "Show Less" : "See More"}
-        onPress={() => setExpanded(!expanded)}
-        color="#1e3a8a" // Change the color to match your design
-      /> */}
-    </ScrollView>
+
+      {isExpandable && (
+        <View style={styles.linkContainer}>
+          <TouchableOpacity onPress={() => setExpanded(!expanded)}>
+            <Text style={styles.linkText}>
+              {expanded ? "Show Less" : "See More"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    // marginBottom: 10,
+    marginBottom: 10,
   },
   webView: {
     width: "100%",
     borderWidth: 0.2,
     borderColor: "#ddd",
+  },
+  linkContainer: {
+    padding: 10,
+    alignItems: "flex-start", // Align text to the left
+  },
+  linkText: {
+    color: "#1e3a8a", // Link color
+    fontWeight: "bold", // Make the link bold
   },
 });
 
