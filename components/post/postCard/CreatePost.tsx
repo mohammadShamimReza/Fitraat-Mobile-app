@@ -1,7 +1,7 @@
 import { useCreatePostMutation } from "@/redux/api/postApi";
 import { UserData } from "@/types/contantType";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { useRouter } from "expo-router";
+import { router } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
   Alert,
@@ -26,7 +26,6 @@ const postSchema = z.object({
 });
 
 const CreatePost = ({ user }: { user: UserData | null }) => {
-  const router = useRouter();
   const userId = user ? user.id : null;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [content, setContent] = useState("");
@@ -146,7 +145,7 @@ const CreatePost = ({ user }: { user: UserData | null }) => {
                 </Text>
                 <Button
                   mode="contained"
-                  onPress={() => router.replace("/login")}
+                  onPress={() => router.push("/profile")}
                   style={styles.loginButton}
                 >
                   Login

@@ -25,9 +25,9 @@ const Index = () => {
 
   const handlePremium = () => {
     if (!userToken) {
-      router.push("/login");
+      router.push("/profile");
     } else if (!userInfo?.paid) {
-      router.push("/payment");
+      router.push("/MakePayment");
     } else if (userInfo?.paid) {
       alert("You are already Premium member");
     }

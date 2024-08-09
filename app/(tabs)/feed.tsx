@@ -163,7 +163,7 @@ const FeedPost = () => {
                 </Text>
                 <Button
                   mode="contained"
-                  onPress={() => router.replace("/login")}
+                  onPress={() => router.replace("/profile")}
                   style={styles.loginButton}
                 >
                   Login
