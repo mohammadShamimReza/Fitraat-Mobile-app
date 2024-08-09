@@ -1,4 +1,5 @@
 import useSetNavigationTitle from "@/hooks/useCustomStackName";
+import { useGetUserInfoQuery } from "@/redux/api/authApi";
 import { useAppSelector } from "@/redux/hooks";
 import { router } from "expo-router";
 import React from "react";
@@ -12,14 +13,14 @@ import {
 
 const Index = () => {
   useSetNavigationTitle("Pro member");
-  const userInfo = useAppSelector((state) => state.auth.userInfo);
+  const userInfo = useGetUserInfoQuery().data;
   const userToken = useAppSelector((state) => state.auth.authToken);
 
   const handleFree = () => {
     if (userToken) {
       alert("You are already using free access");
     } else {
-      router.push("/login");
+      router.replace("/login");
     }
   };
 
@@ -27,7 +28,7 @@ const Index = () => {
     if (!userToken) {
       router.push("/profile");
     } else if (!userInfo?.paid) {
-      router.push("/MakePayment");
+      router.push("/payment");
     } else if (userInfo?.paid) {
       alert("You are already Premium member");
     }

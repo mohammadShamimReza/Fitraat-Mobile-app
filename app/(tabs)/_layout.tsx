@@ -35,6 +35,7 @@ export default function TabLayout() {
 
     fetchToken(); // Fetch the token on component mount
   }, []);
+  console.log(userInfo);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

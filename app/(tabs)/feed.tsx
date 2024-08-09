@@ -33,6 +33,7 @@ const FeedPost = () => {
     data: feedPosts,
     isLoading,
     isFetching,
+    refetch,
   } = useGetPostQuery({ pageCount });
   const total = feedPosts?.meta.pagination.total || 0;
   const [createPost] = useCreatePostMutation();
@@ -93,6 +94,7 @@ const FeedPost = () => {
                 post={post}
                 userId={userId}
                 varifiedSine={varifiedSine}
+                refetch={refetch}
               />
             ))}
           </ScrollView>
