@@ -10,6 +10,7 @@ import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Button, StyleSheet, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
+import CompletedFreeTask from "./CompletedFreeTask";
 import TaskPage from "./TaskPage";
 
 function UnAuthTask({ paid }: { paid: boolean | undefined }) {
@@ -19,6 +20,7 @@ function UnAuthTask({ paid }: { paid: boolean | undefined }) {
   const { data: unAuthenticatedDayData } = useGetDaysByDayIdQuery(
     parseInt(unAuthDayId)
   );
+  console.log(unAuthenticatedDayData);
 
   useEffect(() => {
     const loadDayId = async () => {
@@ -144,65 +146,69 @@ function UnAuthTask({ paid }: { paid: boolean | undefined }) {
   const [video, setVideo] = useState<{ videoUrl: string | undefined }>({
     videoUrl: "",
   });
+  console.log(!unAuthenticatedDayData ? "true" : "false");
 
   useEffect(() => {
-    if (unAuthenticatedDayData) {
-      const unAuthDayData = unAuthenticatedDayData?.data[0].attributes;
+    if (
+      unAuthenticatedDayData &&
+      unAuthenticatedDayData.data &&
+      unAuthenticatedDayData.data.length > 0
+    ) {
+      const unAuthDayData = unAuthenticatedDayData.data[0].attributes;
       if (unAuthDayData) {
         setBlog({
           id: unAuthDayData.blog.data.id,
           title: unAuthDayData.blog.data.attributes.title,
           content: unAuthDayData.blog.data.attributes.content,
         });
-        setQuiz(unAuthDayData?.quizzes.data);
+        setQuiz(unAuthDayData.quizzes.data);
         setVideo({ videoUrl: unAuthDayData.video.data.attributes.VideoUrl });
-        setKegel(unAuthDayData?.kegel.data.attributes.kegel_times.data);
+        setKegel(unAuthDayData.kegel.data.attributes.kegel_times.data);
       }
     }
   }, [unAuthenticatedDayData, unAuthDayId]);
+const DayCount = parseInt(unAuthDayId) || 0;
 
-  const DayCount = parseInt(unAuthDayId) || 0;
+const handleDayid = (id: string) => {
+  setUnAuthDayId(id.toString());
+};
 
-  const handleDayid = (id: string) => {
-    setUnAuthDayId(id.toString());
-  };
-
-  return (
-    <>
-      {isFinishModalOpen && (
-        <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>
-            Hurra! You have finished another Day! Congratulations
-          </Text>
-          <Image
-            source={require("../../assets/images/dayFinish.gif")}
-            style={styles.finishImage}
-            resizeMode="contain"
-          />
-          <Button title="OK" onPress={handleOk} />
-        </View>
-      )}
-      {DayCount > 4 ? (
-        ""
-      ) : (
-        <TaskPage
-          localStorageData={localStorageData}
-          handleTaskClick={handleTaskClick}
-          selectedTask={selectedTask}
-          selectedTaskIndex={selectedTaskIndex}
-          handlePrevious={handlePrevious}
-          handleNext={handleNext}
-          blog={blog}
-          quiz={quiz}
-          video={video}
-          kegel={kegel}
-          DayCount={DayCount}
-          handleDayid={handleDayid}
-          paid={paid}
+return (
+  <>
+    {isFinishModalOpen && (
+      <View style={styles.modalContainer}>
+        <Text style={styles.modalTitle}>
+          Hurra! You have finished another Day! Congratulations
+        </Text>
+        <Image
+          source={require("../../assets/images/dayFinish.gif")}
+          style={styles.finishImage}
+          resizeMode="contain"
         />
-      )}
-    </>
-  );
+        <Button title="OK" onPress={handleOk} />
+      </View>
+    )}
+    {DayCount > 4 ? (
+      <CompletedFreeTask />
+    ) : (
+      <TaskPage
+        localStorageData={localStorageData}
+        handleTaskClick={handleTaskClick}
+        selectedTask={selectedTask}
+        selectedTaskIndex={selectedTaskIndex}
+        handlePrevious={handlePrevious}
+        handleNext={handleNext}
+        blog={blog}
+        quiz={quiz}
+        video={video}
+        kegel={kegel}
+        DayCount={DayCount}
+        handleDayid={handleDayid}
+        paid={paid}
+      />
+    )}
+  </>
+);
 }
 
 const styles = StyleSheet.create({

@@ -293,13 +293,23 @@ const TaskPage: React.FC<TaskPageProps> = ({
                 <VideoComponent video={video} selectedTask={selectedTask} />
               )}
             </View>
-            <View style={styles.navigationButtons}>
-              <TouchableOpacity
-                onPress={handlePrevious}
-                style={[styles.navButton, { backgroundColor: "#4B5563" }]}
-              >
-                <Text style={styles.navButtonText}>Previous</Text>
-              </TouchableOpacity>
+            <View
+              style={[
+                styles.navigationButtons,
+                {
+                  justifyContent:
+                    selectedTask === "video" ? "flex-end" : "space-between",
+                },
+              ]}
+            >
+              {selectedTask !== "video" && (
+                <TouchableOpacity
+                  onPress={handlePrevious}
+                  style={[styles.navButton, { backgroundColor: "#4B5563" }]}
+                >
+                  <Text style={styles.navButtonText}>Previous</Text>
+                </TouchableOpacity>
+              )}
               <TouchableOpacity
                 onPress={handleNext}
                 style={[styles.navButton, { backgroundColor: "#4B5563" }]}

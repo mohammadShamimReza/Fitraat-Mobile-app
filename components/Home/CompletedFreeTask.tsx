@@ -7,7 +7,7 @@ const CompletedFreeTask = () => {
   const navigation = useNavigation();
 
   const redirectToMembership = () => {
-    router.push("/ProMember"); // Replace "ProMember" with the actual name of your target screen
+    router.push("/promember"); // Replace "ProMember" with the actual name of your target screen
   };
 
   return (

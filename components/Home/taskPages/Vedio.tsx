@@ -21,7 +21,7 @@ const VideoComponent: React.FC<VideoProps> = ({ selectedTask, video }) => {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <style>
         body { margin: 0; }
-        iframe { width: 100%; height: 100%; border: 1 solid black; border-radius: 8px; }
+        iframe { width: 100%; height: 422px; border: 1 solid black; border-radius: 8px; }
       </style>
     </head>
     <body>
@@ -46,6 +46,8 @@ const VideoComponent: React.FC<VideoProps> = ({ selectedTask, video }) => {
             source={{ html: htmlContent }}
             javaScriptEnabled
             domStorageEnabled
+            allowsFullscreenVideo
+            mediaPlaybackRequiresUserAction={false} // Allow media playback without user action
           />
         </View>
       )}
@@ -67,8 +69,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   videoContainer: {
-    width: 330,
-    height: 230,
+    width: "100%",
+    height: "100%",
     padding: 10,
     borderWidth: 0.2,
     borderRadius: 10,
