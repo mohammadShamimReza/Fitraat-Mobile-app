@@ -1,6 +1,37 @@
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
-import { Button, Modal, Portal, TextInput } from "react-native-paper";
+import React, { useState } from "react";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Button,
+  IconButton,
+  Modal,
+  Portal,
+  TextInput,
+} from "react-native-paper";
+import { z } from "zod";
+
+const passwordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Please input your current password!"),
+    newPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters long")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+      .regex(/[0-9]/, "Password must contain at least one number")
+      .regex(
+        /[!@#$%^&*(),.?":{}|<>]/,
+        "Password must contain at least one special character"
+      ),
+    confirmPassword: z.string().min(1, "Please confirm your new password!"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match!",
+    path: ["confirmPassword"],
+  })
+  .refine((data) => data.currentPassword !== data.newPassword, {
+    message: "New password cannot be the same as the current password!",
+    path: ["newPassword"],
+  });
 
 const ChengePassword = ({
   showPasswordModal,
@@ -25,6 +56,27 @@ const ChengePassword = ({
   setConfirmPassword: React.Dispatch<React.SetStateAction<string>>;
   handlePasswordOk: () => Promise<void>;
 }) => {
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const togglePasswordVisibility = (setter: any) => {
+    setter((prevState: any) => !prevState);
+  };
+
+  const handleSubmit = async () => {
+    try {
+      passwordSchema.parse({ currentPassword, newPassword, confirmPassword });
+      await handlePasswordOk(); // Call your existing password update function
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        Alert.alert("Validation Error", error.errors[0].message);
+      } else {
+        Alert.alert("Error", "Something went wrong. Please try again later.");
+      }
+    }
+  };
+
   return (
     <>
       <TouchableOpacity style={styles.button} onPress={showPasswordModal}>
@@ -37,32 +89,46 @@ const ChengePassword = ({
           contentContainerStyle={styles.modalContainer}
         >
           <Text style={styles.modalTitle}>Change Password</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Current Password"
-            secureTextEntry
-            value={currentPassword}
-            onChangeText={setCurrentPassword}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="New Password"
-            secureTextEntry
-            value={newPassword}
-            onChangeText={setNewPassword}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Confirm New Password"
-            secureTextEntry
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-          />
-          <Button
-            style={styles.button}
-            mode="contained"
-            onPress={handlePasswordOk}
-          >
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Current Password"
+              secureTextEntry={!showCurrentPassword}
+              value={currentPassword}
+              onChangeText={setCurrentPassword}
+            />
+            <IconButton
+              icon={showCurrentPassword ? "eye-off" : "eye"}
+              onPress={() => togglePasswordVisibility(setShowCurrentPassword)}
+            />
+          </View>
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="New Password"
+              secureTextEntry={!showNewPassword}
+              value={newPassword}
+              onChangeText={setNewPassword}
+            />
+            <IconButton
+              icon={showNewPassword ? "eye-off" : "eye"}
+              onPress={() => togglePasswordVisibility(setShowNewPassword)}
+            />
+          </View>
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Confirm New Password"
+              secureTextEntry={!showConfirmPassword}
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+            />
+            <IconButton
+              icon={showConfirmPassword ? "eye-off" : "eye"}
+              onPress={() => togglePasswordVisibility(setShowConfirmPassword)}
+            />
+          </View>
+          <Button mode="contained" onPress={handleSubmit}>
             Save
           </Button>
           <Button mode="text" onPress={handlePasswordCancel}>
@@ -99,10 +165,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   input: {
+    flex: 1,
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 5,
-    marginBottom: 10,
     padding: 10,
+  },
+  passwordContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
   },
 });

@@ -66,22 +66,33 @@ function ProfilePage() {
     }
     try {
       const result = await updateUserPassword({
-        userId: userId,
-        password: newPassword,
+        data: {
+          currentPassword: currentPassword,
+          password: newPassword,
+          passwordConfirmation: confirmPassword,
+        },
       });
+      console.log(result);
       setIsPasswordModalVisible(false);
-      if (result) {
-        Alert.alert("Success", "Password updated successfully!");
+      if (result && "error" in result) {
+        Alert.alert("Error", "current password is incorrect.");
       } else {
-        Alert.alert("Error", "Something went wrong. Please try again later.");
+        Alert.alert("Success", "Password updated successfully!");
+        resetPasswordForm();
       }
     } catch (error) {
       Alert.alert("Error", "Something went wrong. Please try again later.");
     }
   };
+  const resetPasswordForm = () => {
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+  };
 
   const handlePasswordCancel = () => {
     setIsPasswordModalVisible(false);
+    resetPasswordForm();
   };
 
   // const handlePostOk = async () => {

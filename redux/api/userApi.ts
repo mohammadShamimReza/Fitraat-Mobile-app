@@ -21,7 +21,7 @@ export const daysApi = baseApi.injectEndpoints({
     }),
     updateUserPassword: builder.mutation({
       query: (body) => ({
-        url: `${USER}/${body.userId}`,
+        url: `/auth/change-password`,
         method: "POST",
         body: body.data,
       }),
