@@ -1,4 +1,4 @@
-import ShowBLog from "@/components/Blog/ShowBlog";
+import ShowBlog from "@/components/Blog/ShowBlog";
 import { useGetFreeBlogsQuery } from "@/redux/api/freeBlogApi";
 import React, { useCallback, useEffect, useState } from "react";
 import {
@@ -29,20 +29,39 @@ const FreeBlogs: React.FC = () => {
     data: blogData,
     isLoading,
     isSuccess,
+    isFetching,
     refetch,
   } = useGetFreeBlogsQuery({ searchTerm, pageCount });
+
+  // Append new blogs to the existing blogs
+  useEffect(() => {
+    if (pageCount === 1) {
+      setBlogs(blogData?.data || []); // Reset blogs if pageCount is 1 (initial load or refresh)
+    } else if (blogData?.data) {
+      setBlogs((prevBlogs) => [...prevBlogs, ...blogData.data]);
+    }
+  }, [blogData, pageCount]);
 
   const handleSearchTermChange = (text: string) => {
     setSearchTerm(text);
   };
 
   const handleRefresh = useCallback(() => {
-    console.log("refreashing");
-    setSearchTerm("");
-    setPageCount(1);
-    setRefreshing(!refreshing);
-    refetch();
+    setRefreshing(true);
+    setPageCount(1); // Reset page count to 1 for a fresh load
+    refetch().finally(() => setRefreshing(false)); // Re-fetch data and stop refreshing
   }, [refetch]);
+
+  const loadMoreBlogs = useCallback(() => {
+    if (isFetching || !blogData?.meta.pagination.total) return;
+
+    const hasMoreBlogs =
+      pageCount * blogData.meta.pagination.pageSize <
+      blogData.meta.pagination.total;
+    if (hasMoreBlogs) {
+      setPageCount((prev) => prev + 1);
+    }
+  }, [isFetching, blogData, pageCount]);
 
   useEffect(() => {
     if (!isLoading && refreshing) {
@@ -67,16 +86,16 @@ const FreeBlogs: React.FC = () => {
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
         <FlatList
-          data={blogData?.data}
-          renderItem={({ item }) => <ShowBLog blog={item} />}
+          data={blogs}
+          renderItem={({ item }) => <ShowBlog blog={item} />}
           keyExtractor={(item, index) => {
             // Generate a unique key based on item.id and index
             return item.id ? `blog-${item.id}-${index}` : `index-${index}`;
           }}
-          // onEndReached={loadMoreBlogs}
+          onEndReached={loadMoreBlogs}
           onEndReachedThreshold={0.5} // Trigger loadMoreBlogs when 50% from end
           ListFooterComponent={
-            isLoading ? (
+            isFetching ? (
               <ActivityIndicator size="small" color="#0000ff" />
             ) : null
           }
@@ -87,7 +106,11 @@ const FreeBlogs: React.FC = () => {
             </Text>
           }
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              colors={["#0000ff"]}
+            />
           }
         />
       )}

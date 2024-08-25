@@ -40,9 +40,8 @@ const FeedPost = () => {
   } = useGetPostQuery({ pageCount });
 
   const totalPosts = feedPosts?.meta.pagination.total || 0;
-  const postsPerPage = 3;
+  const postsPerPage = 25;
 
-  console.log(allPosts);
 
   const [createPost] = useCreatePostMutation();
   const { data: getUserInfoData } = useGetUserInfoQuery();

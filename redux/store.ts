@@ -5,7 +5,11 @@ import { reducer } from "./rootReducer";
 export const store = configureStore({
   reducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(baseApi.middleware),
+    getDefaultMiddleware({
+      immutableCheck: false,
+      serializableCheck: false,
+    }).concat(baseApi.middleware),
+  devTools: process.env.NODE_ENV !== "production",
 });
 
 
