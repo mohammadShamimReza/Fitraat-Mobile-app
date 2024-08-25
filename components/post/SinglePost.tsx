@@ -22,12 +22,10 @@ function SinglePost({
   post,
   userId,
   varifiedSine,
-  refetch,
 }: {
   post: Post;
   userId: number | undefined;
   varifiedSine: boolean | undefined;
-  refetch: any;
 }) {
   const dropdownRef = useRef<View>(null);
 

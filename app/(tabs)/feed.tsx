@@ -2,12 +2,14 @@ import SinglePost from "@/components/post/SinglePost";
 import { useGetUserInfoQuery } from "@/redux/api/authApi";
 import { useCreatePostMutation, useGetPostQuery } from "@/redux/api/postApi";
 import { useAppSelector } from "@/redux/hooks";
+import { Post } from "@/types/contantType";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
-import React, { useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Alert,
-  ScrollView,
+  FlatList,
+  RefreshControl,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -24,10 +26,11 @@ import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
 
 const FeedPost = () => {
   const [pageCount, setPageCount] = useState<number>(1);
+  const [allPosts, setAllPosts] = useState<Post[]>([]); // State to store all posts
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [content, setContent] = useState("");
+  const [refreshing, setRefreshing] = useState(false); // State for pull-to-refresh
   const richText = useRef<RichEditor>(null);
-  const scrollRef = useRef<ScrollView>(null);
 
   const {
     data: feedPosts,
@@ -35,14 +38,40 @@ const FeedPost = () => {
     isFetching,
     refetch,
   } = useGetPostQuery({ pageCount });
-  const total = feedPosts?.meta.pagination.total || 0;
+
+  const totalPosts = feedPosts?.meta.pagination.total || 0;
+  const postsPerPage = 3;
+
+  console.log(allPosts);
+
   const [createPost] = useCreatePostMutation();
   const { data: getUserInfoData } = useGetUserInfoQuery();
 
   const userToken = useAppSelector((store) => store.auth.authToken);
   const userId = getUserInfoData?.id;
   const varifiedSine = getUserInfoData?.varifiedSine;
-  const posts = feedPosts?.data;
+
+  // Append new posts to the existing posts
+  useEffect(() => {
+    if (feedPosts?.data) {
+      setAllPosts((prevPosts) => [...prevPosts, ...feedPosts.data]);
+    }
+  }, [feedPosts]);
+
+  const loadMorePosts = useCallback(() => {
+    if (isFetching) return;
+    const hasMorePosts = pageCount * postsPerPage < totalPosts;
+    if (hasMorePosts) {
+      setPageCount((prev) => prev + 1);
+    }
+  }, [isFetching, pageCount, totalPosts]);
+
+  const handleRefresh = useCallback(() => {
+    setRefreshing(true);
+    setPageCount(1);
+    setAllPosts([]);
+    refetch().finally(() => setRefreshing(false));
+  }, [refetch]);
 
   const handleInputClick = () => {
     setIsModalVisible(true);
@@ -65,6 +94,7 @@ const FeedPost = () => {
             "Success",
             "Thanks for sharing your valuable information"
           );
+          handleRefresh(); // Refresh after creating a post
         } else {
           Alert.alert("Error", "Something went wrong. Please try again later.");
         }
@@ -80,24 +110,43 @@ const FeedPost = () => {
   return (
     <PaperProvider>
       <View style={styles.container}>
-        {isLoading || isFetching ? (
+        {isLoading && pageCount === 1 ? (
           <ActivityIndicator
             size="large"
             color="#0000ff"
             style={styles.loadingIndicator}
           />
         ) : (
-          <ScrollView>
-            {posts?.map((post) => (
+          <FlatList
+            data={allPosts}
+            renderItem={({ item }) => (
               <SinglePost
-                key={post.id}
-                post={post}
+                key={item.id}
+                post={item}
                 userId={userId}
                 varifiedSine={varifiedSine}
-                refetch={refetch}
               />
-            ))}
-          </ScrollView>
+            )}
+            keyExtractor={(item) => item.id.toString()}
+            onEndReached={loadMorePosts}
+            onEndReachedThreshold={0.5} // Trigger load more when halfway through the current list
+            ListFooterComponent={
+              isFetching ? (
+                <ActivityIndicator
+                  size="large"
+                  color="#0000ff"
+                  style={styles.loadingIndicator}
+                />
+              ) : null
+            }
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                colors={["#0000ff"]}
+              />
+            }
+          />
         )}
 
         <TouchableOpacity style={styles.fab} onPress={handleInputClick}>
@@ -113,19 +162,13 @@ const FeedPost = () => {
             {userToken ? (
               <View>
                 <Text style={styles.modalTitle}>Create Post</Text>
-                <ScrollView
-                  ref={scrollRef}
-                  style={styles.scrollContainer}
-                  contentContainerStyle={styles.scrollContentContainer}
-                >
-                  <RichEditor
-                    ref={richText}
-                    style={styles.editor}
-                    placeholder="Start typing here..."
-                    initialContentHTML={content}
-                    onChange={(text) => setContent(text)}
-                  />
-                </ScrollView>
+                <RichEditor
+                  ref={richText}
+                  style={styles.editor}
+                  placeholder="Start typing here..."
+                  initialContentHTML={content}
+                  onChange={(text) => setContent(text)}
+                />
 
                 <RichToolbar
                   editor={richText}
@@ -185,9 +228,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   loadingIndicator: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    marginVertical: 20,
   },
   fab: {
     position: "absolute",
@@ -208,14 +249,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontWeight: "bold",
   },
-  scrollContainer: {
-    maxHeight: 300,
-  },
-  scrollContentContainer: {
-    flexGrow: 1,
-  },
   editor: {
-    flex: 1,
     borderColor: "#ccc",
     borderWidth: 1,
     minHeight: 200,
