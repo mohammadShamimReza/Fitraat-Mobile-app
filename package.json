@@ -20,6 +20,7 @@
     "@react-native-picker/picker": "2.7.5",
     "@react-navigation/native": "^6.0.2",
     "@reduxjs/toolkit": "^2.2.7",
+    "@sentry/react-native": "^5.30.0",
     "date-fns": "^3.6.0",
     "expo": "~51.0.26",
     "expo-av": "~14.0.6",
@@ -35,6 +36,7 @@
     "expo-system-ui": "~3.0.7",
     "expo-video": "^1.2.4",
     "expo-web-browser": "~13.0.3",
+    "jest-expo": "~51.0.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.74.5",
@@ -50,8 +52,7 @@
     "react-native-webview": "13.8.6",
     "react-native-youtube": "^2.0.2",
     "react-redux": "^9.1.2",
-    "zod": "^3.23.8",
-    "jest-expo": "~51.0.3"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

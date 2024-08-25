@@ -31,7 +31,15 @@
       "expo-router",
       "expo-secure-store",
       "expo-video",
-      "expo-font"
+      "expo-font",
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "react-native",
+          "organization": "detox-dopamine-app"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
