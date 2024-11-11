@@ -5,6 +5,7 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import { useTheme } from "@react-navigation/native";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   Animated,
@@ -14,6 +15,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import EmergencyButton from "./EmergencyButton";
 import SuggestedBlog from "./taskPages/Blog";
 import Kagel from "./taskPages/Kagel";
 import Quiz from "./taskPages/Quiz";
@@ -67,6 +69,9 @@ const TaskPage: React.FC<TaskPageProps> = ({
   handleDayid,
   paid,
 }) => {
+  const handleEmergencyPress = () => {
+    router.push("/emergency");
+  };
   const { colors } = useTheme();
   const tasks: (keyof typeof localStorageData)[] = [
     "video",
@@ -76,7 +81,6 @@ const TaskPage: React.FC<TaskPageProps> = ({
   ];
   const [collapsed, setCollapsed] = useState(true); // Sidebar starts collapsed
   const [sidebarWidth] = useState(new Animated.Value(60)); // Initial width
-
 
   const toggleSidebar = () => {
     setCollapsed(!collapsed);
@@ -236,7 +240,9 @@ const TaskPage: React.FC<TaskPageProps> = ({
                         Day: {day}
                       </Text>
                       <Text
-                        style={{ color: DayCount === day ? "white" : "black" }}
+                        style={{
+                          color: DayCount === day ? "white" : "black",
+                        }}
                       >
                         {paid === undefined || paid === false
                           ? day > 3
@@ -264,6 +270,15 @@ const TaskPage: React.FC<TaskPageProps> = ({
               <Text style={[styles.dayText, { color: colors.text }]}>
                 Day: {DayCount}
               </Text>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <EmergencyButton onPress={handleEmergencyPress} />
+              </View>
               <View style={styles.rankContainer}>
                 <Text style={[styles.rankText, { color: colors.text }]}>
                   Rank:

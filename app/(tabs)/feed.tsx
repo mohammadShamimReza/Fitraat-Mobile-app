@@ -22,7 +22,6 @@ import {
   Provider as PaperProvider,
   Portal,
 } from "react-native-paper";
-import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
 
 const FeedPost = () => {
   const [pageCount, setPageCount] = useState<number>(1);
@@ -30,7 +29,7 @@ const FeedPost = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [content, setContent] = useState("");
   const [refreshing, setRefreshing] = useState(false); // State for pull-to-refresh
-  const richText = useRef<RichEditor>(null);
+  // const richText = useRef<RichEditor>(null);
 
   const {
     data: feedPosts,
@@ -161,7 +160,7 @@ const FeedPost = () => {
             {userToken ? (
               <View>
                 <Text style={styles.modalTitle}>Create Post</Text>
-                <RichEditor
+                {/* <RichEditor
                   ref={richText}
                   style={styles.editor}
                   placeholder="Start typing here..."
@@ -181,7 +180,7 @@ const FeedPost = () => {
                     "insertVideo",
                   ]}
                   style={styles.toolbar}
-                />
+                /> */}
 
                 <Button
                   mode="contained"

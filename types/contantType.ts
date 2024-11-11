@@ -38,6 +38,17 @@ export interface PostData {
   meta: Meta;
 }
 
+export interface Emergencys {
+  data: {
+    attributes: {
+      vedio_url: string;
+      message: string;
+    };
+  }[];
+  meta: Meta;
+}
+
+
 export interface CreateLikeForPost {
   id: number;
   attributes: {

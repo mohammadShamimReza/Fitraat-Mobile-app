@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { WebView } from "react-native-webview";
 
 interface VideoProps {
-  selectedTask: string;
+  selectedTask?: string;
   video: {
     videoUrl: string | undefined;
   };
@@ -21,7 +21,7 @@ const VideoComponent: React.FC<VideoProps> = ({ selectedTask, video }) => {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <style>
         body { margin: 0; }
-        iframe { width: 100%; height: 422px; border: 1 solid black; border-radius: 8px; }
+        iframe { width: 422px; height: 422px; border: 1 solid black; border-radius: 8px; }
       </style>
     </head>
     <body>

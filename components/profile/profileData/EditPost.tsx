@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 import { Button, Modal, Portal } from "react-native-paper";
-import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
+// import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
 
 const EditPost = ({ post }: { post: Post }) => {
   const [isPostModalVisible, setIsPostModalVisible] = useState(false);
@@ -18,7 +18,7 @@ const EditPost = ({ post }: { post: Post }) => {
   const [updatePost] = useUpdatePostMutation();
 
   const [content, setContent] = useState(post.attributes.description);
-  const richText = useRef<RichEditor>(null);
+  // const richText = useRef<RichEditor>(null);
   const scrollRef = useRef<ScrollView>(null);
 
   useEffect(() => {
@@ -91,7 +91,7 @@ const EditPost = ({ post }: { post: Post }) => {
             style={styles.scrollContainer}
             contentContainerStyle={styles.scrollContentContainer}
           >
-            <RichEditor
+            {/* <RichEditor
               key={post.id} // Force re-render by using key
               ref={richText}
               initialContentHTML={content}
@@ -99,10 +99,10 @@ const EditPost = ({ post }: { post: Post }) => {
               onChange={(text) => setContent(text)}
               useContainer={true}
               onCursorPosition={handleCursorPosition}
-            />
+            /> */}
           </ScrollView>
 
-          <RichToolbar
+          {/* <RichToolbar
             editor={richText}
             actions={[
               "bold",
@@ -114,7 +114,7 @@ const EditPost = ({ post }: { post: Post }) => {
               "insertVideo",
             ]}
             style={styles.toolbar}
-          />
+          /> */}
 
           <Button
             mode="contained"

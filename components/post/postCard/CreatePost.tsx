@@ -17,7 +17,7 @@ import {
   Provider as PaperProvider,
   Portal,
 } from "react-native-paper";
-import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
+// import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
 import { z } from "zod";
 
 // Define the schema using Zod
@@ -29,7 +29,7 @@ const CreatePost = ({ user }: { user: UserData | null }) => {
   const userId = user ? user.id : null;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [content, setContent] = useState("");
-  const richText = useRef<RichEditor>(null);
+  // const richText = useRef<RichEditor>(null);
   const scrollRef = useRef<ScrollView>(null);
 
   const [createPost, { isLoading }] = useCreatePostMutation();
@@ -92,7 +92,7 @@ const CreatePost = ({ user }: { user: UserData | null }) => {
           >
             {userId ? (
               <View>
-                <Text style={styles.modalTitle}>Create Post</Text>
+                {/* <Text style={styles.modalTitle}>Create Post</Text>
                 <ScrollView
                   ref={scrollRef}
                   style={styles.scrollContainer}
@@ -119,7 +119,7 @@ const CreatePost = ({ user }: { user: UserData | null }) => {
                     "insertVideo",
                   ]}
                   style={styles.toolbar}
-                />
+                /> */}
 
                 <Button
                   mode="contained"
