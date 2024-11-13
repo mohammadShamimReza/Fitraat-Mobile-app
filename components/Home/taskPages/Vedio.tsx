@@ -20,8 +20,8 @@ const VideoComponent: React.FC<VideoProps> = ({ selectedTask, video }) => {
     <head>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <style>
-        body { margin: 0; }
-        iframe { width: 422px; height: 422px; border: 1 solid black; border-radius: 8px; }
+       body { margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        iframe { width: 100%; height: 100%; max-width: 100%; max-height: 100%; border: 1px solid black; border-radius: 8px; }
       </style>
     </head>
     <body>
