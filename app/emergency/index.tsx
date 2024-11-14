@@ -148,7 +148,10 @@ const EmergencyService: React.FC = () => {
         ) : (
           <TouchableOpacity
             style={[styles.button, styles.finishButton]}
-            onPress={() => Alert.alert("Emergency Service Completed!")}
+            onPress={() => {
+              Alert.alert("Emergency Service Completed!");
+              setCurrent(0); // Reset to the first step
+            }}
           >
             <Text style={styles.buttonText}>Finish</Text>
           </TouchableOpacity>
