@@ -53,7 +53,6 @@ const EditPost = ({ post }: { post: Post }) => {
           },
         },
       });
-      console.log(result);
 
       if (result) {
         Alert.alert("Success", "Post updated successfully!");

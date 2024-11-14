@@ -29,10 +29,8 @@ export default function ForgotPassword() {
 
     setIsLoading(true);
     const result = await forgetPassword({ email });
-    console.log(result);
 
     // Simulate sending reset password email
-    console.log(email);
     // setTimeout(() => {
     //   setIsLoading(false);
     //   navigation.navigate("ResetPassword"); // Replace with your reset password screen

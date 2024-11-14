@@ -21,7 +21,6 @@ const RestartJourney = ({ userId }: { userId: number }) => {
               compliteDay: 0,
               userId: userId,
             });
-            console.log(result);
             saveUserDayData("AuthDay", {
               video: false,
               kagel: false,
@@ -29,7 +28,6 @@ const RestartJourney = ({ userId }: { userId: number }) => {
               Blog: false,
             });
 
-            console.log(result);
             if (result) {
               Alert.alert(
                 "Success",

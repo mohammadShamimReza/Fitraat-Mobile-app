@@ -78,22 +78,9 @@ function RegisterPage({
     try {
       // Validate form data with Zod
       registerSchema.parse(formData);
-      console.log(formData);
 
       const result: any = await registerUser(formData);
-      // const result: any = await fetch("http://localhost:1337/api/auth/local", {
-      //   headers: {
-      //     Accept: "application/json",
-      //     "Content-Type": "application/json",
-      //   },
-      //   method: "POST",
-      //   body: JSON.stringify(formData), // Stringify the formData object
-      // })
-      //   .then((res) => res.json()) // Call .json() to parse the response
-      //   .then((data) => console.log(data)) // Log the parsed data
-      //   .catch((error) => console.error("Error:", error)); // Handle errors
 
-      console.log(result);
       if (result?.error) {
         if (result?.error?.error?.message === "This attribute must be unique") {
           Toast.show({
@@ -121,8 +108,6 @@ function RegisterPage({
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
-        console.log(error);
-
         error.errors.forEach((e) =>
           Toast.show({
             type: "error",

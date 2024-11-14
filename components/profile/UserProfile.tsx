@@ -72,7 +72,6 @@ function ProfilePage() {
           passwordConfirmation: confirmPassword,
         },
       });
-      console.log(result);
       setIsPasswordModalVisible(false);
       if (result && "error" in result) {
         Alert.alert("Error", "current password is incorrect.");
@@ -105,7 +104,6 @@ function ProfilePage() {
   //           },
   //         },
   //       });
-  //       console.log(result);
   //       if (result) {
   //         Alert.alert("Success", "Post updated successfully!");
   //       } else {
@@ -150,7 +148,6 @@ function ProfilePage() {
     //     return;
     //   }
     //   setProfileImage(selectedImage.uri); // Set the image URI
-    //   console.log("Uploaded Image:", selectedImage.uri); // Log the image URI
     // }
   };
 

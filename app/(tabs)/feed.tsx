@@ -5,7 +5,7 @@ import { useAppSelector } from "@/redux/hooks";
 import { Post } from "@/types/contantType";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Alert,
   FlatList,
@@ -41,7 +41,6 @@ const FeedPost = () => {
   const totalPosts = feedPosts?.meta.pagination.total || 0;
   const postsPerPage = 25;
 
-
   const [createPost] = useCreatePostMutation();
   const { data: getUserInfoData } = useGetUserInfoQuery();
 
@@ -67,13 +66,19 @@ const FeedPost = () => {
   const handleRefresh = useCallback(() => {
     setRefreshing(true);
     setPageCount(1);
-    setAllPosts([]);
     refetch().finally(() => setRefreshing(false));
   }, [refetch]);
 
   const handleInputClick = () => {
     setIsModalVisible(true);
   };
+  useEffect(() => {
+    if (feedPosts?.data) {
+      setAllPosts((prevPosts) =>
+        pageCount === 1 ? feedPosts.data : [...prevPosts, ...feedPosts.data]
+      );
+    }
+  }, [feedPosts, pageCount]);
 
   const handleModalCancel = () => {
     setIsModalVisible(false);

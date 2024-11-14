@@ -4,7 +4,7 @@ import { storeCurrentTask } from "@/redux/slice/taskSlice";
 import { KegelTimes, Quizzes } from "@/types/contantType";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-import { router } from "expo-router";
+import { Href, router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Button, Image, Modal, StyleSheet, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
@@ -87,17 +87,17 @@ function AuthMyTask({
           text2: "You become a Spartan!",
         });
         await AsyncStorage.setItem("AuthDayId", nextDayId.toString());
-        router.replace("/FreeBlogs");
+        router.replace("/FreeBlogs" as Href<"/FreeBlogs">);
       } else if (nextDayId > 40) {
         Toast.show({
           type: "success",
           text1: "Congratulations!",
           text2: "You have successfully completed all tasks.",
         });
-        router.replace("/CompletedTask");
+        router.replace("/CompletedTask" as Href<"/CompletedTask">);
       } else {
         await AsyncStorage.setItem("AuthDayId", nextDayId.toString());
-        router.replace("/FreeBlogs");
+        router.replace("/FreeBlogs" as Href<"/FreeBlogs">);
       }
     } else {
       setLocalStorageData((prevState) => ({
@@ -114,7 +114,7 @@ function AuthMyTask({
 
   const handleOk = () => {
     setIsFinishModalOpen(false);
-    router.replace("/FreeBlogs");
+    router.replace("/FreeBlogs" as Href<"/FreeBlogs">);
   };
 
   const [blog, setBlog] = useState<{

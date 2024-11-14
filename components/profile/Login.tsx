@@ -86,6 +86,7 @@ function Login() {
               text1: "Success",
               text2: "Login successful",
             });
+            console.log(result);
             await storeTokenInSecureStore(result?.data?.jwt);
             dispatch(storeAuthToken(result?.data?.jwt));
             dispatch(storeUserInfo(result?.data?.user));

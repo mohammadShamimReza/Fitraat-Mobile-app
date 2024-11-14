@@ -6,7 +6,7 @@ import { KegelTimes, Quizzes } from "@/types/contantType";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { Image } from "expo-image";
-import { router } from "expo-router";
+import { Href, router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Button, StyleSheet, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
@@ -20,13 +20,13 @@ function UnAuthTask({ paid }: { paid: boolean | undefined }) {
   const { data: unAuthenticatedDayData } = useGetDaysByDayIdQuery(
     parseInt(unAuthDayId)
   );
-  console.log(unAuthenticatedDayData);
+  console.log(unAuthDayId, "this is dayId");
 
   useEffect(() => {
     const loadDayId = async () => {
       const dayId = (await AsyncStorage.getItem("unAuthDayId")) || "1";
       if (parseInt(dayId) > 3) {
-        router.replace("/CompletedFreeTask");
+        router.replace("/CompletedFreeTask" as Href<"/CompletedFreeTask">);
       }
       setUnAuthDayId(dayId);
     };
@@ -100,7 +100,7 @@ function UnAuthTask({ paid }: { paid: boolean | undefined }) {
           text1: "Congratulations",
           text2: "You have completed your tasks for the free days.",
         });
-        router.replace("/CompletedFreeTask");
+        router.replace("/CompletedFreeTask" as Href<"/CompletedFreeTask">);
       } else {
         parsedUnAuthDayId += 1;
         if (parsedUnAuthDayId === 3) {
@@ -128,7 +128,7 @@ function UnAuthTask({ paid }: { paid: boolean | undefined }) {
 
   const handleOk = () => {
     setIsFinishModalOpen(false);
-    router.replace("/freeBlogs");
+    router.replace("/freeBlogs" as Href<"/freeBlogs">);
   };
 
   const [blog, setBlog] = useState<{
@@ -146,7 +146,6 @@ function UnAuthTask({ paid }: { paid: boolean | undefined }) {
   const [video, setVideo] = useState<{ videoUrl: string | undefined }>({
     videoUrl: "",
   });
-  console.log(!unAuthenticatedDayData ? "true" : "false");
 
   useEffect(() => {
     if (
@@ -162,53 +161,55 @@ function UnAuthTask({ paid }: { paid: boolean | undefined }) {
           content: unAuthDayData.blog.data.attributes.content,
         });
         setQuiz(unAuthDayData.quizzes.data);
-        setVideo({ videoUrl: unAuthDayData.video.data.attributes.VideoUrl });
+        setVideo({
+          videoUrl: unAuthDayData.video.data.attributes.VideoUrl,
+        });
         setKegel(unAuthDayData.kegel.data.attributes.kegel_times.data);
       }
     }
   }, [unAuthenticatedDayData, unAuthDayId]);
-const DayCount = parseInt(unAuthDayId) || 0;
+  const DayCount = parseInt(unAuthDayId) || 0;
 
-const handleDayid = (id: string) => {
-  setUnAuthDayId(id.toString());
-};
+  const handleDayid = (id: string) => {
+    setUnAuthDayId(id.toString());
+  };
 
-return (
-  <>
-    {isFinishModalOpen && (
-      <View style={styles.modalContainer}>
-        <Text style={styles.modalTitle}>
-          Hurra! You have finished another Day! Congratulations
-        </Text>
-        <Image
-          source={require("../../assets/images/dayFinish.gif")}
-          style={styles.finishImage}
-          resizeMode="contain"
+  return (
+    <>
+      {isFinishModalOpen && (
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalTitle}>
+            Hurra! You have finished another Day! Congratulations
+          </Text>
+          <Image
+            source={require("../../assets/images/dayFinish.gif")}
+            style={styles.finishImage}
+            resizeMode="contain"
+          />
+          <Button title="OK" onPress={handleOk} />
+        </View>
+      )}
+      {DayCount > 4 ? (
+        <CompletedFreeTask />
+      ) : (
+        <TaskPage
+          localStorageData={localStorageData}
+          handleTaskClick={handleTaskClick}
+          selectedTask={selectedTask}
+          selectedTaskIndex={selectedTaskIndex}
+          handlePrevious={handlePrevious}
+          handleNext={handleNext}
+          blog={blog}
+          quiz={quiz}
+          video={video}
+          kegel={kegel}
+          DayCount={DayCount}
+          handleDayid={handleDayid}
+          paid={paid}
         />
-        <Button title="OK" onPress={handleOk} />
-      </View>
-    )}
-    {DayCount > 4 ? (
-      <CompletedFreeTask />
-    ) : (
-      <TaskPage
-        localStorageData={localStorageData}
-        handleTaskClick={handleTaskClick}
-        selectedTask={selectedTask}
-        selectedTaskIndex={selectedTaskIndex}
-        handlePrevious={handlePrevious}
-        handleNext={handleNext}
-        blog={blog}
-        quiz={quiz}
-        video={video}
-        kegel={kegel}
-        DayCount={DayCount}
-        handleDayid={handleDayid}
-        paid={paid}
-      />
-    )}
-  </>
-);
+      )}
+    </>
+  );
 }
 
 const styles = StyleSheet.create({

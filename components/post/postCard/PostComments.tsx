@@ -78,7 +78,6 @@ const PostComments = ({
       const result = await createComment({
         data: { user: currentUserId, post: postId, comment: modalComment },
       });
-      console.log(result, modalComment);
       if (result) {
         Alert.alert("Comment successful");
       } else {

@@ -3,11 +3,11 @@ import { useGetEnergencyContantQuery } from "@/redux/api/emergencyApi";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
+  ScrollView,
   StyleSheet,
   Text,
-  View,
-  ScrollView,
   TouchableOpacity,
+  View,
 } from "react-native";
 import { WebView } from "react-native-webview";
 
@@ -52,7 +52,6 @@ const VideoComponent: React.FC<VideoProps> = ({ videoUrl }) => {
   );
 };
 
-
 const EmergencyService: React.FC = () => {
   useSetNavigationTitle("Emergency");
 
@@ -66,8 +65,6 @@ const EmergencyService: React.FC = () => {
     if (total && typeof total === "number") {
       const randomNumber = Math.floor(Math.random() * total);
       setEmergencyNumber(randomNumber);
-    } else {
-      console.log("Total is not a valid number");
     }
   }, [total]);
 

@@ -34,7 +34,6 @@ export const getUserDayData = async (key: AllowedKeys) => {
 export const removeUserData = async (key: AllowedKeys) => {
   try {
     await AsyncStorage.removeItem(key);
-    console.log("Data removed successfully!");
   } catch (error) {
     console.error("Error removing data", error);
   }

@@ -64,7 +64,6 @@ const PaymentPage = () => {
         source={{ uri: paymentUrl }}
         onNavigationStateChange={(navState) => {
           if (navState.url.includes("redirectSuccess")) {
-            console.log(navState);
             setPaymentUrl(null); // Close WebView on success
             Alert.alert("Payment Successful", "Thank you for your payment!");
             router.replace("/");

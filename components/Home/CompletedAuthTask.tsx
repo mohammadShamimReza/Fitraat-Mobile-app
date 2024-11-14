@@ -49,7 +49,6 @@ const CompletedAuthTask = () => {
                 })
               );
 
-              console.log(result);
 
               if (updateUserDaySuccess) {
                 Toast.show({

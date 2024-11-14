@@ -1,4 +1,5 @@
 import useSetNavigationTitle from "@/hooks/useCustomStackName";
+import { useGetUserInfoQuery } from "@/redux/api/authApi";
 import { useGetBlogsByIdQuery } from "@/redux/api/blogApi";
 import { useAppSelector } from "@/redux/hooks";
 import { router, useLocalSearchParams } from "expo-router";
@@ -16,10 +17,13 @@ const Page = ({ params }: { params: { slug: string } }) => {
   const userInfo = useAppSelector((store) => store.auth.userInfo);
   const userToken = useAppSelector((store) => store.auth.authToken);
   useSetNavigationTitle("Blog");
+  const { data: getUserInfoData } = useGetUserInfoQuery();
+
+  console.log(params, getUserInfoData?.paid);
   useEffect(() => {
     if (!userToken) {
       router.replace("/profile");
-    } else if (!userInfo?.paid) {
+    } else if (getUserInfoData?.paid === false) {
       router.replace("/promember");
     }
   });

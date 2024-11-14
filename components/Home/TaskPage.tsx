@@ -98,7 +98,9 @@ const TaskPage: React.FC<TaskPageProps> = ({
   const allDays = Array.from({ length: 40 }, (_, i) => i + 1);
 
   return (
-    <View style={{ flex: 1, padding: 8, backgroundColor: colors.background }}>
+    <View
+      style={{ flex: 1, paddingTop: 40, backgroundColor: colors.background }}
+    >
       <View style={{ flexDirection: "row", borderRadius: 8, flex: 1 }}>
         {/* Sidebar */}
 
@@ -323,7 +325,7 @@ const styles = StyleSheet.create({
   },
 
   closeButton: {
-    // padding: 8,
+    paddingRight: 12,
     alignItems: "center",
   },
   sidebarTitle: {
@@ -333,7 +335,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   taskItem: {
-    padding: 10,
+    // padding: 10,
     borderRadius: 8,
     marginBottom: 8,
     alignSelf: "stretch",
@@ -357,7 +359,7 @@ const styles = StyleSheet.create({
   },
   mainContent: {
     flex: 1,
-    paddingLeft: 16,
+    padding: 16,
   },
   mainHeader: {
     flexDirection: "row",
