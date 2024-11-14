@@ -76,8 +76,6 @@ function SinglePost({
         });
         if (!result) {
           Alert.alert("Error", "Something went wrong, try again later");
-        } else if (result) {
-          Alert.alert("Success", "Thanks for liking the post");
         }
       } catch (error) {
         Alert.alert("Error", "Something went wrong, try again later");
