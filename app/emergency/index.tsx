@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingVertical: 15,
   },
- 
+
   infoText: {
     fontSize: 16,
     textAlign: "center",
@@ -251,6 +251,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 5,
     alignItems: "center",
+    marginLeft: 32,
   },
   nextButton: {
     backgroundColor: "#4CAF50",
