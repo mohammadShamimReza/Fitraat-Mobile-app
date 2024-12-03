@@ -104,132 +104,137 @@ const TaskPage: React.FC<TaskPageProps> = ({
       <View style={{ flexDirection: "row", borderRadius: 8, flex: 1 }}>
         {/* Sidebar */}
 
-        <Animated.View style={[styles.sidebar, { width: sidebarWidth }]}>
-          <View>
-            {/* Close/Open Button */}
+        {collapsed === false && (
+          <Animated.View style={[styles.sidebar, { width: sidebarWidth }]}>
+            <View>
+              {/* Close/Open Button */}
 
-            {/* Render the rest of the sidebar content only if not collapsed */}
-            {!collapsed && (
-              <>
-                <TouchableOpacity
-                  onPress={toggleSidebar}
-                  style={styles.closeButton}
-                >
-                  <Ionicons
-                    name={collapsed ? "menu" : "close"}
-                    size={24}
-                    color={colors.text}
-                  />
-                </TouchableOpacity>
-                {/* Sidebar Title */}
-                <Text style={[styles.sidebarTitle, { color: colors.text }]}>
-                  Tasks
-                </Text>
-
-                {/* Task Items */}
-                {tasks.map((task, index) => (
+              {/* Render the rest of the sidebar content only if not collapsed */}
+              {!collapsed && (
+                <>
                   <TouchableOpacity
-                    key={index}
-                    style={[
-                      styles.taskItem,
-                      {
-                        backgroundColor:
-                          selectedTask === task ? colors.primary : colors.card,
-                        opacity: localStorageData[task] === false ? 0.5 : 1,
-                      },
-                    ]}
-                    onPress={() =>
-                      localStorageData[task] === true && handleTaskClick(index)
-                    }
-                    disabled={localStorageData[task] === false}
+                    onPress={toggleSidebar}
+                    style={styles.closeButton}
                   >
-                    <Text
-                      style={[
-                        styles.taskText,
-                        {
-                          color: selectedTask === task ? "white" : "black",
-                        },
-                      ]}
-                    >
-                      {task.replace(/^\w/, (c) => c.toUpperCase())}
-                    </Text>
-                    <FontAwesome
-                      name="check-circle"
-                      size={20}
-                      color={localStorageData[task] ? "#0578EA" : "gray"}
+                    <Ionicons
+                      name={collapsed ? "menu" : "close"}
+                      size={24}
+                      color={colors.text}
                     />
                   </TouchableOpacity>
-                ))}
+                  {/* Sidebar Title */}
+                  <Text style={[styles.sidebarTitle, { color: colors.text }]}>
+                    Tasks
+                  </Text>
 
-                {/* Days Title */}
-                <Text
-                  style={[
-                    styles.sidebarTitle,
-                    { marginTop: 32, color: colors.text },
-                  ]}
-                >
-                  Days
-                </Text>
-
-                {/* Day Items */}
-                <ScrollView style={{ maxHeight: 200, marginTop: "auto" }}>
-                  {allDays.map((day) => (
+                  {/* Task Items */}
+                  {tasks.map((task, index) => (
                     <TouchableOpacity
-                      key={day}
+                      key={index}
                       style={[
-                        styles.dayItem,
+                        styles.taskItem,
                         {
                           backgroundColor:
-                            DayCount === day ? colors.primary : colors.card,
-                          opacity: DayCount >= day ? 1 : 0.5,
+                            selectedTask === task
+                              ? colors.primary
+                              : colors.card,
+                          opacity: localStorageData[task] === false ? 0.5 : 1,
                         },
                       ]}
                       onPress={() =>
-                        DayCount >= day && handleDayid(day.toString())
+                        localStorageData[task] === true &&
+                        handleTaskClick(index)
                       }
-                      disabled={DayCount < day}
+                      disabled={localStorageData[task] === false}
                     >
-                      <View
-                        style={{
-                          width: "100%",
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                        }}
+                      <Text
+                        style={[
+                          styles.taskText,
+                          {
+                            color: selectedTask === task ? "white" : "black",
+                          },
+                        ]}
                       >
-                        <Text
-                          style={{
-                            color:
-                              DayCount === day
-                                ? colors.background
-                                : colors.text,
-                          }}
-                        >
-                          Day: {day}
-                        </Text>
-                        <Text
-                          style={{
-                            color: DayCount === day ? "white" : "black",
-                          }}
-                        >
-                          {paid === undefined || paid === false
-                            ? day > 3
-                              ? "Paid"
-                              : "Demo"
-                            : ""}
-                        </Text>
-                        <FontAwesome
-                          name="check-circle"
-                          size={20}
-                          color={DayCount >= day ? "blue" : "gray"}
-                        />
-                      </View>
+                        {task.replace(/^\w/, (c) => c.toUpperCase())}
+                      </Text>
+                      <FontAwesome
+                        name="check-circle"
+                        size={20}
+                        color={localStorageData[task] ? "#0578EA" : "gray"}
+                      />
                     </TouchableOpacity>
                   ))}
-                </ScrollView>
-              </>
-            )}
-          </View>
-        </Animated.View>
+
+                  {/* Days Title */}
+                  <Text
+                    style={[
+                      styles.sidebarTitle,
+                      { marginTop: 32, color: colors.text },
+                    ]}
+                  >
+                    Days
+                  </Text>
+
+                  {/* Day Items */}
+                  <ScrollView style={{ maxHeight: 200, marginTop: "auto" }}>
+                    {allDays.map((day) => (
+                      <TouchableOpacity
+                        key={day}
+                        style={[
+                          styles.dayItem,
+                          {
+                            backgroundColor:
+                              DayCount === day ? colors.primary : colors.card,
+                            opacity: DayCount >= day ? 1 : 0.5,
+                          },
+                        ]}
+                        onPress={() =>
+                          DayCount >= day && handleDayid(day.toString())
+                        }
+                        disabled={DayCount < day}
+                      >
+                        <View
+                          style={{
+                            width: "100%",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              color:
+                                DayCount === day
+                                  ? colors.background
+                                  : colors.text,
+                            }}
+                          >
+                            Day: {day}
+                          </Text>
+                          <Text
+                            style={{
+                              color: DayCount === day ? "white" : "black",
+                            }}
+                          >
+                            {paid === undefined || paid === false
+                              ? day > 3
+                                ? "Paid"
+                                : "Demo"
+                              : ""}
+                          </Text>
+                          <FontAwesome
+                            name="check-circle"
+                            size={20}
+                            color={DayCount >= day ? "blue" : "gray"}
+                          />
+                        </View>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </>
+              )}
+            </View>
+          </Animated.View>
+        )}
 
         {/* Main Content */}
         {collapsed === true && (
@@ -322,6 +327,11 @@ const styles = StyleSheet.create({
     width: 55,
     borderRadius: 8,
     overflow: "hidden",
+    paddingLeft: 30,
+    flex: 1,
+    padding: 30,
+    justifyContent: "center",
+    alignContent: "center",
   },
 
   closeButton: {
@@ -329,13 +339,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   sidebarTitle: {
+    padding: 10,
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 16,
     alignSelf: "flex-start",
   },
   taskItem: {
-    // padding: 10,
+    padding: 10,
     borderRadius: 8,
     marginBottom: 8,
     alignSelf: "stretch",
