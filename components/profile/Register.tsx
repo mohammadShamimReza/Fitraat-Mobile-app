@@ -6,6 +6,8 @@ import { storeAuthToken, storeUserInfo } from "@/redux/slice/authSlice";
 import { Picker } from "@react-native-picker/picker";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons"; // Add this import
+
 import {
   KeyboardAvoidingView,
   Platform,
@@ -166,20 +168,22 @@ function RegisterPage({
             {/* Password Input */}
             <View style={styles.inputContainer}>
               <Text style={styles.label}>
-                Password<Text style={styles.required}>*</Text>
+                Password <Text style={styles.required}>*</Text>
               </Text>
               <View style={styles.passwordContainer}>
                 <TextInput
-                  style={styles.input}
+                  style={styles.inputPassword}
                   placeholder="Enter your password"
                   secureTextEntry={!showPassword}
                   onChangeText={(value) => handleChange("password", value)}
                   value={formData.password}
                 />
                 <TouchableOpacity onPress={togglePasswordVisibility}>
-                  <Text style={styles.togglePassword}>
-                    {showPassword ? "Hide" : "Show"}
-                  </Text>
+                  <Icon
+                    name={showPassword ? "eye-off" : "eye"}
+                    size={24}
+                    color="#666"
+                  />
                 </TouchableOpacity>
               </View>
             </View>
@@ -292,6 +296,10 @@ const styles = StyleSheet.create({
   required: {
     color: "red",
   },
+  inputPassword: {
+    height: 40,
+    paddingHorizontal: 8,
+  },
   input: {
     height: 40,
     borderColor: "#ccc",
@@ -301,7 +309,13 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   passwordContainer: {
-    position: "relative",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 4,
+    // paddingHorizontal: 8,
   },
   togglePassword: {
     position: "absolute",

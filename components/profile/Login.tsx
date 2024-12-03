@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { storeAuthToken, storeUserInfo } from "@/redux/slice/authSlice";
 import { useRouter } from "expo-router";
 import Toast from "react-native-toast-message";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons"; // Add this import
 import { z } from "zod";
 
 // types.ts
@@ -151,19 +152,20 @@ function Login() {
           <Text style={styles.label}>
             Password <Text style={styles.required}>*</Text>
           </Text>
-
-          <View style={styles.inputContainer}>
+          <View style={styles.passwordContainer}>
             <TextInput
-              style={styles.input}
+              style={styles.inputPassword}
               placeholder="Enter your password"
               secureTextEntry={!showPassword}
               onChangeText={(value) => handleChange("password", value)}
               value={formData.password}
             />
             <TouchableOpacity onPress={togglePasswordVisibility}>
-              <Text style={styles.togglePassword}>
-                {showPassword ? "Hide" : "Show"}
-              </Text>
+              <Icon
+                name={showPassword ? "eye-off" : "eye"}
+                size={24}
+                color="#666"
+              />
             </TouchableOpacity>
           </View>
         </View>
@@ -217,6 +219,10 @@ const styles = StyleSheet.create({
   required: {
     color: "red",
   },
+  inputPassword: {
+    height: 40,
+    paddingHorizontal: 8,
+  },
   input: {
     height: 40,
     borderColor: "#ccc",
@@ -230,6 +236,15 @@ const styles = StyleSheet.create({
     // marginLeft: 8,
     color: "#007bff",
     fontWeight: "bold",
+  },
+  passwordContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 4,
+    // paddingHorizontal: 8,
   },
   button: {
     backgroundColor: "#333",
