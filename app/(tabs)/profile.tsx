@@ -7,6 +7,7 @@ import { StyleSheet } from "react-native";
 const profile = () => {
   const userInfo = useAppSelector((store) => store.auth.userInfo);
   const userToken = useAppSelector((store) => store.auth.authToken);
+  console.log(userInfo, "user token");
   return userToken ? <UserProfile /> : <Login />;
 };
 

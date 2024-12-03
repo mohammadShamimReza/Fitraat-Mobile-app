@@ -75,6 +75,7 @@ function Login() {
       if (formData.identifier !== "" && formData.password !== "") {
         try {
           const result: any | Error = await loginUser(formData);
+          console.log(result);
           if (result?.error) {
             Toast.show({
               type: "error",

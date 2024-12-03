@@ -34,6 +34,8 @@ function ProfilePage() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  console.log(getUserInfoData, "userInfoData");
+
 
   const name = getUserInfoData?.username;
   const age = getUserInfoData?.age;

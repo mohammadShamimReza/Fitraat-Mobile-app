@@ -19,8 +19,12 @@ const Index = () => {
   const handleFree = () => {
     if (userToken) {
       alert("You are already using free access");
-    } else {
-      router.replace("/login");
+    } else if (!userToken) {
+      alert("Please login first");
+    } else if (userInfo?.paid) {
+      alert("You are already using premium access");
+    } else if (!userInfo?.paid) {
+      alert("Please go for premium access");
     }
   };
 
@@ -55,76 +59,6 @@ const Index = () => {
         </Text> */}
       </View>
       <View style={styles.cardContainer}>
-        {/* Freemium Membership Card */}
-        <View style={styles.card}>
-          <View style={styles.cardHeader}>
-            <Text style={styles.cardTitle}>Freemium Membership</Text>
-          </View>
-          <View style={styles.cardBody}>
-            <View style={styles.feature}>
-              <Text style={styles.featureIcon}>✔️</Text>
-              <Text style={styles.featureText}>Access to basic features</Text>
-            </View>
-            <View style={styles.feature}>
-              <Text style={styles.featureIcon}>✔️</Text>
-              <Text style={styles.featureText}>Limited access to content</Text>
-            </View>
-            <View style={styles.feature}>
-              <Text style={styles.featureIcon}>✔️</Text>
-              <Text style={styles.featureText}>Access to community forum</Text>
-            </View>
-            <View style={styles.feature}>
-              <Text style={styles.featureIcon}>✔️</Text>
-              <Text style={styles.featureText}>
-                Ability to save preferences
-              </Text>
-            </View>
-            <View style={styles.feature}>
-              <Text style={styles.featureIcon}>✔️</Text>
-              <Text style={styles.featureText}>Access to basic analytics</Text>
-            </View>
-            <View style={styles.feature}>
-              <Text style={styles.featureIcon}>✔️</Text>
-              <Text style={styles.featureText}>
-                Ability to connect with social media
-              </Text>
-            </View>
-            <View style={styles.featureUnavailable}>
-              <Text style={styles.featureIcon}>❌</Text>
-              <Text style={styles.featureText}>
-                Customizable dashboard layout
-              </Text>
-            </View>
-            <View style={styles.featureUnavailable}>
-              <Text style={styles.featureIcon}>❌</Text>
-              <Text style={styles.featureText}>120 day premium package</Text>
-            </View>
-            <View style={styles.featureUnavailable}>
-              <Text style={styles.featureIcon}>❌</Text>
-              <Text style={styles.featureText}>
-                Latest update of premium content
-              </Text>
-            </View>
-            <View style={styles.featureUnavailable}>
-              <Text style={styles.featureIcon}>❌</Text>
-              <Text style={styles.featureText}>
-                Access career building workshop
-              </Text>
-            </View>
-            <View style={styles.featureUnavailable}>
-              <Text style={styles.featureIcon}>❌</Text>
-              <Text style={styles.featureText}>
-                Access career building support
-              </Text>
-            </View>
-          </View>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={handleFree}>
-              <Text style={styles.buttonText}>Start Freemium</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
         {/* Pro Membership Card */}
         <View style={styles.card}>
           <View style={styles.cardHeader}>
@@ -195,6 +129,76 @@ const Index = () => {
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={styles.button} onPress={handlePremium}>
               <Text style={styles.buttonText}>Upgrade to Premium</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Freemium Membership Card */}
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <Text style={styles.cardTitle}>Freemium Membership</Text>
+          </View>
+          <View style={styles.cardBody}>
+            <View style={styles.feature}>
+              <Text style={styles.featureIcon}>✔️</Text>
+              <Text style={styles.featureText}>Access to basic features</Text>
+            </View>
+            <View style={styles.feature}>
+              <Text style={styles.featureIcon}>✔️</Text>
+              <Text style={styles.featureText}>Limited access to content</Text>
+            </View>
+            <View style={styles.feature}>
+              <Text style={styles.featureIcon}>✔️</Text>
+              <Text style={styles.featureText}>Access to community forum</Text>
+            </View>
+            <View style={styles.feature}>
+              <Text style={styles.featureIcon}>✔️</Text>
+              <Text style={styles.featureText}>
+                Ability to save preferences
+              </Text>
+            </View>
+            <View style={styles.feature}>
+              <Text style={styles.featureIcon}>✔️</Text>
+              <Text style={styles.featureText}>Access to basic analytics</Text>
+            </View>
+            <View style={styles.feature}>
+              <Text style={styles.featureIcon}>✔️</Text>
+              <Text style={styles.featureText}>
+                Ability to connect with social media
+              </Text>
+            </View>
+            <View style={styles.featureUnavailable}>
+              <Text style={styles.featureIcon}>❌</Text>
+              <Text style={styles.featureText}>
+                Customizable dashboard layout
+              </Text>
+            </View>
+            <View style={styles.featureUnavailable}>
+              <Text style={styles.featureIcon}>❌</Text>
+              <Text style={styles.featureText}>120 day premium package</Text>
+            </View>
+            <View style={styles.featureUnavailable}>
+              <Text style={styles.featureIcon}>❌</Text>
+              <Text style={styles.featureText}>
+                Latest update of premium content
+              </Text>
+            </View>
+            <View style={styles.featureUnavailable}>
+              <Text style={styles.featureIcon}>❌</Text>
+              <Text style={styles.featureText}>
+                Access career building workshop
+              </Text>
+            </View>
+            <View style={styles.featureUnavailable}>
+              <Text style={styles.featureIcon}>❌</Text>
+              <Text style={styles.featureText}>
+                Access career building support
+              </Text>
+            </View>
+          </View>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.button} onPress={handleFree}>
+              <Text style={styles.buttonText}>Start Freemium</Text>
             </TouchableOpacity>
           </View>
         </View>

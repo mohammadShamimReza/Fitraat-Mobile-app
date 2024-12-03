@@ -26,6 +26,7 @@ export default function TabLayout() {
   useEffect(() => {
     const fetchToken = async () => {
       const tokenFromSecureStore = await getTokenFromSecureStore();
+      console.log(tokenFromSecureStore, "token");
       if (tokenFromSecureStore) {
         dispatch(storeUserInfo(userData));
         setToken(tokenFromSecureStore);

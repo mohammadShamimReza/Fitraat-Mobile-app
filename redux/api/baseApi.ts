@@ -3,12 +3,11 @@ import { BaseQueryApi } from "@reduxjs/toolkit/query";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
 
+const backendUrl = process.env.EXPO_PUBLIC_BackendUrl;
+
 // Define a base query with token support
 const baseQueryWithToken = fetchBaseQuery({
-  baseUrl:
-    // "https://detox-dopamine-backend.onrender.com/api" ||
-    // "http://localhost:1337/api", ||
-    "http://10.0.2.2:1337/api",
+  baseUrl: `${backendUrl}/api`,
 
   prepareHeaders: async (
     headers: Headers,

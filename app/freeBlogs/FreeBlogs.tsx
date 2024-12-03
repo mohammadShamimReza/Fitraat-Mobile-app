@@ -25,13 +25,20 @@ const FreeBlogs: React.FC = () => {
   const [blogs, setBlogs] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
-  const {
-    data: blogData,
-    isLoading,
-    isSuccess,
-    isFetching,
-    refetch,
-  } = useGetFreeBlogsQuery({ searchTerm, pageCount });
+
+const backendUrl = process.env.EXPO_PUBLIC_BackendUrl;
+
+console.log(backendUrl, " this is the backend url");
+
+const {
+  data: blogData,
+  isLoading,
+  isSuccess,
+  isFetching,
+  refetch,
+} = useGetFreeBlogsQuery({ searchTerm, pageCount });
+
+console.log(blogData, "this is blog data");
 
   // Append new blogs to the existing blogs
   useEffect(() => {
