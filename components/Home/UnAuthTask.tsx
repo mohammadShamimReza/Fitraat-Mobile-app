@@ -20,7 +20,6 @@ function UnAuthTask({ paid }: { paid: boolean | undefined }) {
   const { data: unAuthenticatedDayData } = useGetDaysByDayIdQuery(
     parseInt(unAuthDayId)
   );
-  console.log(unAuthDayId, "this is dayId");
 
   useEffect(() => {
     const loadDayId = async () => {

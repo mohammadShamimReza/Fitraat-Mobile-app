@@ -49,14 +49,7 @@ export interface Emergencys {
 }
 
 
-export interface CreateLikeForPost {
-  id: number;
-  attributes: {
-    createdAt: string;
-    updatedAt: string;
-    publishedAt: string;
-  };
-}
+
 export interface CreateCommentForPost {
   id: number;
   attributes: {

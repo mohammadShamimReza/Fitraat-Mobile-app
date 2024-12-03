@@ -34,8 +34,6 @@ function ProfilePage() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  console.log(getUserInfoData, "userInfoData");
-
 
   const name = getUserInfoData?.username;
   const age = getUserInfoData?.age;
@@ -43,7 +41,7 @@ function ProfilePage() {
   const compliteDay = getUserInfoData?.compliteDay || 0;
   const userId = getUserInfoData?.id;
   const location = getUserInfoData?.country;
-  const paid = getUserInfoData?.paid || false;
+  const membership = getUserInfoData?.paid || false;
 
   const { data: posts } = useGetPostsByUserIdQuery({
     userId: userId || 0,
@@ -164,6 +162,7 @@ function ProfilePage() {
             age={age || 0}
             compliteDay={compliteDay || 0}
             location={location || ""}
+            membership={membership || false}
           />
           <RestartJourney userId={userId || 0} />
           <ChengePassword

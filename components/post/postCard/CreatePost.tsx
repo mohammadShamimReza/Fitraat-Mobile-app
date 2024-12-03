@@ -17,7 +17,11 @@ import {
   Provider as PaperProvider,
   Portal,
 } from "react-native-paper";
-// import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
+import {
+  RichEditor,
+  RichToolbar,
+  actions,
+} from "react-native-pell-rich-editor"; // Imported RichEditor & RichToolbar
 import { z } from "zod";
 
 // Define the schema using Zod
@@ -29,7 +33,7 @@ const CreatePost = ({ user }: { user: UserData | null }) => {
   const userId = user ? user.id : null;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [content, setContent] = useState("");
-  // const richText = useRef<RichEditor>(null);
+  const richText = useRef<RichEditor>(null); // Reference for RichEditor
   const scrollRef = useRef<ScrollView>(null);
 
   const [createPost, { isLoading }] = useCreatePostMutation();
@@ -92,12 +96,13 @@ const CreatePost = ({ user }: { user: UserData | null }) => {
           >
             {userId ? (
               <View>
-                {/* <Text style={styles.modalTitle}>Create Post</Text>
+                <Text style={styles.modalTitle}>Create Post</Text>
                 <ScrollView
                   ref={scrollRef}
                   style={styles.scrollContainer}
                   contentContainerStyle={styles.scrollContentContainer}
                 >
+                  {/* RichEditor */}
                   <RichEditor
                     ref={richText}
                     style={styles.editor}
@@ -107,19 +112,20 @@ const CreatePost = ({ user }: { user: UserData | null }) => {
                   />
                 </ScrollView>
 
+                {/* RichToolbar */}
                 <RichToolbar
                   editor={richText}
                   actions={[
-                    "bold",
-                    "italic",
-                    "underline",
-                    "unorderedList",
-                    "orderedList",
-                    "insertImage",
-                    "insertVideo",
+                    actions.setBold,
+                    actions.setItalic,
+                    actions.setUnderline,
+                    actions.insertOrderedList,
+                    actions.insertBulletsList,
+                    actions.insertImage,
+                    actions.insertVideo,
                   ]}
                   style={styles.toolbar}
-                /> */}
+                />
 
                 <Button
                   mode="contained"

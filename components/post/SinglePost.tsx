@@ -2,17 +2,12 @@ import {
   useCreateCommentMutation,
   useGetCommentOfPostQuery,
 } from "@/redux/api/commentApi";
-import {
-  useCreateLikeMutation,
-  useDeleteLikeMutation,
-  useGetLikeOfPostQuery,
-  usePostLikeForCurrentUserQuery,
-} from "@/redux/api/likeApi";
+
 import { Post } from "@/types/contantType";
 import React, { useRef } from "react";
 
 import { formatDistanceToNow } from "date-fns";
-import { Alert, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import PostActions from "./postCard/PostActions";
 import PostComments from "./postCard/PostComments";
 import PostContent from "./postCard/PostContent";
@@ -29,20 +24,12 @@ function SinglePost({
 }) {
   const dropdownRef = useRef<View>(null);
 
-  const [createLike] = useCreateLikeMutation();
   const [createComment] = useCreateCommentMutation();
-  const [deleteLike] = useDeleteLikeMutation();
 
-  const { data: postLike } = useGetLikeOfPostQuery({ postId: post?.id });
-  const { data: postLikeForCurrentUser } = usePostLikeForCurrentUserQuery({
-    postId: post?.id,
-    userId: userId || 0,
-  });
   const { data: postComments } = useGetCommentOfPostQuery({ postId: post?.id });
 
   const postComment = postComments?.data;
   const totalComment = postComments?.meta.pagination.total || 0;
-  const totalLikes = postLike?.meta.pagination.total || 0;
   const postDescription = post.attributes.description;
   const postUserName = post.attributes.user.data.attributes.username;
   const postAt = formatDistanceToNow(new Date(post.attributes.createdAt), {
@@ -50,38 +37,6 @@ function SinglePost({
   });
   const postUserId = post.attributes.user.data.id;
   const postId = post.id;
-
-  const likedPostForCurrentUser =
-    postLikeForCurrentUser?.meta.pagination.total !== 0;
-  const postLikeForCurrentUserId = postLikeForCurrentUser?.data[0]?.id;
-
-  const handleLikeUnlickClick = async () => {
-    if (!userId) {
-      return Alert.alert("Info", "Please login first to like this post");
-    }
-
-    if (likedPostForCurrentUser && postLikeForCurrentUserId) {
-      try {
-        const result = await deleteLike({ postLikeForCurrentUserId });
-        if (!result) {
-          Alert.alert("Error", "Something went wrong, try again later");
-        }
-      } catch (error) {
-        Alert.alert("Error", "Something went wrong, try again later");
-      }
-    } else if (!likedPostForCurrentUser) {
-      try {
-        const result = await createLike({
-          data: { user: userId, post: postId },
-        });
-        if (!result) {
-          Alert.alert("Error", "Something went wrong, try again later");
-        }
-      } catch (error) {
-        Alert.alert("Error", "Something went wrong, try again later");
-      }
-    }
-  };
 
   return (
     <View style={styles.container}>
@@ -94,13 +49,7 @@ function SinglePost({
             varifiedSine={varifiedSine}
           />
           <PostContent postDescription={postDescription} />
-          <PostActions
-            totalLikes={totalLikes}
-            likedPostForCurrentUser={likedPostForCurrentUser}
-            handleLikeUnlickClick={handleLikeUnlickClick}
-            totalComment={totalComment}
-            userId={userId}
-          />
+          <PostActions totalComment={totalComment} userId={userId} />
           <PostComments
             postId={postId}
             postComment={postComment}

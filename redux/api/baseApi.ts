@@ -37,7 +37,6 @@ export const baseApi = createApi({
     "updateUser",
     "createPost",
     "deletePost",
-    "createLike",
     "deleteLike",
     "createComment",
     "updateComment",

@@ -12,12 +12,14 @@ const UserInfo = ({
   email,
   location,
   compliteDay,
+  membership,
 }: {
   name: string;
   age: number;
   email: string;
   location: string;
   compliteDay: number;
+  membership: boolean;
 }) => {
   const dispatch = useAppDispatch();
 
@@ -41,6 +43,9 @@ const UserInfo = ({
       <Text style={styles.profileText}>Email: {email}</Text>
       <Text style={styles.profileText}>Location: {location}</Text>
       <Text style={styles.profileText}>Days Completed: {compliteDay}</Text>
+      <Text style={styles.profileText}>
+        Days Completed: {!membership ? "free" : "pro"}
+      </Text>
     </View>
   );
 };

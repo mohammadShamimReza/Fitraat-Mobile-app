@@ -1,11 +1,5 @@
-import SinglePost from "@/components/post/SinglePost";
-import { useGetUserInfoQuery } from "@/redux/api/authApi";
-import { useCreatePostMutation, useGetPostQuery } from "@/redux/api/postApi";
-import { useAppSelector } from "@/redux/hooks";
-import { Post } from "@/types/contantType";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { router } from "expo-router";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Alert,
   FlatList,
@@ -22,47 +16,61 @@ import {
   Provider as PaperProvider,
   Portal,
 } from "react-native-paper";
+import {
+  RichEditor,
+  RichToolbar,
+  actions,
+} from "react-native-pell-rich-editor";
+
+import SinglePost from "@/components/post/SinglePost";
+import { useGetUserInfoQuery } from "@/redux/api/authApi";
+import { useCreatePostMutation, useGetPostQuery } from "@/redux/api/postApi";
+import { Post } from "@/types/contantType";
+import { router } from "expo-router";
 
 const FeedPost = () => {
   const [pageCount, setPageCount] = useState<number>(1);
-  const [allPosts, setAllPosts] = useState<Post[]>([]); // State to store all posts
+  const [allPosts, setAllPosts] = useState<Post[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [content, setContent] = useState("");
-  const [refreshing, setRefreshing] = useState(false); // State for pull-to-refresh
-  // const richText = useRef<RichEditor>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const richText = useRef<RichEditor>(null);
 
   const {
     data: feedPosts,
     isLoading,
     isFetching,
     refetch,
-  } = useGetPostQuery({ pageCount });
+  } = useGetPostQuery({
+    pageCount,
+  });
+
+  const { data: userInfo } = useGetUserInfoQuery();
+  const userId = userInfo?.id;
+  const verifiedSince = userInfo?.varifiedSine;
+
+  const [createPost] = useCreatePostMutation();
 
   const totalPosts = feedPosts?.meta.pagination.total || 0;
   const postsPerPage = 25;
 
-  const [createPost] = useCreatePostMutation();
-  const { data: getUserInfoData } = useGetUserInfoQuery();
-
-  const userToken = useAppSelector((store) => store.auth.authToken);
-  const userId = getUserInfoData?.id;
-  const varifiedSine = getUserInfoData?.varifiedSine;
-
-  // Append new posts to the existing posts
+  // Update allPosts when feedPosts changes
   useEffect(() => {
     if (feedPosts?.data) {
-      setAllPosts((prevPosts) => [...prevPosts, ...feedPosts.data]);
+      setAllPosts((prevPosts) =>
+        pageCount === 1 ? feedPosts.data : [...prevPosts, ...feedPosts.data]
+      );
     }
-  }, [feedPosts]);
+  }, [feedPosts, pageCount]);
 
+  // Load more posts when reaching the bottom
   const loadMorePosts = useCallback(() => {
-    if (isFetching) return;
-    const hasMorePosts = pageCount * postsPerPage < totalPosts;
-    if (hasMorePosts) {
+    if (!isFetching && pageCount * postsPerPage < totalPosts) {
       setPageCount((prev) => prev + 1);
     }
   }, [isFetching, pageCount, totalPosts]);
 
+  // Pull-to-refresh
   const handleRefresh = useCallback(() => {
     setRefreshing(true);
     setPageCount(1);
@@ -72,13 +80,6 @@ const FeedPost = () => {
   const handleInputClick = () => {
     setIsModalVisible(true);
   };
-  useEffect(() => {
-    if (feedPosts?.data) {
-      setAllPosts((prevPosts) =>
-        pageCount === 1 ? feedPosts.data : [...prevPosts, ...feedPosts.data]
-      );
-    }
-  }, [feedPosts, pageCount]);
 
   const handleModalCancel = () => {
     setIsModalVisible(false);
@@ -86,30 +87,33 @@ const FeedPost = () => {
   };
 
   const handleCreatePost = async () => {
-    if (content !== "") {
-      try {
-        const post = { description: content, user: userId };
-        const result = await createPost({ data: post });
-        if (result) {
-          setIsModalVisible(false);
-          setContent("");
-          Alert.alert(
-            "Success",
-            "Thanks for sharing your valuable information"
-          );
-          handleRefresh(); // Refresh after creating a post
-        } else {
-          Alert.alert("Error", "Something went wrong. Please try again later.");
-        }
-      } catch (error) {
-        console.error("Error creating post:", error);
-        Alert.alert("Error", "An error occurred while creating the post.");
-      }
-    } else {
+    if (!content.trim()) {
       Alert.alert("Validation Error", "Post content cannot be empty.");
+      return;
+    }
+
+    if (!userId) {
+      Alert.alert("Error", "User not found.");
+      return;
+    }
+
+    try {
+      const post = { description: content, user: userId };
+      const result = await createPost({ data: post });
+
+      if (result) {
+        setIsModalVisible(false);
+        setContent("");
+        Alert.alert("Success", "Post created successfully.");
+        handleRefresh(); // Refresh posts after successful creation
+      } else {
+        Alert.alert("Error", "Failed to create post. Try again.");
+      }
+    } catch (error) {
+      console.error("Error creating post:", error);
+      Alert.alert("Error", "An error occurred while creating the post.");
     }
   };
-
 
   return (
     <PaperProvider>
@@ -128,14 +132,20 @@ const FeedPost = () => {
                 key={item.id}
                 post={item}
                 userId={userId}
-                varifiedSine={varifiedSine}
+                varifiedSine={verifiedSince}
               />
             )}
             keyExtractor={(item) => item.id.toString()}
             onEndReached={loadMorePosts}
-            onEndReachedThreshold={0.5} // Trigger load more when halfway through the current list
+            onEndReachedThreshold={0.5}
             ListFooterComponent={
-              isFetching ? (
+              isFetching && (
+                <ActivityIndicator
+                  size="large"
+                  color="#0000ff"
+                  style={styles.loadingIndicator}
+                />
+              ) ? (
                 <ActivityIndicator
                   size="large"
                   color="#0000ff"
@@ -163,31 +173,27 @@ const FeedPost = () => {
             onDismiss={handleModalCancel}
             contentContainerStyle={styles.modalContainer}
           >
-            {userToken ? (
+            {userId ? (
               <View>
                 <Text style={styles.modalTitle}>Create Post</Text>
-                {/* <RichEditor
+                <RichEditor
                   ref={richText}
                   style={styles.editor}
                   placeholder="Start typing here..."
                   initialContentHTML={content}
-                  onChange={(text) => setContent(text)}
+                  onChange={setContent}
                 />
-
                 <RichToolbar
                   editor={richText}
                   actions={[
-                    "bold",
-                    "italic",
-                    "underline",
-                    "unorderedList",
-                    "orderedList",
-                    "insertImage",
-                    "insertVideo",
+                    actions.setBold,
+                    actions.setItalic,
+                    actions.setUnderline,
+                    actions.insertOrderedList,
+                    actions.insertBulletsList,
                   ]}
                   style={styles.toolbar}
-                /> */}
-
+                />
                 <Button
                   mode="contained"
                   onPress={handleCreatePost}
@@ -198,7 +204,7 @@ const FeedPost = () => {
                   Submit
                 </Button>
                 <Button
-                  mode="text"
+                  mode="outlined"
                   onPress={handleModalCancel}
                   style={styles.cancelButton}
                 >
@@ -208,11 +214,11 @@ const FeedPost = () => {
             ) : (
               <View style={styles.centeredContainer}>
                 <Text style={styles.loginPrompt}>
-                  Please log in first to create a post.
+                  Please log in to create a post.
                 </Text>
                 <Button
                   mode="contained"
-                  onPress={() => router.replace("/profile")}
+                  onPress={() => router.push("/profile")}
                   style={styles.loginButton}
                 >
                   Login
@@ -247,6 +253,7 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "white",
     borderRadius: 10,
+    height: "100%",
   },
   modalTitle: {
     fontSize: 18,
@@ -268,9 +275,12 @@ const styles = StyleSheet.create({
   submitButton: {
     marginTop: 10,
     marginBottom: 5,
+    backgroundColor: "#007bff",
   },
   cancelButton: {
     marginTop: 5,
+    borderColor: "#007bff",
+    borderWidth: 1,
   },
   centeredContainer: {
     alignItems: "center",

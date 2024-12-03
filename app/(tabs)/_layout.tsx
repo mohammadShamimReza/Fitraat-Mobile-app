@@ -26,7 +26,6 @@ export default function TabLayout() {
   useEffect(() => {
     const fetchToken = async () => {
       const tokenFromSecureStore = await getTokenFromSecureStore();
-      console.log(tokenFromSecureStore, "token");
       if (tokenFromSecureStore) {
         dispatch(storeUserInfo(userData));
         setToken(tokenFromSecureStore);
@@ -36,7 +35,6 @@ export default function TabLayout() {
 
     fetchToken(); // Fetch the token on component mount
   }, []);
-  console.log(userInfo, "userInfo");
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

@@ -47,22 +47,22 @@ const PostComments = ({
 
   const isValidComment = (comment: string) => /\w/.test(comment);
 
-  // const handleAddComment = async () => {
-  //   if (!currentUserId) {
-  //     return Alert.alert("Please log in first to comment");
-  //   }
-  //   if (!isValidComment(newComment)) {
-  //     return Alert.alert("Please write something meaningfull");
-  //   }
-  //   try {
-  //     await createComment({
-  //       data: { user: currentUserId, post: postId, comment: newComment },
-  //     });
-  //     setNewComment("");
-  //   } catch (error) {
-  //     console.error("Error adding comment:", error);
-  //   }
-  // };
+  const handleAddComment = async () => {
+    if (!currentUserId) {
+      return Alert.alert("Please log in first to comment");
+    }
+    if (!isValidComment(newComment)) {
+      return Alert.alert("Please write something meaningfull");
+    }
+    try {
+      await createComment({
+        data: { user: currentUserId, post: postId, comment: newComment },
+      });
+      setNewComment("");
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    }
+  };
 
   const handleModalAddComment = async () => {
     setModalVisible(false);
@@ -202,7 +202,7 @@ const PostComments = ({
             editable={false}
           />
         </TouchableOpacity>
-        {/* <View style={styles.commentButons}>
+        <View style={styles.commentButons}>
           <TouchableOpacity onPress={handleAddComment} style={[styles.button]}>
             <Text style={styles.buttonText}>Comment</Text>
           </TouchableOpacity>
@@ -212,7 +212,7 @@ const PostComments = ({
           >
             <Ionicons name="expand" size={20} color="white" />
           </TouchableOpacity>
-        </View> */}
+        </View>
         <ScrollView contentContainerStyle={styles.commentList}>
           {commentsToShow?.map(renderComment)}
           {postComment && postComment.length > 1 && (

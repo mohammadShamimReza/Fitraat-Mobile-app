@@ -48,6 +48,8 @@ function RegisterPage({
 }: {
   handleLoginRegister: () => void;
 }) {
+  const [loading, setLoading] = useState(false);
+
   const router = useRouter();
   const dispatch = useAppDispatch();
   const currentDate = new Date().toISOString();
@@ -82,7 +84,7 @@ function RegisterPage({
       registerSchema.parse(formData);
 
       const result: any = await registerUser(formData);
-      console.log(result);
+      setLoading(true);
 
       if (result?.error) {
         if (result?.error?.error?.message === "This attribute must be unique") {
@@ -109,6 +111,7 @@ function RegisterPage({
         dispatch(storeUserInfo(result?.data?.user));
         router.push("/");
       }
+      setLoading(false);
     } catch (error) {
       if (error instanceof z.ZodError) {
         error.errors.forEach((e) =>
@@ -126,6 +129,9 @@ function RegisterPage({
           text2: "An unexpected error occurred",
         });
       }
+    } finally {
+      // Ensure loading stops even if validation fails
+      setLoading(false);
     }
   };
 
@@ -245,8 +251,14 @@ function RegisterPage({
               </Picker>
             </View>
             {/* Submit Button */}
-            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-              <Text style={styles.buttonText}>Register</Text>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleSubmit}
+              disabled={loading}
+            >
+              <Text style={styles.buttonText}>
+                {loading ? "Loading..." : "Register"} {/* Show loading text */}
+              </Text>
             </TouchableOpacity>
             <Text style={styles.footerText}>
               Already have an account?{" "}

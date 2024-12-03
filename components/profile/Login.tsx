@@ -42,149 +42,162 @@ const loginSchema = z.object({
 
 function Login() {
   const [login, setLogin] = useState(true);
-  const router = useRouter();
-  const dispatch = useAppDispatch();
-  const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    identifier: "",
-    password: "",
-  });
-  const [loginUser] = useLoginUserMutation();
+    const [loading, setLoading] = useState(false);
 
-  const togglePasswordVisibility = () => {
-    setShowPassword((prevState) => !prevState);
-  };
-
-  const handleChange = (name: string, value: string) => {
-    setFormData({
-      ...formData,
-      [name]: value,
+    const router = useRouter();
+    const dispatch = useAppDispatch();
+    const [showPassword, setShowPassword] = useState(false);
+    const [formData, setFormData] = useState({
+      identifier: "",
+      password: "",
     });
-  };
-  const handleLoginRegister = () => {
-    setLogin(!login);
-  };
+    const [loginUser] = useLoginUserMutation();
 
-  const authTokenFromRedux = useAppSelector((state) => state.auth.authToken);
+    const togglePasswordVisibility = () => {
+      setShowPassword((prevState) => !prevState);
+    };
 
-  const handleSubmit = async () => {
-    try {
-      // Validate form data with Zod
-      loginSchema.parse(formData);
+    const handleChange = (name: string, value: string) => {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    };
+    const handleLoginRegister = () => {
+      setLogin(!login);
+    };
 
-      if (formData.identifier !== "" && formData.password !== "") {
-        try {
-          const result: any | Error = await loginUser(formData);
-          console.log(result);
-          if (result?.error) {
+    const authTokenFromRedux = useAppSelector((state) => state.auth.authToken);
+
+    const handleSubmit = async () => {
+      try {
+        // Validate form data with Zod
+        loginSchema.parse(formData);
+
+        if (formData.identifier !== "" && formData.password !== "") {
+          try {
+            setLoading(true);
+            const result: any | Error = await loginUser(formData);
+            if (result?.error) {
+              Toast.show({
+                type: "error",
+                text1: "Error",
+                text2: "User is not valid",
+              });
+            } else {
+              Toast.show({
+                type: "success",
+                text1: "Success",
+                text2: "Login successful",
+              });
+              await storeTokenInSecureStore(result?.data?.jwt);
+              dispatch(storeAuthToken(result?.data?.jwt));
+              dispatch(storeUserInfo(result?.data?.user));
+              // router.push("/");
+            }
+          } catch (error) {
+            console.log(error);
             Toast.show({
               type: "error",
               text1: "Error",
-              text2: "User is not valid",
+              text2: "An error occurred during login",
             });
-          } else {
-            Toast.show({
-              type: "success",
-              text1: "Success",
-              text2: "Login successful",
-            });
-            console.log(result);
-            await storeTokenInSecureStore(result?.data?.jwt);
-            dispatch(storeAuthToken(result?.data?.jwt));
-            dispatch(storeUserInfo(result?.data?.user));
-            // router.push("/");
+          } finally {
+            // Stop loading after the request completes
+            setLoading(false);
           }
-        } catch (error) {
-          console.log(error);
+        } else {
           Toast.show({
             type: "error",
             text1: "Error",
-            text2: "An error occurred during login",
+            text2: "Please fill in all fields",
           });
         }
-      } else {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: "Please fill in all fields",
-        });
-      }
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        console.log(error);
-        error.errors.forEach((e) =>
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          console.log(error);
+          error.errors.forEach((e) =>
+            Toast.show({
+              type: "error",
+              text1: "Validation Error",
+              text2: e.message,
+            })
+          );
+        } else {
+          console.error(error);
           Toast.show({
             type: "error",
-            text1: "Validation Error",
-            text2: e.message,
-          })
-        );
-      } else {
-        console.error(error);
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: "An unexpected error occurred",
-        });
+            text1: "Error",
+            text2: "An unexpected error occurred",
+          });
+        }
+      } finally {
+        // Ensure loading stops even if validation fails
+        setLoading(false);
       }
-    }
-  };
+    };
 
-  return login ? (
-    <View style={styles.container}>
-      <Toast config={toastConfig} />
+    return login ? (
+      <View style={styles.container}>
+        <Toast config={toastConfig} />
 
-      <View style={styles.formContainer}>
-        <Text style={styles.title}>Login</Text>
-        {/* Email Input */}
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>
-            Email or Username <Text style={styles.required}>*</Text>
-          </Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your email or username"
-            onChangeText={(value) => handleChange("identifier", value)}
-            value={formData.identifier}
-          />
-        </View>
-        {/* Password Input */}
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>
-            Password <Text style={styles.required}>*</Text>
-          </Text>
-          <View style={styles.passwordContainer}>
+        <View style={styles.formContainer}>
+          <Text style={styles.title}>Login</Text>
+          {/* Email Input */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>
+              Email or Username <Text style={styles.required}>*</Text>
+            </Text>
             <TextInput
-              style={styles.inputPassword}
-              placeholder="Enter your password"
-              secureTextEntry={!showPassword}
-              onChangeText={(value) => handleChange("password", value)}
-              value={formData.password}
+              style={styles.input}
+              placeholder="Enter your email or username"
+              onChangeText={(value) => handleChange("identifier", value)}
+              value={formData.identifier}
             />
-            <TouchableOpacity onPress={togglePasswordVisibility}>
-              <Icon
-                name={showPassword ? "eye-off" : "eye"}
-                size={24}
-                color="#666"
-              />
-            </TouchableOpacity>
           </View>
-        </View>
-        {/* Login Button */}
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-        <Text style={styles.footerText}>
-          Don't have an account?{" "}
-          <Text style={styles.link} onPress={() => handleLoginRegister()}>
-            Register here
+          {/* Password Input */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>
+              Password <Text style={styles.required}>*</Text>
+            </Text>
+            <View style={styles.passwordContainer}>
+              <TextInput
+                style={styles.inputPassword}
+                placeholder="Enter your password"
+                secureTextEntry={!showPassword}
+                onChangeText={(value) => handleChange("password", value)}
+                value={formData.password}
+              />
+              <TouchableOpacity onPress={togglePasswordVisibility}>
+                <Icon
+                  name={showPassword ? "eye-off" : "eye"}
+                  size={24}
+                  color="#666"
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+          {/* Login Button */}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleSubmit}
+            disabled={loading}
+          >
+            <Text style={styles.buttonText}>
+              {loading ? "Loading..." : "Login"} {/* Show loading text */}
+            </Text>
+          </TouchableOpacity>
+          <Text style={styles.footerText}>
+            Don't have an account?{" "}
+            <Text style={styles.link} onPress={() => handleLoginRegister()}>
+              Register here
+            </Text>
           </Text>
-        </Text>
+        </View>
       </View>
-    </View>
-  ) : (
-    <RegisterPage handleLoginRegister={handleLoginRegister} />
-  );
+    ) : (
+      <RegisterPage handleLoginRegister={handleLoginRegister} />
+    );
 }
 
 const styles = StyleSheet.create({

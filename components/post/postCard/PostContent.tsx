@@ -24,7 +24,7 @@ const PostContent = ({ postDescription }: { postDescription: string }) => {
   const handleMessage = (event: any) => {
     const contentHeight = parseInt(event.nativeEvent.data, 10);
     setHeight(contentHeight);
-    setIsExpandable(contentHeight > 160);
+    setIsExpandable(contentHeight > 100);
   };
 
   return (
@@ -53,7 +53,7 @@ const PostContent = ({ postDescription }: { postDescription: string }) => {
             </html>
           `,
         }}
-        style={[styles.webView, { height: expanded ? height : 160 }]} // Adjust height dynamically
+        style={[styles.webView, { height: expanded ? height : 100 }]} // Adjust height dynamically
         scrollEnabled={false} // Disable scrolling in WebView
         nestedScrollEnabled={false} // Disable nested scrolling
         onMessage={handleMessage}

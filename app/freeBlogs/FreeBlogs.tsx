@@ -28,7 +28,6 @@ const FreeBlogs: React.FC = () => {
 
 const backendUrl = process.env.EXPO_PUBLIC_BackendUrl;
 
-console.log(backendUrl, " this is the backend url");
 
 const {
   data: blogData,
@@ -38,7 +37,6 @@ const {
   refetch,
 } = useGetFreeBlogsQuery({ searchTerm, pageCount });
 
-console.log(blogData, "this is blog data");
 
   // Append new blogs to the existing blogs
   useEffect(() => {

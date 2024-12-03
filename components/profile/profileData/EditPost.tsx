@@ -43,7 +43,6 @@ const EditPost = ({ post }: { post: Post }) => {
 
   const handleSave = async () => {
     try {
-      console.log(content);
       const result = await updatePost({
         body: {
           postId: post.id,
