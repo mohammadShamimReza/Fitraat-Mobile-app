@@ -38,6 +38,9 @@ const {
 } = useGetFreeBlogsQuery({ searchTerm, pageCount });
 
 
+  console.log(blogData, "blog data");
+  
+  
   // Append new blogs to the existing blogs
   useEffect(() => {
     if (pageCount === 1) {

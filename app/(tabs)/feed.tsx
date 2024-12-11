@@ -45,6 +45,8 @@ const FeedPost = () => {
     pageCount,
   });
 
+  console.log(feedPosts, "this is feed posts");
+
   const { data: userInfo } = useGetUserInfoQuery();
   const userId = userInfo?.id;
   const verifiedSince = userInfo?.varifiedSine;

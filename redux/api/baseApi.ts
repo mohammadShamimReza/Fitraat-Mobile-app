@@ -4,6 +4,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "../store";
 
 const backendUrl = process.env.EXPO_PUBLIC_BackendUrl;
+    console.log(backendUrl, "this is base api");
 
 // Define a base query with token support
 const baseQueryWithToken = fetchBaseQuery({

@@ -2,6 +2,8 @@ import useSetNavigationTitle from "@/hooks/useCustomStackName";
 import { useGetFreeBlogsByIdQuery } from "@/redux/api/freeBlogApi"; // Adjust import based on your setup
 import { useLocalSearchParams } from "expo-router";
 import React from "react";
+import Markdown from "react-native-markdown-display";
+
 import {
   ActivityIndicator,
   Image,
@@ -47,9 +49,13 @@ const Page = ({ params }: { params: { slug: string } }) => {
           style={styles.image}
           resizeMode="cover"
         />
-        <View style={styles.textContainer}>
-          <Text style={styles.contentText}>{blogData?.content}</Text>
-        </View>
+
+        <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
+          style={styles.textContainer}
+        >
+          <Markdown>{blogData?.content}</Markdown>
+        </ScrollView>
         <Text style={styles.viewCount}>
           Total view:{" "}
           <Text style={styles.viewCountNumber}>{blogData?.viewCount || 1}</Text>
