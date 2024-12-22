@@ -97,229 +97,176 @@ const TaskPage: React.FC<TaskPageProps> = ({
 
   const allDays = Array.from({ length: 40 }, (_, i) => i + 1);
 
-  return (
-    <View
-      style={{ flex: 1, paddingTop: 40, backgroundColor: colors.background }}
-    >
-      <View style={{ flexDirection: "row", borderRadius: 8, flex: 1 }}>
-        {/* Sidebar */}
+   const icons = [
+     <MaterialCommunityIcons name="video" size={20} />,
+     <MaterialCommunityIcons name="yoga" size={20} />,
+     <FontAwesome name="check-circle" size={20} />,
+     <FontAwesome name="reddit" size={20} />,
+   ];
 
-        {collapsed === false && (
-          <Animated.View style={[styles.sidebar, { width: sidebarWidth }]}>
-            <View>
-              {/* Close/Open Button */}
+   return (
+     <View style={{ flex: 1, backgroundColor: colors.background }}>
+       <View style={{ flexDirection: "row", borderRadius: 8, flex: 1 }}>
+         {/* Sidebar */}
 
-              {/* Render the rest of the sidebar content only if not collapsed */}
-              {!collapsed && (
-                <>
-                  <TouchableOpacity
-                    onPress={toggleSidebar}
-                    style={styles.closeButton}
-                  >
-                    <Ionicons
-                      name={collapsed ? "menu" : "close"}
-                      size={24}
-                      color={colors.text}
-                    />
-                  </TouchableOpacity>
-                  {/* Sidebar Title */}
-                  <Text style={[styles.sidebarTitle, { color: colors.text }]}>
-                    Tasks
-                  </Text>
+         {collapsed === false && (
+           <Animated.View style={[styles.sidebar, { width: sidebarWidth }]}>
+             <TouchableOpacity
+               onPress={toggleSidebar}
+               style={styles.closeButton}
+             >
+               <Ionicons name={collapsed ? "menu" : "close"} size={24} />
+             </TouchableOpacity>
+             <Text style={styles.sidebarTitle}>Tasks</Text>
 
-                  {/* Task Items */}
-                  {tasks.map((task, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      style={[
-                        styles.taskItem,
-                        {
-                          backgroundColor:
-                            selectedTask === task
-                              ? colors.primary
-                              : colors.card,
-                          opacity: localStorageData[task] === false ? 0.5 : 1,
-                        },
-                      ]}
-                      onPress={() =>
-                        localStorageData[task] === true &&
-                        handleTaskClick(index)
-                      }
-                      disabled={localStorageData[task] === false}
-                    >
-                      <Text
-                        style={[
-                          styles.taskText,
-                          {
-                            color: selectedTask === task ? "white" : "black",
-                          },
-                        ]}
-                      >
-                        {task.replace(/^\w/, (c) => c.toUpperCase())}
-                      </Text>
-                      <FontAwesome
-                        name="check-circle"
-                        size={20}
-                        color={localStorageData[task] ? "#0578EA" : "gray"}
-                      />
-                    </TouchableOpacity>
-                  ))}
+             {/* Render tasks */}
+             {tasks.map((task, index) => {
+               const isUnlocked = localStorageData[task];
+               return (
+                 <TouchableOpacity
+                   key={index}
+                   style={[
+                     styles.taskItem,
+                     {
+                       backgroundColor:
+                         selectedTask === task ? "#f0f8ff" : "#fff",
+                       opacity: isUnlocked ? 1 : 0.5,
+                     },
+                   ]}
+                   onPress={() => isUnlocked && handleTaskClick(index)}
+                   disabled={!isUnlocked}
+                 >
+                   <View style={styles.taskTextContainer}>
+                     <Text style={styles.taskText}>{icons[index]}</Text>
+                     <Text>{task.charAt(0).toUpperCase() + task.slice(1)}</Text>
+                   </View>
+                   <FontAwesome
+                     name="check-circle"
+                     size={20}
+                     color={isUnlocked ? "#0578EA" : "gray"}
+                   />
+                 </TouchableOpacity>
+               );
+             })}
 
-                  {/* Days Title */}
-                  <Text
-                    style={[
-                      styles.sidebarTitle,
-                      { marginTop: 32, color: colors.text },
-                    ]}
-                  >
-                    Days
-                  </Text>
+             <Text style={styles.sidebarTitle}>Days</Text>
+             <ScrollView>
+               {allDays.map((day) => {
+                 const isUnlocked = DayCount >= day;
+                 const isPaidLocked = !paid && day > 3;
 
-                  {/* Day Items */}
-                  <ScrollView style={{ maxHeight: 200, marginTop: "auto" }}>
-                    {allDays.map((day) => (
-                      <TouchableOpacity
-                        key={day}
-                        style={[
-                          styles.dayItem,
-                          {
-                            backgroundColor:
-                              DayCount === day ? colors.primary : colors.card,
-                            opacity: DayCount >= day ? 1 : 0.5,
-                          },
-                        ]}
-                        onPress={() =>
-                          DayCount >= day && handleDayid(day.toString())
-                        }
-                        disabled={DayCount < day}
-                      >
-                        <View
-                          style={{
-                            width: "100%",
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <Text
-                            style={{
-                              color:
-                                DayCount === day
-                                  ? colors.background
-                                  : colors.text,
-                            }}
-                          >
-                            Day: {day}
-                          </Text>
-                          <Text
-                            style={{
-                              color: DayCount === day ? "white" : "black",
-                            }}
-                          >
-                            {paid === undefined || paid === false
-                              ? day > 3
-                                ? "Paid"
-                                : "Demo"
-                              : ""}
-                          </Text>
-                          <FontAwesome
-                            name="check-circle"
-                            size={20}
-                            color={DayCount >= day ? "blue" : "gray"}
-                          />
-                        </View>
-                      </TouchableOpacity>
-                    ))}
-                  </ScrollView>
-                </>
-              )}
-            </View>
-          </Animated.View>
-        )}
+                 return (
+                   <TouchableOpacity
+                     key={day}
+                     style={[
+                       styles.dayItem,
+                       {
+                         backgroundColor: DayCount === day ? "#f0f8ff" : "#fff",
+                         opacity: isUnlocked && !isPaidLocked ? 1 : 0.5,
+                       },
+                     ]}
+                     onPress={() =>
+                       isUnlocked && !isPaidLocked && handleTaskClick(day)
+                     }
+                     disabled={!isUnlocked || isPaidLocked}
+                   >
+                     <Text style={styles.dayText}>Day: {day}</Text>
+                     <FontAwesome
+                       name={isPaidLocked ? "lock" : "check-circle"}
+                       size={20}
+                       color={isUnlocked ? "#0578EA" : "gray"}
+                     />
+                   </TouchableOpacity>
+                 );
+               })}
+             </ScrollView>
+           </Animated.View>
+         )}
 
-        {/* Main Content */}
-        {collapsed === true && (
-          <View style={styles.mainContent}>
-            <View style={styles.mainHeader}>
-              <TouchableOpacity
-                onPress={toggleSidebar}
-                style={styles.closeButton}
-              >
-                <Ionicons
-                  name={collapsed ? "menu" : "close"}
-                  size={24}
-                  color={colors.text}
-                />
-              </TouchableOpacity>
-              <Text style={[styles.dayText, { color: colors.text }]}>
-                Day: {DayCount}
-              </Text>
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <EmergencyButton onPress={handleEmergencyPress} />
-              </View>
-              <View style={styles.rankContainer}>
-                <Text style={[styles.rankText, { color: colors.text }]}>
-                  Rank:
-                </Text>
-                <MaterialCommunityIcons
-                  name="numeric-1-circle"
-                  size={24}
-                  color="red"
-                />
-              </View>
-            </View>
-            <View style={styles.taksContainer}>
-              {selectedTask === "Blog" && (
-                <SuggestedBlog
-                  blog={blog}
-                  selectedTask={selectedTask}
-                  paid={paid}
-                />
-              )}
-              {selectedTask === "kagel" && (
-                <Kagel kegel={kegel} selectedTask={selectedTask} />
-              )}
-              {selectedTask === "quiz" && (
-                <Quiz quiz={quiz} selectedTask={selectedTask} />
-              )}
-              {selectedTask === "video" && (
-                <VideoComponent video={video} selectedTask={selectedTask} />
-              )}
-            </View>
-            <View
-              style={[
-                styles.navigationButtons,
-                {
-                  justifyContent:
-                    selectedTask === "video" ? "flex-end" : "space-between",
-                },
-              ]}
-            >
-              {selectedTask !== "video" && (
-                <TouchableOpacity
-                  onPress={handlePrevious}
-                  style={[styles.navButton, { backgroundColor: "#4B5563" }]}
-                >
-                  <Text style={styles.navButtonText}>Previous</Text>
-                </TouchableOpacity>
-              )}
-              <TouchableOpacity
-                onPress={handleNext}
-                style={[styles.navButton, { backgroundColor: "#4B5563" }]}
-              >
-                <Text style={styles.navButtonText}>Next</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
-      </View>
-    </View>
-  );
+         {/* Main Content */}
+         {collapsed === true && (
+           <View style={styles.mainContent}>
+             <View style={styles.mainHeader}>
+               <TouchableOpacity
+                 onPress={toggleSidebar}
+                 style={styles.closeButton}
+               >
+                 <Ionicons
+                   name={collapsed ? "menu" : "close"}
+                   size={24}
+                   color={colors.text}
+                 />
+               </TouchableOpacity>
+               <Text style={[styles.dayText, { color: colors.text }]}>
+                 Day: {DayCount}
+               </Text>
+               <View
+                 style={{
+                   flex: 1,
+                   justifyContent: "center",
+                   alignItems: "center",
+                 }}
+               >
+                 <EmergencyButton onPress={handleEmergencyPress} />
+               </View>
+               <View style={styles.rankContainer}>
+                 <Text style={[styles.rankText, { color: colors.text }]}>
+                   Rank:
+                 </Text>
+                 <MaterialCommunityIcons
+                   name="numeric-1-circle"
+                   size={24}
+                   color="red"
+                 />
+               </View>
+             </View>
+             <View style={styles.taksContainer}>
+               {selectedTask === "Blog" && (
+                 <SuggestedBlog
+                   blog={blog}
+                   selectedTask={selectedTask}
+                   paid={paid}
+                 />
+               )}
+               {selectedTask === "kagel" && (
+                 <Kagel kegel={kegel} selectedTask={selectedTask} />
+               )}
+               {selectedTask === "quiz" && (
+                 <Quiz quiz={quiz} selectedTask={selectedTask} />
+               )}
+               {selectedTask === "video" && (
+                 <VideoComponent video={video} selectedTask={selectedTask} />
+               )}
+             </View>
+             <View
+               style={[
+                 styles.navigationButtons,
+                 {
+                   justifyContent:
+                     selectedTask === "video" ? "flex-end" : "space-between",
+                 },
+               ]}
+             >
+               {selectedTask !== "video" && (
+                 <TouchableOpacity
+                   onPress={handlePrevious}
+                   style={[styles.navButton, { backgroundColor: "#4B5563" }]}
+                 >
+                   <Text style={styles.navButtonText}>Previous</Text>
+                 </TouchableOpacity>
+               )}
+               <TouchableOpacity
+                 onPress={handleNext}
+                 style={[styles.navButton, { backgroundColor: "#4B5563" }]}
+               >
+                 <Text style={styles.navButtonText}>Next</Text>
+               </TouchableOpacity>
+             </View>
+           </View>
+         )}
+       </View>
+     </View>
+   );
 };
 
 const styles = StyleSheet.create({
@@ -353,6 +300,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  taskTextContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
   },
   taskText: {
     marginLeft: 8,
@@ -392,7 +344,7 @@ const styles = StyleSheet.create({
   },
   taksContainer: {
     flex: 1,
-    maxHeight: 500,
+    // maxHeight: 500,
   },
   navigationButtons: {
     flexDirection: "row",
