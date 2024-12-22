@@ -29,6 +29,8 @@ const Page = ({ params }: { params: { slug: string } }) => {
   const { data, isLoading } = useGetFreeBlogsByIdQuery(slug);
   const blogData = data?.data.attributes;
 
+  console.log(blogData);
+
   if (isLoading) {
     return (
       <View style={styles.container}>
@@ -39,7 +41,7 @@ const Page = ({ params }: { params: { slug: string } }) => {
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.content}>
-        <Text style={styles.title}>{blogData?.title} free</Text>
+        <Text style={styles.title}>{blogData?.title} </Text>
         <Image
           source={
             blogData?.imageURL
@@ -56,11 +58,14 @@ const Page = ({ params }: { params: { slug: string } }) => {
         >
           <Markdown>{blogData?.content}</Markdown>
         </ScrollView>
-        <Text style={styles.viewCount}>
-          Total view:{" "}
-          <Text style={styles.viewCountNumber}>{blogData?.viewCount || 1}</Text>
-        </Text>
-        <Text style={styles.thankYou}>Thanks for reading this Blog</Text>
+        <View style={styles.authorCount}>
+          <Text style={styles.authorName}>
+            Blog autor: {data?.data.attributes.authorName}
+          </Text>
+          <Text style={styles.viewCount}>
+            Total view: {blogData?.viewCount || 1}
+          </Text>
+        </View>
       </View>
     </ScrollView>
   );
@@ -70,6 +75,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+  },
+  authorCount: {
+    flex: 1,
+    marginTop: 16,
   },
   scrollContainer: {
     flexGrow: 1,
@@ -82,6 +91,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
     marginBottom: 16,
+  },
+  authorName: {
+    fontSize: 16,
+    color: "black",
+    marginBottom: 8,
   },
   image: {
     width: "100%",
@@ -98,20 +112,9 @@ const styles = StyleSheet.create({
     color: "#666",
     lineHeight: 24,
   },
-  viewCount: {
-    fontSize: 16,
-    color: "#000",
-    textAlign: "right",
-    marginVertical: 16,
-  },
+  viewCount: {},
   viewCountNumber: {
-    color: "red",
-  },
-  thankYou: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#407ced",
-    textAlign: "center",
+    color: "gray",
   },
 });
 

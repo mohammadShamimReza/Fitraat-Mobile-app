@@ -1,3 +1,4 @@
+import useSetNavigationTitle from "@/hooks/useCustomStackName";
 import { useGetUserInfoQuery } from "@/redux/api/authApi";
 import { usePaymentInitMutation } from "@/redux/api/payment";
 import { router } from "expo-router";
@@ -14,6 +15,8 @@ import {
 import { WebView } from "react-native-webview";
 
 const PaymentPage = () => {
+  useSetNavigationTitle("Make Payment");
+
   const [paymentInit] = usePaymentInitMutation();
   const [loading, setLoading] = useState(false);
   const [currency, setCurrency] = useState("BDT");
@@ -130,29 +133,31 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     padding: 16,
-    backgroundColor: "#1c1c1c",
+    // backgroundColor: "#1c1c1c",
   },
   card: {
-    backgroundColor: "#2c2c2c",
+    // backgroundColor: "#2c2c2c",
     padding: 20,
     borderRadius: 10,
+    borderStyle: "solid",
+    borderWidth: 1,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 20,
-    color: "#fff",
+    // color: "#fff",
   },
   label: {
-    color: "#fff",
+    // color: "#fff",
   },
   input: {
-    borderColor: "#444",
+    // borderColor: "#444",
     borderWidth: 1,
     padding: 10,
     marginBottom: 10,
-    color: "#fff",
+    // color: "#fff",
     borderRadius: 5,
   },
   submitButton: {

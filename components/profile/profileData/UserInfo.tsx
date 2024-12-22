@@ -35,8 +35,9 @@ const UserInfo = ({
     <View style={styles.container}>
       <View style={styles.nameLogout}>
         <Text style={styles.profileText}>Name: {name}</Text>
-        <TouchableOpacity onPress={handleLogout}>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Ionicons name="log-out" size={30} color="black" />
+          <Text>Log out</Text>
         </TouchableOpacity>
       </View>
       <Text style={styles.profileText}>Age: {age}</Text>
@@ -65,5 +66,15 @@ const styles = StyleSheet.create({
   profileText: {
     fontSize: 18,
     marginBottom: 8,
+  },
+  logoutButton: {
+    flexDirection: "row-reverse",
+    gap: 1,
+    borderBlockColor: "black",
+    borderRadius: 10,
+    padding: 3,
+    borderWidth: 1,
+
+    alignItems: "center",
   },
 });

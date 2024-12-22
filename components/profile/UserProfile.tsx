@@ -4,15 +4,9 @@ import {
   useUpdatePostMutation,
 } from "@/redux/api/postApi";
 import { useUpdateUserPasswordMutation } from "@/redux/api/userApi";
+import { Link } from "expo-router";
 import React, { useState } from "react";
-import {
-  Alert,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Button, Modal, Portal, Provider } from "react-native-paper";
 import ChengePassword from "./profileData/ChengePassword";
 import CompletedDay from "./profileData/CompletedDay";
@@ -42,6 +36,12 @@ function ProfilePage() {
   const userId = getUserInfoData?.id;
   const location = getUserInfoData?.country;
   const membership = getUserInfoData?.paid || false;
+  const paid = getUserInfoData?.paid || false;
+  const startData = getUserInfoData?.startDate || Date.now();
+  const today = new Date();
+  const start = new Date(getUserInfoData?.startDate || new Date());
+  const differenceInTime = today.getTime() - start.getTime();
+  const daysLeft = Math.floor(differenceInTime / (1000 * 60 * 60 * 24)) + 1;
 
   const { data: posts } = useGetPostsByUserIdQuery({
     userId: userId || 0,
@@ -117,10 +117,6 @@ function ProfilePage() {
   //   }
   // };
 
-  const handleImageUploadModal = () => {
-    setIsImageUploadModalVisible(true);
-  };
-
   const handleImageUploadModalCancel = () => {
     setIsImageUploadModalVisible(false);
   };
@@ -178,12 +174,10 @@ function ProfilePage() {
             setNewPassword={setNewPassword}
           />
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleImageUploadModal}
-          >
-            <Text style={styles.buttonText}>Upload Profile Image</Text>
-          </TouchableOpacity>
+          <Link href="/payment" style={styles.button}>
+            <Text style={styles.buttonText}>Become Pro</Text>
+          </Link>
+
           <CompletedDay progressData={progressData} />
         </View>
         <Text style={styles.mainTexts}>My Posts</Text>
@@ -241,6 +235,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     marginBottom: 5,
+    textAlign: "center",
   },
   buttonText: {
     color: "#fff",

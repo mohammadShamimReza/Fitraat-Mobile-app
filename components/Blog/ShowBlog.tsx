@@ -1,3 +1,4 @@
+import { useUpdateFreeBlogMutation } from "@/redux/api/freeBlogApi";
 import { Blog } from "@/types/contantType";
 import { Link } from "expo-router";
 import React from "react";
@@ -12,12 +13,24 @@ interface BlogsProps {
 const ShowBlog: React.FC<BlogsProps> = ({ blog }) => {
   const blogData = blog.attributes;
   const blogUpdatedAt = new Date(blogData.updatedAt).toDateString();
+  const [updateBlog] = useUpdateFreeBlogMutation();
+  const BlogCOunt = parseInt(blogData.viewCount);
+
+  const updateViewCount = async (blogId: number) => {
+    try {
+      const result = await updateBlog({
+        id: blogId,
+        updatedFields: { viewCount: BlogCOunt + 1 },
+      }).unwrap();
+    } catch (error) {
+      console.error("Error updating view count:", error);
+    }
+  };
 
   return (
     <View style={styles.blogContainer}>
-      <Link href={`/freeBlogs/${blog.id}`} style={styles.blogLink}>
-        <Text style={styles.blogTitle}>{blogData.title}</Text>
-      </Link>
+      <Text style={styles.blogTitle}>{blogData.title}</Text>
+
       <View style={styles.blogContent}>
         {blogData?.content && (
           <Markdown style={markdownStyles}>
@@ -25,6 +38,13 @@ const ShowBlog: React.FC<BlogsProps> = ({ blog }) => {
           </Markdown>
         )}
       </View>
+      <Link
+        href={`/freeBlogs/${blog.id}`}
+        onPress={() => updateViewCount(blog.id)}
+        style={styles.blogLink}
+      >
+        Read More...
+      </Link>
       <View style={styles.blogFooter}>
         <Text style={styles.blogUpdatedAt}>
           Updated At:{" "}
@@ -55,7 +75,13 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   blogLink: {
-    textDecorationLine: "none",
+    fontWeight: "bold",
+    borderWidth: 1,
+    padding: 3,
+    width: 90,
+    textAlign: "center",
+    borderRadius: 4,
+    borderColor: "black",
   },
   blogTitle: {
     fontSize: 22,
@@ -110,6 +136,5 @@ const markdownStyles: { [key: string]: TextStyle } = {
     color: "#1e90ff",
   },
 };
-
 
 export default ShowBlog;

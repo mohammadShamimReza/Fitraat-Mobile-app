@@ -1,66 +1,45 @@
 import ShowBlog from "@/components/Blog/ShowBlog";
 import { useGetFreeBlogsQuery } from "@/redux/api/freeBlogApi";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
-  RefreshControl,
   SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
-import { z } from "zod";
-
-// Define the validation schema using Zod
-const validationSchema = z.object({
-  searchTerm: z.string().optional(),
-});
+import PaginationButtons from "./Pagination";
 
 const FreeBlogs: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [pageCount, setPageCount] = useState<number>(1);
-  const [error, setError] = useState<string | null>(null);
   const [blogs, setBlogs] = useState<any[]>([]);
-  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const paginationSize = 25;
 
+  const {
+    data: blogData,
+    isLoading,
+    isFetching,
+    isSuccess,
+  } = useGetFreeBlogsQuery({ searchTerm, pageCount, paginationSize });
 
-const backendUrl = process.env.EXPO_PUBLIC_BackendUrl;
-
-
-const {
-  data: blogData,
-  isLoading,
-  isSuccess,
-  isFetching,
-  refetch,
-} = useGetFreeBlogsQuery({ searchTerm, pageCount });
-
-
-  console.log(blogData, "blog data");
-  
-  
   // Append new blogs to the existing blogs
   useEffect(() => {
     if (pageCount === 1) {
-      setBlogs(blogData?.data || []); // Reset blogs if pageCount is 1 (initial load or refresh)
+      setBlogs(blogData?.data || []); // Reset blogs on the first page
     } else if (blogData?.data) {
-      setBlogs((prevBlogs) => [...prevBlogs, ...blogData.data]);
+      setBlogs((prevBlogs) => [...blogData.data]);
     }
   }, [blogData, pageCount]);
 
   const handleSearchTermChange = (text: string) => {
     setSearchTerm(text);
+    setPageCount(1); // Reset to first page on a new search
   };
 
-  const handleRefresh = useCallback(() => {
-    setRefreshing(true);
-    setPageCount(1); // Reset page count to 1 for a fresh load
-    refetch().finally(() => setRefreshing(false)); // Re-fetch data and stop refreshing
-  }, [refetch]);
-
-  const loadMoreBlogs = useCallback(() => {
+  const loadMoreBlogs = () => {
     if (isFetching || !blogData?.meta.pagination.total) return;
 
     const hasMoreBlogs =
@@ -69,13 +48,10 @@ const {
     if (hasMoreBlogs) {
       setPageCount((prev) => prev + 1);
     }
-  }, [isFetching, blogData, pageCount]);
+  };
 
-  useEffect(() => {
-    if (!isLoading && refreshing) {
-      setRefreshing(false);
-    }
-  }, [isLoading, refreshing]);
+  const total: number = blogData?.meta.pagination.total || 0;
+  const totalPages = Math.ceil(total / paginationSize);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -86,42 +62,43 @@ const {
           value={searchTerm}
           onChangeText={handleSearchTermChange}
         />
-
-        {error && <Text style={styles.error}>{error}</Text>}
       </View>
 
-      {isLoading && !isSuccess && !refreshing ? (
+      {isLoading && pageCount === 1 ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
         <FlatList
           data={blogs}
           renderItem={({ item }) => <ShowBlog blog={item} />}
-          keyExtractor={(item, index) => {
-            // Generate a unique key based on item.id and index
-            return item.id ? `blog-${item.id}-${index}` : `index-${index}`;
-          }}
+          keyExtractor={(item, index) =>
+            item.id ? `blog-${item.id}-${index}` : `index-${index}`
+          }
           onEndReached={loadMoreBlogs}
-          onEndReachedThreshold={0.5} // Trigger loadMoreBlogs when 50% from end
+          onEndReachedThreshold={0.5}
           ListFooterComponent={
             isFetching ? (
-              <ActivityIndicator size="small" color="#0000ff" />
-            ) : null
+              <ActivityIndicator
+                size="small"
+                color="#0000ff"
+                style={{ margin: 16 }}
+              />
+            ) : blogs.length > 0 ? (
+              <PaginationButtons
+                totalPages={totalPages}
+                currentPage={pageCount}
+                onPageChange={(page) => setPageCount(page)}
+              />
+            ) : null // Ensure `null` is returned when no footer is needed
           }
           ListEmptyComponent={
-            // If blogs exist but not displayed, render a "No blogs found" message
-            <Text style={styles.notFoundText}>
-              {blogs.length === 0 ? "No blogs found" : "Loading more blogs..."}
-            </Text>
-          }
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-              colors={["#0000ff"]}
-            />
+            blogs.length === 0 ? (
+              <Text style={styles.notFoundText}>No blogs found.</Text>
+            ) : null // Ensure `null` is returned when no empty component is needed
           }
         />
       )}
+
+      {/* Pagination Buttons */}
     </SafeAreaView>
   );
 };
@@ -144,23 +121,9 @@ const styles = StyleSheet.create({
     padding: 8,
     marginBottom: 8,
   },
-  searchButton: {
-    backgroundColor: "#75787d",
-    padding: 10,
-    borderRadius: 4,
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  searchButtonText: {
-    color: "#ffffff",
-    fontSize: 16,
-  },
-  error: {
-    color: "red",
-    marginTop: 8,
-  },
   notFoundText: {
     textAlign: "center",
+    marginTop: 16,
   },
 });
 

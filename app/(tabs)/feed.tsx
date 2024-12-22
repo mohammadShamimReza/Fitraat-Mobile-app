@@ -22,11 +22,13 @@ import {
   actions,
 } from "react-native-pell-rich-editor";
 
+
 import SinglePost from "@/components/post/SinglePost";
 import { useGetUserInfoQuery } from "@/redux/api/authApi";
 import { useCreatePostMutation, useGetPostQuery } from "@/redux/api/postApi";
 import { Post } from "@/types/contantType";
 import { router } from "expo-router";
+import PaginationButtons from "../freeBlogs/Pagination";
 
 const FeedPost = () => {
   const [pageCount, setPageCount] = useState<number>(1);
@@ -35,6 +37,7 @@ const FeedPost = () => {
   const [content, setContent] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const richText = useRef<RichEditor>(null);
+  const postsPerPage = 25;
 
   const {
     data: feedPosts,
@@ -43,9 +46,10 @@ const FeedPost = () => {
     refetch,
   } = useGetPostQuery({
     pageCount,
+    postsPerPage,
   });
 
-  console.log(feedPosts, "this is feed posts");
+  console.log(feedPosts);
 
   const { data: userInfo } = useGetUserInfoQuery();
   const userId = userInfo?.id;
@@ -54,23 +58,16 @@ const FeedPost = () => {
   const [createPost] = useCreatePostMutation();
 
   const totalPosts = feedPosts?.meta.pagination.total || 0;
-  const postsPerPage = 25;
+  const totalPages = Math.ceil(totalPosts / postsPerPage);
 
   // Update allPosts when feedPosts changes
   useEffect(() => {
     if (feedPosts?.data) {
       setAllPosts((prevPosts) =>
-        pageCount === 1 ? feedPosts.data : [...prevPosts, ...feedPosts.data]
+        pageCount === 1 ? feedPosts.data : [...feedPosts.data]
       );
     }
   }, [feedPosts, pageCount]);
-
-  // Load more posts when reaching the bottom
-  const loadMorePosts = useCallback(() => {
-    if (!isFetching && pageCount * postsPerPage < totalPosts) {
-      setPageCount((prev) => prev + 1);
-    }
-  }, [isFetching, pageCount, totalPosts]);
 
   // Pull-to-refresh
   const handleRefresh = useCallback(() => {
@@ -117,6 +114,16 @@ const FeedPost = () => {
     }
   };
 
+  console.log(
+    allPosts.map((post) => post.id),
+    "this is it"
+  );
+
+  const handlePageChange = (page: number) => {
+    setPageCount(page);
+    refetch(); // Fetch posts for the selected page
+  };
+
   return (
     <PaperProvider>
       <View style={styles.container}>
@@ -138,20 +145,12 @@ const FeedPost = () => {
               />
             )}
             keyExtractor={(item) => item.id.toString()}
-            onEndReached={loadMorePosts}
-            onEndReachedThreshold={0.5}
             ListFooterComponent={
-              isFetching && (
-                <ActivityIndicator
-                  size="large"
-                  color="#0000ff"
-                  style={styles.loadingIndicator}
-                />
-              ) ? (
-                <ActivityIndicator
-                  size="large"
-                  color="#0000ff"
-                  style={styles.loadingIndicator}
+              totalPages > 1 ? (
+                <PaginationButtons
+                  totalPages={totalPages}
+                  currentPage={pageCount}
+                  onPageChange={handlePageChange}
                 />
               ) : null
             }

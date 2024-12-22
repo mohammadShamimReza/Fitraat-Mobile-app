@@ -161,6 +161,7 @@ export interface SingleBlogData {
       content: string;
       imageURL: string;
       viewCount: number;
+      authorName: string;
     };
   };
   meta: Meta;
@@ -291,6 +292,7 @@ export interface UserDataWithDay {
   country: string;
   createdAt: string;
   currentDay: number;
+  startDate: string;
   // {
   //   DayId: number;
   //   createdAt: string;
