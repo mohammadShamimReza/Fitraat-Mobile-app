@@ -49,7 +49,6 @@ const FeedPost = () => {
     postsPerPage,
   });
 
-  console.log(feedPosts);
 
   const { data: userInfo } = useGetUserInfoQuery();
   const userId = userInfo?.id;
@@ -114,10 +113,6 @@ const FeedPost = () => {
     }
   };
 
-  console.log(
-    allPosts.map((post) => post.id),
-    "this is it"
-  );
 
   const handlePageChange = (page: number) => {
     setPageCount(page);

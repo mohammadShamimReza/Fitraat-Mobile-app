@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "name": "মুক্ত বাতাসের খোঁজে",
+    "author": "Asif Adnan",
+    "genre": " আত্মশুদ্ধি ও অনুপ্রেরণামূলক",
+    "description": "দুুঃপেনী ফাংরায আনালচ কানালচ ছপড়ল৞ পছটিল৞ থাকা নীর অন্ধকালয আটকা ঩ড়ালদয...বাইল৞যা আভায বালরাফা঳া না঑, ঴াপযল৞ কমল৞া না...",
+    "image": "../../assetss/bookImage/book1.png",
+    "pdfUrl": "/bookpdf/book1.pdf"
+  },
+  {
+    "id": 2,
+    "name": "আকাশের ওপারে আকাশ",
+    "author": "Lost modesty",
+    "genre": "আত্মশুদ্ধি ও অনুপ্রেরণামূলক",
+    "description": "আকাশের ওপারে আকাশ বইটির সফ্ট কপি",
+    "image": "/bookImage/book2.png",
+    "pdfUrl": "/bookpdf/book2.pdf"
+  },
+  {
+    "id": 3,
+    "name": "Rich Dad Poor Dad",
+    "author": "Robert T. Kiyosaki and Sharon Lechter.",
+    "genre": " Personal finance, Non-fiction",
+    "description": "Why Slow Investors Lose and Fast Money Wins! Rich Dad Poor Dad for Teens. ",
+    "image": "/bookImage/book3.png",
+    "pdfUrl": "/bookpdf/book3.pdf"
+  },
+  {
+    "id": 4,
+    "name": "Self-Help",
+    "author": "Samuel Smiles",
+    "genre": "Dystopian",
+    "description": "Self-Help by Samuel Smiles, it is a classic work that highlights the importance of personal improvement through examples of behavior.",
+    "image": "/bookImage/book4.png",
+    "pdfUrl": "/bookpdf/book4.pdf"
+  },
+  {
+    "id": 5,
+    "name": "The Art of Worldly Wisdom",
+    "author": "Baltasar Gracián",
+    "genre": "History",
+    "description": "The Art of Worldly Wisdom by Baltasar Gracián is a book that offers practical and astute advice on how to navigate life with wisdom and insight.",
+    "image": "/bookImage/book5.png",
+    "pdfUrl": "/bookpdf/book5.pdf"
+  },
+  {
+    "id": 6,
+    "name": "মুক্ত বাতাসের খোঁজে",
+    "author": "Asif Adnan",
+    "genre": " আত্মশুদ্ধি ও অনুপ্রেরণামূলক",
+    "description": "দুুঃপেনী ফাংরায আনালচ কানালচ ছপড়ল৞ পছটিল৞ থাকা নীর অন্ধকালয আটকা ঩ড়ালদয...বাইল৞যা আভায বালরাফা঳া না঑, ঴াপযল৞ কমল৞া না...",
+    "image": "/bookImage/book1.png",
+    "pdfUrl": "/bookpdf/book1.pdf"
+  },
+  {
+    "id": 7,
+    "name": "আকাশের ওপারে আকাশ",
+    "author": "Lost modesty",
+    "genre": "আত্মশুদ্ধি ও অনুপ্রেরণামূলক",
+    "description": "আকাশের ওপারে আকাশ বইটির সফ্ট কপি",
+    "image": "/bookImage/book2.png",
+    "pdfUrl": "/bookpdf/book2.pdf"
+  },
+  {
+    "id": 8,
+    "name": "Rich Dad Poor Dad",
+    "author": "Robert T. Kiyosaki and Sharon Lechter.",
+    "genre": " Personal finance, Non-fiction",
+    "description": "Why Slow Investors Lose and Fast Money Wins! Rich Dad Poor Dad for Teens. ",
+    "image": "/bookImage/book3.png",
+    "pdfUrl": "/bookpdf/book3.pdf"
+  },
+  {
+    "id": 9,
+    "name": "Self-Help",
+    "author": "Samuel Smiles",
+    "genre": "Dystopian",
+    "description": "Self-Help by Samuel Smiles, it is a classic work that highlights the importance of personal improvement through examples of behavior.",
+    "image": "/bookImage/book4.png",
+    "pdfUrl": "/bookpdf/book4.pdf"
+  },
+  {
+    "id": 10,
+    "name": "The Art of Worldly Wisdom",
+    "author": "Baltasar Gracián",
+    "genre": "History",
+    "description": "The Art of Worldly Wisdom by Baltasar Gracián is a book that offers practical and astute advice on how to navigate life with wisdom and insight.",
+    "image": "/bookImage/book5.png",
+    "pdfUrl": "/bookpdf/book5.pdf"
+  }
+]

@@ -2,7 +2,7 @@ import { useUpdateUserDayMutation } from "@/redux/api/authApi";
 import { useAppSelector } from "@/redux/hooks";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-import { router } from "expo-router";
+import { Href, router } from "expo-router";
 import React from "react";
 import { Alert, Button, StyleSheet, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
@@ -49,7 +49,6 @@ const CompletedAuthTask = () => {
                 })
               );
 
-
               if (updateUserDaySuccess) {
                 Toast.show({
                   type: "success",
@@ -75,7 +74,7 @@ const CompletedAuthTask = () => {
   };
 
   const redirectToMembership = () => {
-    router.replace("Home"); // Replace "Home" with the actual screen name you want to navigate to
+    router.replace("Home" as Href<"/Home">); // Replace "Home" with the actual screen name you want to navigate to
   };
 
   return (

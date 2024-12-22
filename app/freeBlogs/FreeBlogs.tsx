@@ -1,4 +1,5 @@
 import ShowBlog from "@/components/Blog/ShowBlog";
+import useSetNavigationTitle from "@/hooks/useCustomStackName";
 import { useGetFreeBlogsQuery } from "@/redux/api/freeBlogApi";
 import React, { useEffect, useState } from "react";
 import {
@@ -13,6 +14,8 @@ import {
 import PaginationButtons from "./Pagination";
 
 const FreeBlogs: React.FC = () => {
+  useSetNavigationTitle("Blogs");
+
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [pageCount, setPageCount] = useState<number>(1);
   const [blogs, setBlogs] = useState<any[]>([]);
