@@ -1,27 +1,16 @@
+import * as Linking from "expo-linking";
 import React from "react";
-import {
-  Linking,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const SupportPalastine: React.FC = () => {
-  const palestineHelpUrl = "https://example.com/support-palestine";
-
-  const handleSupportPress = async () => {
-    try {
-      await Linking.openURL(palestineHelpUrl);
-    } catch (error) {
-      console.error("Failed to open URL:", error);
-    }
-  };
+  const palestineHelpUrl =
+    process.env.EXPO_PUBLIC_PALESTINE_HELP_URL ||
+    "https://www.mastul.net/donate/gaza/";
 
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Stand with Palestine 🇧🇩</Text>
-      <TouchableOpacity onPress={handleSupportPress}>
+      <TouchableOpacity onPress={() => Linking.openURL(palestineHelpUrl)}>
         <Text style={styles.link}>Support 🇵🇸</Text>
       </TouchableOpacity>
     </View>

@@ -14,10 +14,12 @@ function AuthMyTask({
   authDayDataId,
   userId,
   paid,
+  daysLeft,
 }: {
   authDayDataId: number;
   userId: number;
   paid: boolean | undefined;
+  daysLeft: number;
 }) {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
@@ -191,6 +193,7 @@ function AuthMyTask({
           DayCount={authDayDataId}
           handleDayid={handleDayid}
           paid={paid}
+          daysLeft={daysLeft}
         />
       )}
     </View>

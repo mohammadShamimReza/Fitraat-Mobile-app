@@ -5,36 +5,37 @@ import { useGetUserInfoQuery } from "@/redux/api/authApi";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { storeAuthToken, storeUserInfo } from "@/redux/slice/authSlice";
 import { Tabs } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const [token, setToken] = useState<string | null>(null);
   const dispatch = useAppDispatch();
-  const {
-    data: userData,
-    isError,
-    isFetching,
-    isLoading,
-    isSuccess,
-  } = useGetUserInfoQuery();
 
+  const { data: userData, isSuccess } = useGetUserInfoQuery();
   const userInfo = useAppSelector((store) => store.auth.userInfo);
   const userToken = useAppSelector((store) => store.auth.authToken);
 
   useEffect(() => {
-    const fetchToken = async () => {
-      const tokenFromSecureStore = await getTokenFromSecureStore();
-      if (tokenFromSecureStore) {
-        dispatch(storeUserInfo(userData));
-        setToken(tokenFromSecureStore);
-        dispatch(storeAuthToken(tokenFromSecureStore));
+    const fetchTokenAndUser = async () => {
+      try {
+        const tokenFromSecureStore = await getTokenFromSecureStore();
+        if (tokenFromSecureStore) {
+          dispatch(storeAuthToken(tokenFromSecureStore));
+        }
+      } catch (error) {
+        console.error("Error fetching token:", error);
       }
     };
 
-    fetchToken(); // Fetch the token on component mount
-  }, []);
+    fetchTokenAndUser();
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (isSuccess && userData) {
+      dispatch(storeUserInfo(userData));
+    }
+  }, [isSuccess, userData, dispatch]);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -89,10 +90,10 @@ export default function TabLayout() {
               <TabBarIcon
                 name={
                   focused
-                    ? token
+                    ? userToken
                       ? "person"
                       : "log-in"
-                    : token
+                    : userToken
                     ? "person-outline"
                     : "log-in-outline"
                 }

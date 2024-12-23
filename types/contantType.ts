@@ -282,6 +282,7 @@ export interface UserData {
   tran_id: string;
   varifiedSine: boolean;
   paid: boolean;
+  startDate: string;
 }
 
 export interface UserDataWithDay {

@@ -13,7 +13,13 @@ import Toast from "react-native-toast-message";
 import CompletedFreeTask from "./CompletedFreeTask";
 import TaskPage from "./TaskPage";
 
-function UnAuthTask({ paid }: { paid: boolean | undefined }) {
+function UnAuthTask({
+  paid,
+  daysLeft,
+}: {
+  paid: boolean | undefined;
+  daysLeft: number;
+}) {
   const navigation = useNavigation();
   const [unAuthDayId, setUnAuthDayId] = useState("1");
 
@@ -205,6 +211,7 @@ function UnAuthTask({ paid }: { paid: boolean | undefined }) {
           DayCount={DayCount}
           handleDayid={handleDayid}
           paid={paid}
+          daysLeft={daysLeft}
         />
       )}
     </>

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Animated, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { Animated, StyleSheet, Text, TouchableOpacity } from "react-native";
 
 interface EmergencyButtonProps {
   onPress: () => void;
@@ -67,8 +67,8 @@ const EmergencyButton: React.FC<EmergencyButtonProps> = ({ onPress }) => {
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    paddingVertical: 8,
-    paddingHorizontal: 18,
+    paddingVertical: 2,
+    paddingHorizontal: 10,
     borderRadius: 30,
     borderWidth: 2,
     backgroundColor: "black",
