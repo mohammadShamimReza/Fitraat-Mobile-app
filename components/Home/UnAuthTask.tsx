@@ -1,5 +1,6 @@
 import { useGetDaysByDayIdQuery } from "@/redux/api/dayApi";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { clearDayData } from "@/redux/slice/daySlice";
 import { storeCurrentTask } from "@/redux/slice/taskSlice";
 import { getUserDayData, saveUserDayData } from "@/shared/StoreDayData";
 import { KegelTimes, Quizzes } from "@/types/contantType";
@@ -89,43 +90,67 @@ function UnAuthTask({
 
   const handleNext = async () => {
     if (selectedTask === "Blog") {
+      setLocalStorageData((prevState: typeof localStorageData) => ({
+        ...prevState,
+        [selectedTask]: true,
+      }));
+      setLocalStorageData(defaultLocalStorageData);
+      setSelectedTaskIndex(selectedTaskIndex + 1);
+      dispatch(storeCurrentTask(tasks[selectedTaskIndex + 1]));
+      dispatch(clearDayData());
+      setSelectedTaskIndex(0);
       setIsFinishModalOpen(true);
-      dispatch(storeCurrentTask(tasks[0]));
-      setLocalStorageData({
-        video: false,
-        kagel: false,
-        quiz: false,
-        Blog: false,
-      });
 
-      let parsedUnAuthDayId = parseInt(unAuthDayId);
-      if (parsedUnAuthDayId >= 3) {
-        Toast.show({
-          type: "success",
-          text1: "Congratulations",
-          text2: "You have completed your tasks for the free days.",
-        });
-        router.replace("/CompletedFreeTask" as Href<"/CompletedFreeTask">);
+      dispatch(storeCurrentTask(tasks[0]));
+      localStorage.setItem(
+        "UnAuthDay",
+        JSON.stringify(defaultLocalStorageData)
+      );
+
+      const unAuthDayId = await AsyncStorage.getItem("unAuthDayId");
+      if (unAuthDayId === null) {
+        // First-time setup for unAuthDayId
+        await AsyncStorage.setItem("unAuthDayId", "1");
       } else {
-        parsedUnAuthDayId += 1;
+        let parsedUnAuthDayId = parseInt(unAuthDayId) + 1;
+
         if (parsedUnAuthDayId === 3) {
           Toast.show({
             type: "success",
             text1: "This is your last day of free task.",
             text2: "Upgrade membership to access pro content.",
           });
+          await AsyncStorage.setItem(
+            "unAuthDayId",
+            parsedUnAuthDayId.toString()
+          );
+          router.replace("/freeBlog" as Href<"/freeBlog">);
+        } else if (parsedUnAuthDayId > 3) {
+          Toast.show({
+            type: "success",
+            text1: "Congratulations",
+            text2: "You have completed your tasks for 3 days.",
+          });
+          await AsyncStorage.removeItem("unAuthDayId"); // Reset the progress
+          router.replace("/CompletedFreeTask" as Href<"/CompletedFreeTask">);
+        } else {
+          // Increment and save the unAuthDayId
+          await AsyncStorage.setItem(
+            "unAuthDayId",
+            parsedUnAuthDayId.toString()
+          );
+          Toast.show({
+            type: "success",
+            text1: `Day ${parsedUnAuthDayId} Completed`,
+            text2: "Keep going! You're doing great!",
+          });
         }
-        await AsyncStorage.setItem("unAuthDayId", parsedUnAuthDayId.toString());
-        setUnAuthDayId(parsedUnAuthDayId.toString());
       }
     } else {
-      setLocalStorageData((prevState) => ({
+      setLocalStorageData((prevState: typeof localStorageData) => ({
         ...prevState,
         [selectedTask]: true,
       }));
-    }
-
-    if (selectedTaskIndex < tasks.length - 1) {
       setSelectedTaskIndex(selectedTaskIndex + 1);
       dispatch(storeCurrentTask(tasks[selectedTaskIndex + 1]));
     }
@@ -209,7 +234,6 @@ function UnAuthTask({
           video={video}
           kegel={kegel}
           DayCount={DayCount}
-          handleDayid={handleDayid}
           paid={paid}
           daysLeft={daysLeft}
         />

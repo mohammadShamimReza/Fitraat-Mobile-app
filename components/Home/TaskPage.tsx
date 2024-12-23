@@ -46,15 +46,8 @@ type TaskPageProps = {
   };
   kegel: KegelTimes[] | undefined;
   DayCount: number; // Explicitly typed
-  handleDayid: (id: string) => void;
   paid: boolean | undefined;
   daysLeft: number;
-};
-
-// AsyncStorage keys
-const ALLOWED_KEYS = {
-  AUTH_DAY: "AuthDay",
-  UNAUTH_DAY: "UnAuthDay",
 };
 
 const TaskPage: React.FC<TaskPageProps> = ({
@@ -69,7 +62,6 @@ const TaskPage: React.FC<TaskPageProps> = ({
   video,
   kegel,
   DayCount,
-  handleDayid,
   paid,
   daysLeft,
 }) => {

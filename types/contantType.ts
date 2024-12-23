@@ -140,7 +140,7 @@ export interface Blog {
   };
   id: number;
 }
-interface Meta {
+export interface Meta {
   pagination: {
     page: number;
     pageSize: number;

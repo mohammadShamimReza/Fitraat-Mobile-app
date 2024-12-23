@@ -57,7 +57,7 @@ const Main = () => {
   // Handle authenticated users
   if (userToken) {
     if (paid === true && DayCount > 40) {
-      return <CompletedAuthTask />;
+      return <CompletedAuthTask auth={true} daysCompleted={40} />;
     }
 
     if (paid === true && authDayDataId && userId && DayCount <= 40) {

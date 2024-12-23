@@ -7,7 +7,12 @@ import React from "react";
 import { Alert, Button, StyleSheet, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
 
-const CompletedAuthTask = () => {
+
+interface Props {
+  auth: boolean;
+  daysCompleted: number;
+}
+const CompletedAuthTask = ({ auth, daysCompleted }: Props) => {
   const navigation = useNavigation();
   const getUserInfoData = useAppSelector((state) => state.auth.userInfo);
   const [
