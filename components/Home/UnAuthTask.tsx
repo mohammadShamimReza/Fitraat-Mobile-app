@@ -1,3 +1,4 @@
+import toastConfig from "@/lib/ToastConfig";
 import { useGetDaysByDayIdQuery } from "@/redux/api/dayApi";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { clearDayData } from "@/redux/slice/daySlice";
@@ -5,14 +6,22 @@ import { storeCurrentTask } from "@/redux/slice/taskSlice";
 import { getUserDayData, saveUserDayData } from "@/shared/StoreDayData";
 import { KegelTimes, Quizzes } from "@/types/contantType";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import { Link, useNavigation } from "@react-navigation/native";
 import { Image } from "expo-image";
-import { Href, router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Button, Modal, StyleSheet, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
 import CompletedFreeTask from "./CompletedFreeTask";
 import TaskPage from "./TaskPage";
+
+type TabParamList = {
+  index: undefined;
+  feed: undefined;
+  blog: undefined;
+  profile: undefined;
+  menu: undefined;
+};
 
 function UnAuthTask({
   paid,
@@ -21,7 +30,7 @@ function UnAuthTask({
   paid: boolean | undefined;
   daysLeft: number;
 }) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<BottomTabNavigationProp<TabParamList>>();
   const [unAuthDayId, setUnAuthDayId] = useState("1");
 
   const { data: unAuthenticatedDayData } = useGetDaysByDayIdQuery(
@@ -32,7 +41,8 @@ function UnAuthTask({
     const loadDayId = async () => {
       const dayId = (await AsyncStorage.getItem("unAuthDayId")) || "1";
       if (parseInt(dayId) > 3) {
-        router.replace("/CompletedFreeTask" as Href<"/CompletedFreeTask">);
+        // router.replace("CompletedFreeTask" as Href<"CompletedFreeTask">);
+        await AsyncStorage.setItem("unAuthDayId", "1");
       }
       setUnAuthDayId(dayId);
     };
@@ -102,49 +112,22 @@ function UnAuthTask({
       setIsFinishModalOpen(true);
 
       dispatch(storeCurrentTask(tasks[0]));
-      localStorage.setItem(
+      AsyncStorage.setItem(
         "UnAuthDay",
         JSON.stringify(defaultLocalStorageData)
       );
-
       const unAuthDayId = await AsyncStorage.getItem("unAuthDayId");
+      console.log(unAuthDayId, "unAuthDayId");
       if (unAuthDayId === null) {
         // First-time setup for unAuthDayId
         await AsyncStorage.setItem("unAuthDayId", "1");
       } else {
-        let parsedUnAuthDayId = parseInt(unAuthDayId) + 1;
-
-        if (parsedUnAuthDayId === 3) {
-          Toast.show({
-            type: "success",
-            text1: "This is your last day of free task.",
-            text2: "Upgrade membership to access pro content.",
-          });
-          await AsyncStorage.setItem(
-            "unAuthDayId",
-            parsedUnAuthDayId.toString()
-          );
-          router.replace("/freeBlog" as Href<"/freeBlog">);
-        } else if (parsedUnAuthDayId > 3) {
-          Toast.show({
-            type: "success",
-            text1: "Congratulations",
-            text2: "You have completed your tasks for 3 days.",
-          });
-          await AsyncStorage.removeItem("unAuthDayId"); // Reset the progress
-          router.replace("/CompletedFreeTask" as Href<"/CompletedFreeTask">);
-        } else {
-          // Increment and save the unAuthDayId
-          await AsyncStorage.setItem(
-            "unAuthDayId",
-            parsedUnAuthDayId.toString()
-          );
-          Toast.show({
-            type: "success",
-            text1: `Day ${parsedUnAuthDayId} Completed`,
-            text2: "Keep going! You're doing great!",
-          });
-        }
+        await AsyncStorage.setItem(
+          "unAuthDayId",
+          (parseInt(unAuthDayId) + 1).toString()
+        );
+        const newDayData = parseInt(unAuthDayId) + 1;
+        setUnAuthDayId(newDayData.toString());
       }
     } else {
       setLocalStorageData((prevState: typeof localStorageData) => ({
@@ -158,7 +141,7 @@ function UnAuthTask({
 
   const handleOk = () => {
     setIsFinishModalOpen(false);
-    router.replace("/freeBlogs" as Href<"/freeBlogs">);
+    navigation.navigate("blog"); // Navigate to blog
   };
 
   const [blog, setBlog] = useState<{
@@ -200,26 +183,37 @@ function UnAuthTask({
   }, [unAuthenticatedDayData, unAuthDayId]);
   const DayCount = parseInt(unAuthDayId) || 0;
 
-  const handleDayid = (id: string) => {
-    setUnAuthDayId(id.toString());
-  };
-
   return (
     <>
-      {isFinishModalOpen && (
+      <Toast config={toastConfig} />
+      <Modal visible={isFinishModalOpen} transparent animationType="fade">
         <View style={styles.modalContainer}>
           <Text style={styles.modalTitle}>
-            Hurra! You have finished another Day! Congratulations
+            {parseInt(unAuthDayId) === 3
+              ? "This is your last day of free task. For farther become pro!"
+              : parseInt(unAuthDayId) > 3
+              ? "Congratulations! You have successfully completed all free tasks."
+              : "Hurray! You have finished another Day! Congratulations!"}
           </Text>
           <Image
             source={require("../../assets/images/dayFinish.gif")}
             style={styles.finishImage}
-            resizeMode="contain"
           />
+          <Text>
+            {parseInt(unAuthDayId) >= 3
+              ? "Celebrate your achievement! You are unstoppable!"
+              : "Read some blogs and continue your journey of growth!"}
+          </Text>
+          {parseInt(unAuthDayId) === 3 && (
+            <Link to="/payment" style={styles.button}>
+              <Text style={styles.buttonText}>Pro Member</Text>
+            </Link>
+          )}
+
           <Button title="OK" onPress={handleOk} />
         </View>
-      )}
-      {DayCount > 4 ? (
+      </Modal>
+      {DayCount >= 4 ? (
         <CompletedFreeTask />
       ) : (
         <TaskPage
@@ -244,22 +238,45 @@ function UnAuthTask({
 
 const styles = StyleSheet.create({
   modalContainer: {
-    flex: 1,
-    justifyContent: "center",
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    top: 150,
+    borderWidth: 1,
+    borderColor: "#000",
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
-    color: "#fff",
   },
   finishImage: {
     width: 200,
     height: 200,
     marginBottom: 20,
+  },
+  button: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: "#818385",
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    textAlign: "center",
   },
 });
 

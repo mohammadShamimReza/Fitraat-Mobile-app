@@ -16,6 +16,7 @@ export default function TabLayout() {
   const userInfo = useAppSelector((store) => store.auth.userInfo);
   const userToken = useAppSelector((store) => store.auth.authToken);
 
+  // Fetch Token from Secure Store
   useEffect(() => {
     const fetchTokenAndUser = async () => {
       try {
@@ -31,89 +32,70 @@ export default function TabLayout() {
     fetchTokenAndUser();
   }, [dispatch]);
 
+  // Store User Info in Redux
   useEffect(() => {
     if (isSuccess && userData) {
       dispatch(storeUserInfo(userData));
     }
   }, [isSuccess, userData, dispatch]);
 
+  // Define Tab Configuration
+  const tabs = [
+    {
+      name: "index",
+      title: "Home",
+      icon: (focused: boolean) => (focused ? "home" : "home-outline"),
+    },
+    {
+      name: "feed",
+      title: "Feed",
+      icon: (focused: boolean) => (focused ? "albums" : "albums-outline"),
+    },
+    {
+      name: "blog",
+      title: "Blog",
+      icon: (focused: boolean) => (focused ? "book" : "book-outline"),
+    },
+    {
+      name: "profile",
+      title: userToken ? "Profile" : "Login",
+      icon: (focused: boolean) =>
+        focused
+          ? userToken
+            ? "person"
+            : "log-in"
+          : userToken
+          ? "person-outline"
+          : "log-in-outline",
+    },
+    {
+      name: "menu",
+      title: "Menu",
+      icon: (focused: boolean) => (focused ? "menu" : "menu-outline"),
+    },
+  ];
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: "#4B5563", // Set active tab text color
-          tabBarInactiveTintColor: "#A0A3B1", // Optional: Set inactive tab text color
+          tabBarActiveTintColor: "#4B5563",
+          tabBarInactiveTintColor: "#A0A3B1",
           headerShown: false,
         }}
       >
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: "Home",
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={focused ? "home" : "home-outline"}
-                color={"#4B5563"}
-              />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="feed"
-          options={{
-            title: "Feed",
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={focused ? "albums" : "albums-outline"}
-                color={"#4B5563"}
-              />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="blog"
-          options={{
-            title: "Blog",
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={focused ? "book" : "book-outline"}
-                color={"#4B5563"}
-              />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="profile"
-          options={{
-            title: userToken ? "Profile" : "Login",
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={
-                  focused
-                    ? userToken
-                      ? "person"
-                      : "log-in"
-                    : userToken
-                    ? "person-outline"
-                    : "log-in-outline"
-                }
-                color={"#4B5563"}
-              />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="menu"
-          options={{
-            title: "Menu",
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={focused ? "menu" : "menu-outline"}
-                color={"#4B5563"}
-              />
-            ),
-          }}
-        />
+        {tabs.map((tab) => (
+          <Tabs.Screen
+            key={tab.name}
+            name={tab.name}
+            options={{
+              title: tab.title,
+              tabBarIcon: ({ focused }) => (
+                <TabBarIcon name={tab.icon(focused)} color={"#4B5563"} />
+              ),
+            }}
+          />
+        ))}
       </Tabs>
     </SafeAreaView>
   );

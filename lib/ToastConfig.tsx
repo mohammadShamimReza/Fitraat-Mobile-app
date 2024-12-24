@@ -10,27 +10,33 @@ interface ToastInternalState {
 
 // Define custom Toast configuration
 const toastConfig: ToastConfig = {
-  // Configuration for success toasts
+  // Success toast configuration
   success: ({ text1, text2 }: ToastConfigParams<ToastInternalState>) => (
     <View style={[styles.toastContainer, styles.successToast]}>
-      <Text style={styles.toastText}>{text1 || "Success"}</Text>
-      {text2 && <Text style={styles.toastText}>{text2}</Text>}
+      <View style={styles.background}>
+        <Text style={styles.toastText}>{text1 || "Success"}</Text>
+        {text2 && <Text style={styles.toastText}>{text2}</Text>}
+      </View>
     </View>
   ),
 
-  // Configuration for error toasts
+  // Error toast configuration
   error: ({ text1, text2 }: ToastConfigParams<ToastInternalState>) => (
     <View style={[styles.toastContainer, styles.errorToast]}>
-      <Text style={styles.toastText}>{text1 || "Error"}</Text>
-      {text2 && <Text style={styles.toastText}>{text2}</Text>}
+      <View style={styles.background}>
+        <Text style={styles.toastText}>{text1 || "Error"}</Text>
+        {text2 && <Text style={styles.toastText}>{text2}</Text>}
+      </View>
     </View>
   ),
 
-  // Configuration for info toasts
+  // Info toast configuration
   info: ({ text1, text2 }: ToastConfigParams<ToastInternalState>) => (
     <View style={[styles.toastContainer, styles.infoToast]}>
-      <Text style={styles.toastText}>{text1 || "Info"}</Text>
-      {text2 && <Text style={styles.toastText}>{text2}</Text>}
+      <View style={styles.background}>
+        <Text style={styles.toastText}>{text1 || "Info"}</Text>
+        {text2 && <Text style={styles.toastText}>{text2}</Text>}
+      </View>
     </View>
   ),
 };
@@ -38,25 +44,37 @@ const toastConfig: ToastConfig = {
 // Define styles for Toast
 const styles = StyleSheet.create({
   toastContainer: {
-    padding: 16,
+    padding: 12,
+    borderRadius: 10,
+    marginHorizontal: 16,
+    elevation: 4, // Shadow for Android
+    shadowColor: "#000", // Shadow for iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  background: {
+    padding: 8,
     borderRadius: 8,
-    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.1)", // Transparent background overlay
   },
   // Style for success toasts
   successToast: {
-    backgroundColor: "#4CAF50", // Green background for success
+    backgroundColor: "#4CAF50", // Green background
   },
   // Style for error toasts
   errorToast: {
-    backgroundColor: "#F44336", // Red background for error
+    backgroundColor: "#F44336", // Red background
   },
   // Style for info toasts
   infoToast: {
-    backgroundColor: "#2196F3", // Blue background for info
+    backgroundColor: "#2196F3", // Blue background
   },
   toastText: {
-    color: "white", // White text
+    color: "white",
     fontSize: 16,
+    fontWeight: "600",
+    textAlign: "center",
   },
 });
 

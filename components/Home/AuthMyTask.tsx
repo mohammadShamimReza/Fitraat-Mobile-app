@@ -1,3 +1,5 @@
+import toastConfig from "@/lib/ToastConfig";
+import { useUpdateUserDayMutation } from "@/redux/api/authApi";
 import { useGetDaysByDayIdQuery } from "@/redux/api/dayApi";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { clearDayData } from "@/redux/slice/daySlice";
@@ -5,8 +7,8 @@ import { storeCurrentTask } from "@/redux/slice/taskSlice";
 import { KegelTimes, Quizzes } from "@/types/contantType";
 import { FontAwesome5 } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { useNavigation } from "@react-navigation/native";
-import { Href, router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   Button,
@@ -21,6 +23,14 @@ import Toast from "react-native-toast-message";
 import CompletedAuthTask from "./CompletedAuthTask";
 import TaskPage from "./TaskPage";
 
+type TabParamList = {
+  index: undefined;
+  feed: undefined;
+  blog: undefined;
+  profile: undefined;
+  menu: undefined;
+};
+
 function AuthMyTask({
   authDayDataId,
   userId,
@@ -32,8 +42,10 @@ function AuthMyTask({
   paid: boolean | undefined;
   daysLeft: number;
 }) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<BottomTabNavigationProp<TabParamList>>();
   const dispatch = useAppDispatch();
+  const [updataUserDay] = useUpdateUserDayMutation();
+
   const [dayId, setDayId] = useState(authDayDataId);
 
   const tasks = ["video", "kagel", "quiz", "Blog"];
@@ -99,36 +111,7 @@ function AuthMyTask({
       setIsFinishModalOpen(true);
       dispatch(storeCurrentTask(tasks[0]));
 
-      if (authDayDataId === 40) {
-        setLocalStorageData((prevState: typeof localStorageData) => ({
-          ...prevState,
-          [selectedTask]: true,
-        }));
-      } else {
-        AsyncStorage.setItem("AuthDay", JSON.stringify(localStorageData));
-      }
-      const nextDayId = authDayDataId + 1;
-
-      if (nextDayId === 40) {
-        Toast.show({
-          type: "success",
-          text1: "Hurray! This is your last day of tasks.",
-          text2: "You become a Spartan!",
-        });
-        await AsyncStorage.setItem("AuthDayId", nextDayId.toString());
-        router.replace("/FreeBlogs" as Href<"/FreeBlogs">);
-      } else if (nextDayId > 40) {
-        Toast.show({
-          type: "success",
-          text1: "Congratulations!",
-          text2: "You have successfully completed all tasks.",
-        });
-        router.replace("/CompletedTask" as Href<"/CompletedTask">);
-      } else {
-        console.log("this is data");
-        await AsyncStorage.setItem("AuthDayId", nextDayId.toString());
-        router.replace("/CompletedTask" as Href<"/CompletedTask">);
-      }
+      AsyncStorage.setItem("AuthDay", JSON.stringify(localStorageData));
     } else {
       setLocalStorageData((prevState: typeof localStorageData) => ({
         ...prevState,
@@ -139,9 +122,54 @@ function AuthMyTask({
     }
   };
 
-  const handleOk = () => {
-    setIsFinishModalOpen(false);
-    router.replace("/FreeBlogs" as Href<"/FreeBlogs">);
+  const handleOk = async () => {
+    const nextDayId = authDayDataId + 1;
+
+    if (nextDayId === 40) {
+      Toast.show({
+        type: "success",
+        text1: "Hurray! This is your last day of tasks.",
+        text2: "You become a Spartan!",
+      });
+      await updataUserDay({
+        currentDay: nextDayId,
+        compliteDay: authDayDataId,
+        userId: userId,
+      });
+      await AsyncStorage.setItem("AuthDayId", nextDayId.toString());
+      setIsFinishModalOpen(false); // Close the modal
+      navigation.navigate("blog");
+    } else if (nextDayId > 40) {
+      Toast.show({
+        type: "success",
+        text1: "Congratulations!",
+        text2: "You have successfully completed all tasks.",
+        onPress: () => navigation.navigate("blog"),
+      });
+      await updataUserDay({
+        currentDay: nextDayId,
+        compliteDay: authDayDataId,
+        userId: userId,
+      });
+      await AsyncStorage.setItem("AuthDayId", nextDayId.toString());
+      setIsFinishModalOpen(false); // Close the modal
+      navigation.navigate("blog"); // Navigate to completion screen if necessary
+    } else {
+      console.log("Processing next day data...");
+      await AsyncStorage.setItem("AuthDayId", nextDayId.toString());
+      await updataUserDay({
+        currentDay: nextDayId,
+        compliteDay: authDayDataId,
+        userId: userId,
+      });
+      Toast.show({
+        type: "success",
+        text1: `Day ${nextDayId} Complete!`,
+        text2: "Keep up the great work!",
+      });
+      setIsFinishModalOpen(false); // Close the modal
+      navigation.navigate("blog"); // Navigate to blog
+    }
   };
 
   const [blog, setBlog] = useState<{
@@ -186,18 +214,29 @@ function AuthMyTask({
 
   return (
     <View style={styles.container}>
+      <Toast config={toastConfig} />
       <Modal visible={isFinishModalOpen} transparent animationType="fade">
         <View style={styles.modalContainer}>
           <Text style={styles.modalTitle}>
-            Hurray! You have finished another Day! Congratulations
+            {authDayDataId === 39
+              ? "Hurray! This is your last day of tasks. You are now a Spartan!"
+              : authDayDataId >= 40
+              ? "Congratulations! You have successfully completed all tasks."
+              : "Hurray! You have finished another Day! Congratulations!"}
           </Text>
           <Image
             source={require("../../assets/images/dayFinish.gif")}
             style={styles.finishImage}
           />
+          <Text>
+            {authDayDataId >= 40
+              ? "Celebrate your achievement! You are unstoppable!"
+              : "Read some blogs and continue your journey of growth!"}
+          </Text>
           <Button title="OK" onPress={handleOk} />
         </View>
       </Modal>
+
       {DayCount > 40 ? (
         <CompletedAuthTask auth={true} daysCompleted={40} />
       ) : authDayDataId <= daysLeft ? (
@@ -257,16 +296,26 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   modalContainer: {
-    flex: 1,
-    justifyContent: "center",
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
-    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    top: 150,
+    borderWidth: 1,
+    borderColor: "#000",
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#fff",
     marginBottom: 20,
     textAlign: "center",
   },

@@ -150,7 +150,6 @@ const TaskPage: React.FC<TaskPageProps> = ({
               {allDays.map((day) => {
                 const isUnlocked = DayCount >= day;
                 const isPaidLocked = !paid && day > 3;
-                console.log(daysLeft);
                 return (
                   <TouchableOpacity
                     key={day}

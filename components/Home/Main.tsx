@@ -26,12 +26,12 @@ const Main = () => {
   const DayCount = authDayDataId || 0;
 
   const today = new Date();
-  const start = new Date(userData?.startDate || new Date());
+  const start = new Date(authenticatedUserInfoData?.startDate || new Date());
   const differenceInTime = today.getTime() - start.getTime(); // Difference in milliseconds
   const daysLeft = Math.floor(differenceInTime / (1000 * 60 * 60 * 24)) + 1;
   //  setDaysPassed(days);
 
-  console.log(userData, "this is userData");
+  console.log(authenticatedUserInfoData);
 
   // Handle loading state
   if (isLoading) {
