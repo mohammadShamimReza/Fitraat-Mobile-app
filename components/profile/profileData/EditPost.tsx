@@ -10,16 +10,17 @@ import {
   View,
 } from "react-native";
 import { Button, Modal, Portal } from "react-native-paper";
-// import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
+import {
+  RichEditor,
+  RichToolbar,
+  actions,
+} from "react-native-pell-rich-editor";
 
 const EditPost = ({ post }: { post: Post }) => {
   const [isPostModalVisible, setIsPostModalVisible] = useState(false);
-
   const [updatePost] = useUpdatePostMutation();
-
   const [content, setContent] = useState(post.attributes.description);
-  // const richText = useRef<RichEditor>(null);
-  const scrollRef = useRef<ScrollView>(null);
+  const richText = useRef<RichEditor>(null); // Reference for RichEditor
 
   useEffect(() => {
     if (isPostModalVisible) {
@@ -28,28 +29,21 @@ const EditPost = ({ post }: { post: Post }) => {
     }
   }, [isPostModalVisible, post]);
 
-  const handleCursorPosition = (scrollY: number) => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTo({ y: scrollY - 30, animated: true });
-    }
-  };
-
   const handlePostCancel = () => {
     setIsPostModalVisible(false);
   };
-  const showPostModal = (post: any) => {
-    setIsPostModalVisible(true);
-  };
 
   const handleSave = async () => {
+    if (!content.trim()) {
+      Alert.alert("Validation Error", "Post content cannot be empty.");
+      return;
+    }
+
     try {
       const result = await updatePost({
         body: {
           postId: post.id,
-
-          data: {
-            description: content,
-          },
+          data: { description: content },
         },
       });
 
@@ -59,20 +53,21 @@ const EditPost = ({ post }: { post: Post }) => {
         Alert.alert("Error", "Something went wrong. Please try again later.");
       }
 
-      // Close the modal and reset content state
+      // Close the modal
       handlePostCancel();
-      setContent("");
     } catch (error) {
-      Alert.alert("Error", "Something went wrong. Please try again later.");
+      console.error("Error updating post:", error);
+      Alert.alert("Error", "An error occurred while updating the post.");
     }
+  };
+
+  const showPostModal = () => {
+    setIsPostModalVisible(true);
   };
 
   return (
     <View>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => showPostModal(post)}
-      >
+      <TouchableOpacity style={styles.button} onPress={showPostModal}>
         <Text style={styles.buttonText}>Edit Post</Text>
       </TouchableOpacity>
 
@@ -84,35 +79,29 @@ const EditPost = ({ post }: { post: Post }) => {
         >
           <Text style={styles.modalTitle}>Edit Post</Text>
 
-          <ScrollView
-            ref={scrollRef}
-            style={styles.scrollContainer}
-            contentContainerStyle={styles.scrollContentContainer}
-          >
-            {/* <RichEditor
-              key={post.id} // Force re-render by using key
+          <ScrollView style={styles.scrollContainer}>
+            {/* RichEditor */}
+            <RichEditor
               ref={richText}
-              initialContentHTML={content}
               style={styles.editor}
-              onChange={(text) => setContent(text)}
-              useContainer={true}
-              onCursorPosition={handleCursorPosition}
-            /> */}
-          </ScrollView>
+              placeholder="Start typing here..."
+              initialContentHTML={content}
+              onChange={setContent}
+            />
 
-          {/* <RichToolbar
-            editor={richText}
-            actions={[
-              "bold",
-              "italic",
-              "underline",
-              "unorderedList",
-              "orderedList",
-              "insertImage",
-              "insertVideo",
-            ]}
-            style={styles.toolbar}
-          /> */}
+            {/* RichToolbar */}
+            <RichToolbar
+              editor={richText}
+              actions={[
+                actions.setBold,
+                actions.setItalic,
+                actions.setUnderline,
+                actions.insertOrderedList,
+                actions.insertBulletsList,
+              ]}
+              style={styles.toolbar}
+            />
+          </ScrollView>
 
           <Button
             mode="contained"
@@ -135,32 +124,6 @@ const EditPost = ({ post }: { post: Post }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 10,
-  },
-  scrollContainer: {
-    maxHeight: 300, // Adjust based on your design needs
-  },
-  scrollContentContainer: {
-    flexGrow: 1,
-  },
-  editor: {
-    flex: 1,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    minHeight: 150, // Adjust based on your design needs
-  },
-  toolbar: {
-    backgroundColor: "#f1f1f1",
-    borderTopWidth: 1,
-    borderTopColor: "#ccc",
-    marginTop: 10,
-  },
-  contentPreview: {
-    marginTop: 10,
-    fontWeight: "bold",
-  },
   button: {
     backgroundColor: "#676c73",
     paddingVertical: 12,
@@ -174,20 +137,48 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
     padding: 20,
-    backgroundColor: "white",
-    borderRadius: 10,
   },
   modalTitle: {
     fontSize: 18,
     marginBottom: 10,
+    fontWeight: "bold",
+  },
+  scrollContainer: {
+    width: "100%",
+    maxHeight: 300, // Adjust height for better appearance
+  },
+  editor: {
+    flex: 1,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 8,
+    minHeight: 200, // Minimum height for RichEditor
+    // padding: 10,
+    backgroundColor: "#f9f9f9", // Light background for editor
+  },
+  toolbar: {
+    backgroundColor: "#f1f1f1",
+    borderTopWidth: 1,
+    borderTopColor: "#ccc",
+    marginTop: 10,
+    borderRadius: 8, // Rounded corners
   },
   saveButton: {
     marginTop: 10,
     marginBottom: 5,
+    backgroundColor: "#007bff",
+    borderRadius: 8,
   },
   cancelButton: {
     marginTop: 5,
+    borderColor: "#007bff",
+    borderWidth: 1,
+    borderRadius: 8,
   },
 });
 
