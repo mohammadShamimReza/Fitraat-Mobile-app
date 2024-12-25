@@ -66,19 +66,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    margin: 10,
+    margin: 6,
     // backgroundColor: "#f9f9f9",
-    borderWidth: 0.2,
-    marginBottom: 16,
+    borderWidth: 0.5,
+    marginBottom: 6,
     borderRadius: 10,
+    backgroundColor: "#fff",
   },
   postContainer: {
     flexGrow: 1,
   },
   postCard: {
     borderRadius: 10,
-    backgroundColor: "#fff",
-    shadowColor: "#000",
+
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,

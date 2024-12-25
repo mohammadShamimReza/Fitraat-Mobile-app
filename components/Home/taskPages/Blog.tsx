@@ -52,7 +52,7 @@ export default SuggestedBlog;
 
 const styles = StyleSheet.create({
   blogContainer: {
-    borderWidth: 0.2,
+    borderWidth: 1,
     padding: 5,
     borderRadius: 10,
   },

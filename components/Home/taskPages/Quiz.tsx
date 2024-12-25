@@ -143,9 +143,9 @@ export default Quiz;
 
 const styles = StyleSheet.create({
   quizContainer: {
-    borderWidth: 0.2,
-    padding: 5,
+    borderWidth: 1,
     borderRadius: 10,
+    flex: 1,
   },
   container: {
     maxWidth: 600,

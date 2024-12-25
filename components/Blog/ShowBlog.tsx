@@ -50,11 +50,6 @@ const ShowBlog: React.FC<BlogsProps> = ({ blog }) => {
           Updated At:{" "}
           <Text style={styles.blogUpdatedAtDate}>{blogUpdatedAt}</Text>
         </Text>
-        <View style={styles.blogAuthor}>
-          <Text style={styles.authorName}>
-            {blogData?.authorName.split(" ").slice(0, 2).join(" ")}
-          </Text>
-        </View>
       </View>
     </View>
   );
@@ -78,7 +73,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     borderWidth: 1,
     padding: 3,
-    width: 90,
+    width: 120,
     textAlign: "center",
     borderRadius: 4,
     borderColor: "black",

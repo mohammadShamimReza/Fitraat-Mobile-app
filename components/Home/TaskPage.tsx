@@ -107,8 +107,21 @@ const TaskPage: React.FC<TaskPageProps> = ({
           <Animated.View style={[styles.sidebar, { width: sidebarWidth }]}>
             <TouchableOpacity
               onPress={toggleSidebar}
-              style={styles.closeButton}
+              style={
+                (styles.closeButton,
+                {
+                  flexDirection: "row",
+                  alignItems: "center",
+                  alignContent: "center",
+                  justifyContent: "center",
+                  borderWidth: 1,
+                  borderRadius: 5,
+                })
+              }
             >
+              {collapsed === false && (
+                <Text style={{ fontWeight: "bold", fontSize: 15 }}> Close</Text>
+              )}
               <Ionicons name={collapsed ? "menu" : "close"} size={24} />
             </TouchableOpacity>
             <Text style={styles.sidebarTitle}>Tasks</Text>
@@ -341,13 +354,13 @@ const styles = StyleSheet.create({
   },
   mainContent: {
     flex: 1,
-    padding: 16,
+    padding: 5,
   },
   mainHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 26,
+    marginBottom: 10,
   },
   dayText: {
     fontSize: 18,
@@ -368,7 +381,7 @@ const styles = StyleSheet.create({
   navigationButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 16,
+    marginVertical: 16,
   },
   navButton: {
     padding: 12,

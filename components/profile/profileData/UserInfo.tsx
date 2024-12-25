@@ -1,6 +1,6 @@
 import { removeTokenFromSecureStore } from "@/lib/auth/token";
 import { useAppDispatch } from "@/redux/hooks";
-import { removeAuthToken } from "@/redux/slice/authSlice";
+import { removeAuthToken, storeUserInfo } from "@/redux/slice/authSlice";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
@@ -26,6 +26,7 @@ const UserInfo = ({
   const handleLogout = () => {
     removeTokenFromSecureStore();
     dispatch(removeAuthToken(null));
+    dispatch(storeUserInfo(null));
 
     // Reset the navigation stack and navigate to the login screen
     router.replace("/");

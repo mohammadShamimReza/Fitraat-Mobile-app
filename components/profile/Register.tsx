@@ -1,15 +1,16 @@
-import { storeTokenInSecureStore } from "@/lib/auth/token";
 import toastConfig from "@/lib/ToastConfig";
 import { useRegisterUserMutation } from "@/redux/api/authApi";
 import { useAppDispatch } from "@/redux/hooks";
-import { storeAuthToken, storeUserInfo } from "@/redux/slice/authSlice";
-import { Picker } from "@react-native-picker/picker";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons"; // Add this import
 
+import { storeTokenInSecureStore } from "@/lib/auth/token";
+import { storeAuthToken, storeUserInfo } from "@/redux/slice/authSlice";
 import {
+  FlatList,
   KeyboardAvoidingView,
+  Modal,
   Platform,
   ScrollView,
   StyleSheet,
@@ -49,6 +50,38 @@ function RegisterPage({
   handleLoginRegister: () => void;
 }) {
   const [loading, setLoading] = useState(false);
+  const [isGenderDropdownVisible, setIsGenderDropdownVisible] = useState(false);
+  const [isLanguageDropdownVisible, setIsLanguageDropdownVisible] =
+    useState(false);
+
+  const genderOptions = [
+    { label: "Male", value: "male" },
+    { label: "Female", value: "female" },
+  ];
+
+  const languageOptions = [
+    { label: "English", value: "English" },
+    { label: "Bangla", value: "Bangla" },
+  ];
+
+  interface DropdownItem {
+    label: string;
+    value: string;
+  }
+
+  const renderDropdownItem = (item: DropdownItem, field: string) => (
+    <TouchableOpacity
+      style={styles.dropdownItem}
+      onPress={() => {
+        handleChange(field, item.value);
+        field === "gender"
+          ? setIsGenderDropdownVisible(false)
+          : setIsLanguageDropdownVisible(false);
+      }}
+    >
+      <Text style={styles.dropdownItemText}>{item.label}</Text>
+    </TouchableOpacity>
+  );
 
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -79,6 +112,7 @@ function RegisterPage({
   };
 
   const handleSubmit = async () => {
+    console.log(formData, "this is form data");
     try {
       // Validate form data with Zod
       registerSchema.parse(formData);
@@ -134,7 +168,6 @@ function RegisterPage({
       setLoading(false);
     }
   };
-
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -221,34 +254,76 @@ function RegisterPage({
               />
             </View>
             {/* Gender Dropdown */}
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>
-                Gender<Text style={styles.required}>*</Text>
-              </Text>
-              <Picker
-                selectedValue={formData.gender}
-                onValueChange={(value) => handleChange("gender", value)}
-                style={styles.picker}
+            <View style={styles.container}>
+              {/* Gender Dropdown */}
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>
+                  Gender<Text style={styles.required}>*</Text>
+                </Text>
+                <TouchableOpacity
+                  style={styles.dropdown}
+                  onPress={() => setIsGenderDropdownVisible(true)}
+                >
+                  <Text style={styles.dropdownText}>
+                    {formData.gender || "Select Gender"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Gender Modal */}
+              <Modal
+                transparent
+                visible={isGenderDropdownVisible}
+                animationType="fade"
+                onRequestClose={() => setIsGenderDropdownVisible(false)}
               >
-                <Picker.Item label="Select Gender" value="" />
-                <Picker.Item label="Male" value="male" />
-                <Picker.Item label="Female" value="female" />
-              </Picker>
-            </View>
-            {/* Language Dropdown */}
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>
-                Language<Text style={styles.required}>*</Text>
-              </Text>
-              <Picker
-                selectedValue={formData.language}
-                onValueChange={(value) => handleChange("language", value)}
-                style={styles.picker}
+                <View style={styles.modalContainer}>
+                  <View style={styles.modalContent}>
+                    <FlatList
+                      data={genderOptions}
+                      keyExtractor={(item) => item.value}
+                      renderItem={({ item }) =>
+                        renderDropdownItem(item, "gender")
+                      }
+                    />
+                  </View>
+                </View>
+              </Modal>
+
+              {/* Language Dropdown */}
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>
+                  Language<Text style={styles.required}>*</Text>
+                </Text>
+                <TouchableOpacity
+                  style={styles.dropdown}
+                  onPress={() => setIsLanguageDropdownVisible(true)}
+                >
+                  <Text style={styles.dropdownText}>
+                    {formData.language || "Select Language"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Language Modal */}
+              <Modal
+                transparent
+                visible={isLanguageDropdownVisible}
+                animationType="fade"
+                onRequestClose={() => setIsLanguageDropdownVisible(false)}
               >
-                <Picker.Item label="Select Language" value="" />
-                <Picker.Item label="English" value="English" />
-                <Picker.Item label="Bangla" value="Bangla" />
-              </Picker>
+                <View style={styles.modalContainer}>
+                  <View style={styles.modalContent}>
+                    <FlatList
+                      data={languageOptions}
+                      keyExtractor={(item) => item.value}
+                      renderItem={({ item }) =>
+                        renderDropdownItem(item, "language")
+                      }
+                    />
+                  </View>
+                </View>
+              </Modal>
             </View>
             {/* Submit Button */}
             <TouchableOpacity
@@ -321,6 +396,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     marginTop: 8,
   },
+  pickerItem: {
+    color: "#000", // Ensure the text is visible
+    fontSize: 16,
+  },
   passwordContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -357,10 +436,44 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   picker: {
-    height: 40,
+    // height: 40,
     borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 4,
+  },
+
+  dropdown: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 4,
+    padding: 12,
+    backgroundColor: "#f9f9f9",
+  },
+  dropdownText: {
+    fontSize: 16,
+    color: "#333",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: "80%",
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    padding: 16,
+    elevation: 5,
+  },
+  dropdownItem: {
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+  },
+  dropdownItemText: {
+    fontSize: 16,
+    color: "#333",
   },
 });
 

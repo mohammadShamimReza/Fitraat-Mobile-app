@@ -24,18 +24,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     alignItems: "center",
-    padding: 20,
-    marginTop: 16,
+    // padding: 20,
+    // marginTop: 16,
   },
   likeContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
-  likeText: {
-    marginLeft: 8,
-    fontSize: 16,
-    color: "#4B5563",
-  },
+
   commentContainer: {
     flexDirection: "row",
     alignItems: "center",

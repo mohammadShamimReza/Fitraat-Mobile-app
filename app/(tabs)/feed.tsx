@@ -24,8 +24,8 @@ import {
 
 
 import SinglePost from "@/components/post/SinglePost";
-import { useGetUserInfoQuery } from "@/redux/api/authApi";
 import { useCreatePostMutation, useGetPostQuery } from "@/redux/api/postApi";
+import { useAppSelector } from "@/redux/hooks";
 import { Post } from "@/types/contantType";
 import { router } from "expo-router";
 import PaginationButtons from "../freeBlogs/Pagination";
@@ -49,10 +49,11 @@ const FeedPost = () => {
     postsPerPage,
   });
 
-
-  const { data: userInfo } = useGetUserInfoQuery();
+  const userInfo = useAppSelector((state) => state.auth.userInfo);
   const userId = userInfo?.id;
+  console.log(userId);
   const verifiedSince = userInfo?.varifiedSine;
+  console.log(userId);
 
   const [createPost] = useCreatePostMutation();
 
@@ -112,7 +113,6 @@ const FeedPost = () => {
       Alert.alert("Error", "An error occurred while creating the post.");
     }
   };
-
 
   const handlePageChange = (page: number) => {
     setPageCount(page);
@@ -197,7 +197,7 @@ const FeedPost = () => {
                   disabled={isLoading}
                   style={styles.submitButton}
                 >
-                  Submit
+                  Post
                 </Button>
                 <Button
                   mode="outlined"
@@ -214,10 +214,20 @@ const FeedPost = () => {
                 </Text>
                 <Button
                   mode="contained"
-                  onPress={() => router.push("/profile")}
+                  onPress={() => {
+                    handleModalCancel;
+                    router.push("/profile");
+                  }}
                   style={styles.loginButton}
                 >
                   Login
+                </Button>
+                <Button
+                  mode="outlined"
+                  onPress={handleModalCancel}
+                  style={styles.loginButton}
+                >
+                  Cancel
                 </Button>
               </View>
             )}
@@ -246,51 +256,85 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Add semi-transparent background
     padding: 20,
+  },
+  modalContent: {
+    width: "90%",
+    maxHeight: "80%", // Limit modal height for better appearance
     backgroundColor: "white",
     borderRadius: 10,
-    height: "100%",
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 20,
     marginBottom: 10,
     fontWeight: "bold",
+    textAlign: "center",
+    color: "#333",
   },
   editor: {
+    width: 350,
     borderColor: "#ccc",
     borderWidth: 1,
+    borderRadius: 8, // Rounded corners for better UI
     minHeight: 200,
     padding: 10,
+    fontSize: 16, // Improved font size for better readability
+    color: "#333",
+    backgroundColor: "#f9f9f9", // Light background for the editor
   },
   toolbar: {
     backgroundColor: "#f1f1f1",
     borderTopWidth: 1,
     borderTopColor: "#ccc",
     marginTop: 10,
+    borderRadius: 8, // Rounded corners for consistency
+    paddingHorizontal: 10,
   },
   submitButton: {
     marginTop: 10,
-    marginBottom: 5,
     backgroundColor: "#007bff",
+    borderRadius: 8,
+    paddingVertical: 10,
   },
   cancelButton: {
-    marginTop: 5,
+    marginTop: 10,
     borderColor: "#007bff",
     borderWidth: 1,
+    borderRadius: 8,
+    paddingVertical: 10,
   },
   centeredContainer: {
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   loginPrompt: {
     fontSize: 16,
     marginBottom: 20,
     color: "#2563EB",
+    textAlign: "center",
   },
   loginButton: {
     marginTop: 20,
+    borderRadius: 8,
   },
 });
+
 
 export default FeedPost;

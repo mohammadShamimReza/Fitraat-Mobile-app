@@ -65,14 +65,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "700",
-    marginBottom: 20,
+    marginBottom: 10,
     textAlign: "center",
   },
   videoContainer: {
     width: "100%",
     height: "100%",
     padding: 10,
-    borderWidth: 0.2,
+    borderWidth: 1,
     borderRadius: 10,
   },
   video: {

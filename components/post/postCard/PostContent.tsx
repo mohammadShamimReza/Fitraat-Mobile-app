@@ -43,7 +43,8 @@ const PostContent = ({ postDescription }: { postDescription: string }) => {
                     font-family: Arial, sans-serif;
                     margin: 0;
                     padding: 0;
-                    color: #333;
+                    background-color: transparent;
+
                   }
                 </style>
               </head>
@@ -83,11 +84,13 @@ const PostContent = ({ postDescription }: { postDescription: string }) => {
 const styles = StyleSheet.create({
   container: {
     marginBottom: 10,
+    // backgroundColor: "transparent",
   },
   webView: {
     width: "100%",
-    borderWidth: 0.2,
-    borderColor: "#ddd",
+    // borderWidth: 0.2,
+    // borderColor: "#ddd",
+    backgroundColor: "transparent",
   },
   linkContainer: {
     padding: 10,

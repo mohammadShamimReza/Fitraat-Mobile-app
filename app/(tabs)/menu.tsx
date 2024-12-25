@@ -1,3 +1,4 @@
+import { useAppSelector } from "@/redux/hooks";
 import {
   FontAwesome,
   FontAwesome5,
@@ -21,6 +22,7 @@ const MenuWithFooter = () => {
       console.error("Error opening URL:", err)
     );
   };
+  const useerData = useAppSelector((state) => state.auth.userInfo);
 
   return (
     <ScrollView style={styles.container}>
@@ -28,9 +30,14 @@ const MenuWithFooter = () => {
       <View style={styles.menuSection}>
         <Text style={styles.sectionTitle}>Menu</Text>
         <View style={styles.buttonRow}>
-          <Link href="/payment" style={styles.button}>
-            <Text style={styles.buttonText}>Pro Member</Text>
-          </Link>
+          {useerData && useerData.paid === false ? (
+            <Link href="/payment" style={styles.button}>
+              <Text style={styles.buttonText}>Pro Member</Text>
+            </Link>
+          ) : (
+            ""
+          )}
+
           <Link style={styles.button} href="/books">
             <Text style={styles.buttonText}>Books</Text>
           </Link>
@@ -63,9 +70,16 @@ const MenuWithFooter = () => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Quick Links</Text>
 
-          <Link href="/payment" style={styles.link}>
-            <Text>Payment</Text>
-          </Link>
+          {useerData && useerData.paid === false ? (
+            <Link href="/payment" style={styles.link}>
+              <Text>Payment</Text>
+            </Link>
+          ) : (
+            <Link href="/" style={styles.link}>
+              <Text>Home</Text>
+            </Link>
+          )}
+
           <Link href="/books" style={styles.link}>
             <Text>Books</Text>
           </Link>

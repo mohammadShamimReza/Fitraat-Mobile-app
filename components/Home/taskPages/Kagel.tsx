@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    borderWidth: 0.2,
+    borderWidth: 1,
     borderRadius: 10,
   },
   title: {

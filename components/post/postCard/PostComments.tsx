@@ -39,6 +39,8 @@ const PostComments = ({
   const [dropdownVisible, setDropdownVisible] = useState<number | null>(null);
   const [showAllComments, setShowAllComments] = useState(false);
 
+  console.log(modalVisible, "modalVisible");
+
   const [createComment] = useCreateCommentMutation();
   const [deleteComment] = useDeleteCommentMutation();
   const [updateComment] = useUpdateCommentMutation();
@@ -49,7 +51,7 @@ const PostComments = ({
 
   const handleAddComment = async () => {
     if (!currentUserId) {
-      return Alert.alert("Please log in first to comment");
+      return Alert.alert("Please log in first to comment! Login is easy");
     }
     if (!isValidComment(newComment)) {
       return Alert.alert("Please write something meaningfull");
@@ -68,7 +70,7 @@ const PostComments = ({
     setModalVisible(false);
     setEditModalVisible(false);
     if (!userId) {
-      return Alert.alert("Please log in first to comment");
+      return Alert.alert("Please log in first to comment! Login is easy");
     }
 
     if (!isValidComment(modalComment)) {
@@ -192,7 +194,10 @@ const PostComments = ({
       <View style={styles.container}>
         <TouchableOpacity
           style={styles.inputContainer}
-          onPress={() => setModalVisible(true)}
+          onPress={() => {
+            setModalVisible(true);
+            console.log("ok pressing");
+          }}
         >
           <TextInput
             style={styles.input}
@@ -200,18 +205,22 @@ const PostComments = ({
             value={newComment}
             onChangeText={setNewComment}
             editable={false}
+            onPress={() => {
+              setModalVisible(true);
+              console.log("ok pressing");
+            }}
           />
         </TouchableOpacity>
         <View style={styles.commentButons}>
           <TouchableOpacity onPress={handleAddComment} style={[styles.button]}>
             <Text style={styles.buttonText}>Comment</Text>
           </TouchableOpacity>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => setModalVisible(true)}
             style={[styles.button, styles.buttonModal]}
           >
             <Ionicons name="expand" size={20} color="white" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         <ScrollView contentContainerStyle={styles.commentList}>
           {commentsToShow?.map(renderComment)}
@@ -318,7 +327,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
   },
   commentList: {
     paddingVertical: 8,

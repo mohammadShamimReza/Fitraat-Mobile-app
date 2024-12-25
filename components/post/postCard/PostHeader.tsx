@@ -17,7 +17,7 @@ const PostHeader = ({
   const router = useRouter();
 
   const handlePress = () => {
-    router.push(`/postUser/${postUserId}`);
+    // router.push(`/postUser/${postUserId}`);
   };
 
   return (
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 8,
   },
   link: {
     flexDirection: "row",
@@ -68,6 +68,7 @@ const styles = StyleSheet.create({
   postTime: {
     color: "#4b5563",
     fontSize: 14,
+    marginBottom: 4,
   },
 });
 
