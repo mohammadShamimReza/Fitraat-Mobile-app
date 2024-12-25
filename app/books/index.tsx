@@ -1,4 +1,4 @@
-import useSetNavigationTitle from "@/hooks/useCustomStackName";
+import useCustomHeader from "@/hooks/useCustomHeader";
 import { AntDesign } from "@expo/vector-icons";
 import React from "react";
 import {
@@ -24,7 +24,7 @@ interface Book {
 }
 
 const BooksPage: React.FC = () => {
-  useSetNavigationTitle("Books");
+  useCustomHeader({ title: "Books" });
   const handleDownload = async (pdfPath: string) => {
     try {
       // Open PDF URL in a browser
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     shadowColor: "#000", // Adds shadow for iOS
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-  shadowRadius: 4,
+    shadowRadius: 4,
     borderWidth: 0.3,
   },
   bookImage: {

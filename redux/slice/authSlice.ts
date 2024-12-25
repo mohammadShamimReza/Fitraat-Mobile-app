@@ -19,7 +19,7 @@ export const authSlice = createSlice({
     storeAuthToken: (state, action) => {
       state.authToken = action.payload;
     },
-    removeAuthToken: (state, action) => {
+    removeAuthToken: (state) => {
       state.authToken = null;
     },
   },

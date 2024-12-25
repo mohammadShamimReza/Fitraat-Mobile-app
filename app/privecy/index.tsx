@@ -1,9 +1,11 @@
+import useCustomHeader from "@/hooks/useCustomHeader";
 import useSetNavigationTitle from "@/hooks/useCustomStackName";
 import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 const index = () => {
   useSetNavigationTitle("Privacy policy");
+  useCustomHeader({ title: "Privacy Policy" });
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>

@@ -24,11 +24,14 @@ const UserInfo = ({
   const dispatch = useAppDispatch();
 
   const handleLogout = () => {
+    // Remove the token from secure storage
     removeTokenFromSecureStore();
-    dispatch(removeAuthToken(null));
+
+    // Clear Redux state for auth
+    dispatch(removeAuthToken());
     dispatch(storeUserInfo(null));
 
-    // Reset the navigation stack and navigate to the login screen
+    // Navigate to the login screen
     router.replace("/");
   };
 
@@ -46,7 +49,7 @@ const UserInfo = ({
       <Text style={styles.profileText}>Location: {location}</Text>
       <Text style={styles.profileText}>Days Completed: {compliteDay}</Text>
       <Text style={styles.profileText}>
-        Days Completed: {!membership ? "free" : "pro"}
+        Menmbership: {!membership ? "free" : "pro"}
       </Text>
     </View>
   );

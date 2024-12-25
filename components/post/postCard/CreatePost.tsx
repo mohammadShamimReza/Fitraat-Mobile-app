@@ -103,6 +103,7 @@ const CreatePost = ({ user }: { user: UserData | null }) => {
                   contentContainerStyle={styles.scrollContentContainer}
                 >
                   {/* RichEditor */}
+
                   <RichEditor
                     ref={richText}
                     style={styles.editor}
@@ -188,6 +189,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 10,
     fontWeight: "bold",
+    color: "white",
   },
   scrollContainer: {
     maxHeight: 300,
@@ -195,11 +197,12 @@ const styles = StyleSheet.create({
   scrollContentContainer: {
     flexGrow: 1,
   },
+
   editor: {
     flex: 1,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    minHeight: 200,
+    // borderColor: "#ccc",
+    // borderWidth: 1,
+    height: 200,
     padding: 10,
   },
   toolbar: {

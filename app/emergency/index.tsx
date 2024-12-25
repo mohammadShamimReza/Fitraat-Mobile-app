@@ -1,4 +1,4 @@
-import useSetNavigationTitle from "@/hooks/useCustomStackName";
+import useCustomHeader from "@/hooks/useCustomHeader";
 import { useGetEnergencyContantQuery } from "@/redux/api/emergencyApi";
 import React, { useEffect, useState } from "react";
 import {
@@ -53,7 +53,7 @@ const VideoComponent: React.FC<VideoProps> = ({ videoUrl }) => {
 };
 
 const EmergencyService: React.FC = () => {
-  useSetNavigationTitle("Emergency");
+  useCustomHeader({ title: "Emergency" });
 
   const { data } = useGetEnergencyContantQuery(undefined);
   const total = data?.meta.pagination.total;

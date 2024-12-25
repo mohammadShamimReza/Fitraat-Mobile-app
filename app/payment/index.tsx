@@ -1,7 +1,7 @@
-import useSetNavigationTitle from "@/hooks/useCustomStackName";
+import useCustomHeader from "@/hooks/useCustomHeader";
 import { useGetUserInfoQuery } from "@/redux/api/authApi";
 import { usePaymentInitMutation } from "@/redux/api/payment";
-import { router } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -15,7 +15,20 @@ import {
 import { WebView } from "react-native-webview";
 
 const PaymentPage = () => {
-  useSetNavigationTitle("Make Payment");
+  const navigation = useNavigation();
+  useCustomHeader({
+    title: "Make Payment",
+    onBackPress: () => {
+      Alert.alert(
+        "Exit Payment",
+        "Are you sure you want to go back? Your payment session will be lost.",
+        [
+          { text: "Cancel", style: "cancel" },
+          { text: "Yes", onPress: () => navigation.goBack() },
+        ]
+      );
+    },
+  });
 
   const [paymentInit] = usePaymentInitMutation();
   const [loading, setLoading] = useState(false);

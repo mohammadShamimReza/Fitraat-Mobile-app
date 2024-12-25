@@ -4,6 +4,7 @@ import {
   useUpdatePostMutation,
 } from "@/redux/api/postApi";
 import { useUpdateUserPasswordMutation } from "@/redux/api/userApi";
+import { useAppSelector } from "@/redux/hooks";
 import { Link } from "expo-router";
 import React, { useState } from "react";
 import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -15,7 +16,10 @@ import RestartJourney from "./profileData/RestartJourney";
 import UserInfo from "./profileData/UserInfo";
 
 function ProfilePage() {
-  const { data: getUserInfoData } = useGetUserInfoQuery();
+  const { data } = useGetUserInfoQuery();
+  console.log(data, "profile");
+  const getUserInfoData = useAppSelector((state) => state.auth.userInfo);
+
   const [updateUserPassword] = useUpdateUserPasswordMutation();
   const [updatePost] = useUpdatePostMutation();
   const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
@@ -178,7 +182,7 @@ function ProfilePage() {
             <Text style={styles.buttonText}>Become Pro</Text>
           </Link>
 
-          <CompletedDay progressData={progressData} />
+          <CompletedDay progressData={progressData} membership={membership} />
         </View>
         <Text style={styles.mainTexts}>My Posts</Text>
         <MyPosts postsByUser={postsByUser} />

@@ -1,9 +1,9 @@
-import useSetNavigationTitle from "@/hooks/useCustomStackName";
+import useCustomHeader from "@/hooks/useCustomHeader";
 import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 function Page() {
-  useSetNavigationTitle("About");
+  useCustomHeader({ title: "About" });
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Welcome to Detox-Dopamine by Fitraat</Text>

@@ -1,4 +1,4 @@
-import useSetNavigationTitle from "@/hooks/useCustomStackName";
+import useCustomHeader from "@/hooks/useCustomHeader";
 import { useGetUserInfoQuery } from "@/redux/api/authApi";
 import { useGetBlogsByIdQuery } from "@/redux/api/blogApi";
 import { useAppSelector } from "@/redux/hooks";
@@ -16,7 +16,8 @@ import {
 const Page = ({ params }: { params: { slug: string } }) => {
   const userInfo = useAppSelector((store) => store.auth.userInfo);
   const userToken = useAppSelector((store) => store.auth.authToken);
-  useSetNavigationTitle("Blog");
+
+  useCustomHeader({ title: "Blog" });
   const { data: getUserInfoData } = useGetUserInfoQuery();
 
   console.log(params, getUserInfoData?.paid);

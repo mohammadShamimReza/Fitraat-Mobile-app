@@ -1,4 +1,4 @@
-import useSetNavigationTitle from "@/hooks/useCustomStackName";
+import useCustomHeader from "@/hooks/useCustomHeader";
 import { useGetUserInfoQuery } from "@/redux/api/authApi";
 import { useAppSelector } from "@/redux/hooks";
 import { router } from "expo-router";
@@ -12,7 +12,7 @@ import {
 } from "react-native";
 
 const Index = () => {
-  useSetNavigationTitle("Pro member");
+  useCustomHeader({ title: "Pro member" });
   const userInfo = useGetUserInfoQuery().data;
   const userToken = useAppSelector((state) => state.auth.authToken);
 

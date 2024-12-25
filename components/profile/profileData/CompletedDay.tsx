@@ -3,22 +3,29 @@ import { StyleSheet, Text, View } from "react-native";
 
 const CompletedDay = ({
   progressData,
+  membership,
 }: {
   progressData: {
     day: number;
     completed: boolean;
   }[];
+  membership: boolean;
 }) => {
   return (
     <View>
       <Text style={styles.mainTexts}>Days I completed</Text>
+      <Text style={{ color: "red", margin: 10, textAlign: "center" }}>
+        {!membership && "For use this progress become pro member"}
+      </Text>
       <View style={styles.progressSection}>
         {progressData.map((item) => (
           <View
             key={item.day}
             style={[
               styles.progressItem,
-              item.completed ? styles.completed : styles.incomplete,
+              item.completed && membership
+                ? styles.completed
+                : styles.incomplete,
             ]}
           >
             <Text>{item.day}</Text>

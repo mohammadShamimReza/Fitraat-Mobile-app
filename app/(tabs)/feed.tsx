@@ -4,6 +4,7 @@ import {
   Alert,
   FlatList,
   RefreshControl,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -22,7 +23,6 @@ import {
   actions,
 } from "react-native-pell-rich-editor";
 
-
 import SinglePost from "@/components/post/SinglePost";
 import { useCreatePostMutation, useGetPostQuery } from "@/redux/api/postApi";
 import { useAppSelector } from "@/redux/hooks";
@@ -38,6 +38,7 @@ const FeedPost = () => {
   const [refreshing, setRefreshing] = useState(false);
   const richText = useRef<RichEditor>(null);
   const postsPerPage = 25;
+  const scrollRef = useRef<ScrollView>(null);
 
   const {
     data: feedPosts,
@@ -172,13 +173,19 @@ const FeedPost = () => {
             {userId ? (
               <View>
                 <Text style={styles.modalTitle}>Create Post</Text>
-                <RichEditor
-                  ref={richText}
-                  style={styles.editor}
-                  placeholder="Start typing here..."
-                  initialContentHTML={content}
-                  onChange={setContent}
-                />
+                <ScrollView
+                  ref={scrollRef}
+                  style={styles.scrollContainer}
+                  contentContainerStyle={styles.scrollContentContainer}
+                >
+                  <RichEditor
+                    ref={richText}
+                    style={styles.editor}
+                    placeholder="Start typing here..."
+                    initialContentHTML={content}
+                    onChange={setContent}
+                  />
+                </ScrollView>
                 <RichToolbar
                   editor={richText}
                   actions={[
@@ -263,11 +270,11 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   modalContent: {
-    width: "90%",
-    maxHeight: "80%", // Limit modal height for better appearance
+    // width: "90%",
+    // maxHeight: "80%", // Limit modal height for better appearance
     backgroundColor: "white",
     borderRadius: 10,
-    padding: 20,
+    // padding: 20,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
@@ -279,15 +286,18 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontWeight: "bold",
     textAlign: "center",
-    color: "#333",
+    color: "white",
   },
+  scrollContainer: {},
+  scrollContentContainer: {},
+
   editor: {
-    width: 350,
+    minWidth: 320,
     borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 8, // Rounded corners for better UI
-    minHeight: 200,
-    padding: 10,
+    minHeight: 300,
+    // padding: 10,
     fontSize: 16, // Improved font size for better readability
     color: "#333",
     backgroundColor: "#f9f9f9", // Light background for the editor
