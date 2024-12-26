@@ -61,6 +61,7 @@ const PaymentPage = () => {
     try {
       setLoading(true);
       const result = await paymentInit(data).unwrap();
+      console.log(result, "from payment");
       if (result?.url) {
         setPaymentUrl(result.url); // Save the payment URL to render WebView
       } else {
@@ -73,19 +74,28 @@ const PaymentPage = () => {
       setLoading(false);
     }
   };
-
+  console.log(paymentUrl, "PaymentUrl");
   if (paymentUrl) {
     return (
       <WebView
         source={{ uri: paymentUrl }}
         onNavigationStateChange={(navState) => {
+          console.log(navState, "PaymentUrl, navState");
+
           if (navState.url.includes("redirectSuccess")) {
             setPaymentUrl(null); // Close WebView on success
-            Alert.alert("Payment Successful", "Thank you for your payment!");
+            Alert.alert(
+              "Payment Successful",
+              "Thank you for your payment! Enjoy your course."
+            );
             router.replace("/");
-          } else if (navState.url.includes("payment-failure")) {
+          } else if (
+            navState.url.includes("fail") ||
+            navState.url.includes("cancel")
+          ) {
             setPaymentUrl(null); // Close WebView on failure
             Alert.alert("Payment Failed", "Please try again.");
+            router.replace("/");
           }
         }}
         style={{ flex: 1 }}

@@ -117,7 +117,6 @@ function UnAuthTask({
         JSON.stringify(defaultLocalStorageData)
       );
       const unAuthDayId = await AsyncStorage.getItem("unAuthDayId");
-      console.log(unAuthDayId, "unAuthDayId");
       if (unAuthDayId === null) {
         // First-time setup for unAuthDayId
         await AsyncStorage.setItem("unAuthDayId", "1");

@@ -52,9 +52,7 @@ const FeedPost = () => {
 
   const userInfo = useAppSelector((state) => state.auth.userInfo);
   const userId = userInfo?.id;
-  console.log(userId);
   const verifiedSince = userInfo?.varifiedSine;
-  console.log(userId);
 
   const [createPost] = useCreatePostMutation();
 

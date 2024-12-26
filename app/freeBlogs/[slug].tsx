@@ -29,7 +29,6 @@ const Page = ({ params }: { params: { slug: string } }) => {
   const { data, isLoading } = useGetFreeBlogsByIdQuery(slug);
   const blogData = data?.data.attributes;
 
-  console.log(blogData);
 
   if (isLoading) {
     return (

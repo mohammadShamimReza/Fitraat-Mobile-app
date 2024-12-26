@@ -13,7 +13,6 @@ export const getTokenFromSecureStore = async () => {
     const token = await SecureStore.getItemAsync("fitraatJwt");
     return token;
   } catch (error) {
-    console.log("Error getting token:", error);
     return null;
   }
 };

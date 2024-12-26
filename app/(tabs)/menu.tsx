@@ -23,7 +23,6 @@ const MenuWithFooter = () => {
     );
   };
   const useerData = useAppSelector((state) => state.auth.userInfo);
-  console.log(useerData, useerData?.paid, "user Data");
 
   return (
     <ScrollView style={styles.container}>

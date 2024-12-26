@@ -39,8 +39,6 @@ const PostComments = ({
   const [dropdownVisible, setDropdownVisible] = useState<number | null>(null);
   const [showAllComments, setShowAllComments] = useState(false);
 
-  console.log(modalVisible, "modalVisible");
-
   const [createComment] = useCreateCommentMutation();
   const [deleteComment] = useDeleteCommentMutation();
   const [updateComment] = useUpdateCommentMutation();
@@ -196,7 +194,6 @@ const PostComments = ({
           style={styles.inputContainer}
           onPress={() => {
             setModalVisible(true);
-            console.log("ok pressing");
           }}
         >
           <TextInput
@@ -207,7 +204,6 @@ const PostComments = ({
             editable={false}
             onPress={() => {
               setModalVisible(true);
-              console.log("ok pressing");
             }}
           />
         </TouchableOpacity>
@@ -225,17 +221,15 @@ const PostComments = ({
         <ScrollView contentContainerStyle={styles.commentList}>
           {commentsToShow?.map(renderComment)}
           {postComment && postComment.length > 1 && (
-            <Text
+            <TouchableOpacity
               onPress={() => setShowAllComments(!showAllComments)}
               style={styles.showMoreButton}
             >
-              <Text
-                style={styles.showMoreText}
-                onPress={() => setShowAllComments(!showAllComments)}
-              >
-                {showAllComments ? "Show comments" : "Show comments"}
+              <Text style={styles.showMoreText}>
+                {" "}
+                {showAllComments ? "Show comment" : "Show comments"}
               </Text>
-            </Text>
+            </TouchableOpacity>
           )}
         </ScrollView>
         <Modal visible={modalVisible} animationType="slide">
@@ -383,6 +377,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     textAlign: "center",
     fontWeight: "bold",
+    borderRadius: 14,
   },
   modalContainer: {
     flex: 1,

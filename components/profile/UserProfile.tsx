@@ -17,7 +17,6 @@ import UserInfo from "./profileData/UserInfo";
 
 function ProfilePage() {
   const { data } = useGetUserInfoQuery();
-  console.log(data, "profile");
   const getUserInfoData = useAppSelector((state) => state.auth.userInfo);
 
   const [updateUserPassword] = useUpdateUserPasswordMutation();
@@ -177,10 +176,11 @@ function ProfilePage() {
             setCurrentPassword={setCurrentPassword}
             setNewPassword={setNewPassword}
           />
-
-          <Link href="/payment" style={styles.button}>
-            <Text style={styles.buttonText}>Become Pro</Text>
-          </Link>
+          {paid === false && (
+            <Link href="/payment" style={styles.button}>
+              <Text style={styles.buttonText}>Become Pro</Text>
+            </Link>
+          )}
 
           <CompletedDay progressData={progressData} membership={membership} />
         </View>

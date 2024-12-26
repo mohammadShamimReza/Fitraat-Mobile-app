@@ -31,7 +31,6 @@ const Main = () => {
   const daysLeft = Math.floor(differenceInTime / (1000 * 60 * 60 * 24)) + 1;
   //  setDaysPassed(days);
 
-  console.log(authenticatedUserInfoData);
 
   // Handle loading state
   if (isLoading) {

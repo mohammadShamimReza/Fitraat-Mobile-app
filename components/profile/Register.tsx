@@ -112,7 +112,6 @@ function RegisterPage({
   };
 
   const handleSubmit = async () => {
-    console.log(formData, "this is form data");
     try {
       // Validate form data with Zod
       registerSchema.parse(formData);

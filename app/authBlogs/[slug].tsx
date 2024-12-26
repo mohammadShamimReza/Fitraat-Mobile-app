@@ -20,7 +20,6 @@ const Page = ({ params }: { params: { slug: string } }) => {
   useCustomHeader({ title: "Blog" });
   const { data: getUserInfoData } = useGetUserInfoQuery();
 
-  console.log(params, getUserInfoData?.paid);
   useEffect(() => {
     if (!userToken) {
       router.replace("/profile");

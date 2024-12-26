@@ -33,11 +33,8 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (loaded) {
-      console.log("Fonts loaded successfully.");
       SplashScreen.hideAsync();
-    } else {
-      console.log("Fonts not yet loaded.");
-    }
+    } 
   }, [loaded]);
 
   if (!loaded) {

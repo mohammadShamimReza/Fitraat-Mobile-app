@@ -155,7 +155,6 @@ function AuthMyTask({
       setIsFinishModalOpen(false); // Close the modal
       navigation.navigate("blog"); // Navigate to completion screen if necessary
     } else {
-      console.log("Processing next day data...");
       await AsyncStorage.setItem("AuthDayId", nextDayId.toString());
       await updataUserDay({
         currentDay: nextDayId,
