@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   buttonText: {
-    color: "#fff",
+    color: "white",
     textAlign: "center",
     fontSize: 16,
   },

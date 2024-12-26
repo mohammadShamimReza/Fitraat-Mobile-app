@@ -3,6 +3,7 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import DeletePost from "./DeletePost";
 import EditPost from "./EditPost";
+import CommentsPage from "./UserComments";
 import UserPostWebView from "./UserPostWebView";
 
 const MyPosts = ({ postsByUser }: { postsByUser: Post[] | undefined }) => {
@@ -14,6 +15,7 @@ const MyPosts = ({ postsByUser }: { postsByUser: Post[] | undefined }) => {
             <UserPostWebView post={post} />
             <EditPost post={post} />
             <DeletePost postId={post.id} />
+            <CommentsPage postId={post.id} />
           </View>
         ))}
     </View>

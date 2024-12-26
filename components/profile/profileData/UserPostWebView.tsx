@@ -17,8 +17,8 @@ const UserPostWebView = ({ post }: { post: Post }) => {
                   body {
                     font-size: 18px;
                     font-family: Arial, sans-serif;
-                    margin: 0;
-                    padding: 0;
+                    margin: 3;
+                    padding: 3;
                     color: #333;
                     overflow-y: auto; /* Allow vertical scrolling */
                   }
@@ -48,5 +48,6 @@ const styles = StyleSheet.create({
   webView: {
     flex: 1, // Allow WebView to take full height of the container
     borderWidth: 0.2,
+    padding: 7,
   },
 });
