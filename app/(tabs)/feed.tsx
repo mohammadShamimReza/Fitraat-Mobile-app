@@ -205,7 +205,7 @@ const FeedPost = () => {
                   Post
                 </Button>
                 <Button
-                  mode="outlined"
+                  mode="contained"
                   onPress={handleModalCancel}
                   style={styles.cancelButton}
                 >
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9f9f9", // Light background for the editor
   },
   toolbar: {
-    backgroundColor: "#f1f1f1",
+    backgroundColor: "white",
     borderTopWidth: 1,
     borderTopColor: "#ccc",
     marginTop: 10,
@@ -316,10 +316,10 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     marginTop: 10,
-    borderColor: "#007bff",
     borderWidth: 1,
     borderRadius: 8,
     paddingVertical: 10,
+    color: "white",
   },
   centeredContainer: {
     alignItems: "center",

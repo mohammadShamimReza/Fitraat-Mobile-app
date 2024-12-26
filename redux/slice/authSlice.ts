@@ -22,8 +22,20 @@ export const authSlice = createSlice({
     removeAuthToken: (state) => {
       state.authToken = null;
     },
+    updatePaidStatus: (state, action) => {
+      if (state.userInfo) {
+        state.userInfo = {
+          ...state.userInfo, // Keep the remaining fields unchanged
+          paid: action.payload, // Update the paid field
+        };
+      }
+    },
   },
 });
 
-export const { storeAuthToken, storeUserInfo, removeAuthToken } =
-  authSlice.actions;
+export const {
+  storeAuthToken,
+  storeUserInfo,
+  removeAuthToken,
+  updatePaidStatus,
+} = authSlice.actions;

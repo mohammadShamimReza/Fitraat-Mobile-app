@@ -69,36 +69,37 @@ const MenuWithFooter = () => {
         {/* Quick Links Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Quick Links</Text>
+          <View style={{ flex: 1, alignItems: "center" }}>
+            {useerData && useerData.paid === false ? (
+              <Link href="/payment" style={styles.link}>
+                <Text>Payment</Text>
+              </Link>
+            ) : (
+              <Link href="/" style={styles.link}>
+                <Text>Home</Text>
+              </Link>
+            )}
 
-          {useerData && useerData.paid === false ? (
-            <Link href="/payment" style={styles.link}>
-              <Text>Payment</Text>
+            <Link href="/books" style={styles.link}>
+              <Text>Books</Text>
             </Link>
-          ) : (
-            <Link href="/" style={styles.link}>
-              <Text>Home</Text>
+
+            <Link href="/about" style={styles.link}>
+              <Text>About Us</Text>
             </Link>
-          )}
 
-          <Link href="/books" style={styles.link}>
-            <Text>Books</Text>
-          </Link>
+            <Link href="/freeBlogs/FreeBlogs" style={styles.link}>
+              <Text>Blogs</Text>
+            </Link>
 
-          <Link href="/about" style={styles.link}>
-            <Text>About Us</Text>
-          </Link>
+            <Link href="/books" style={styles.link}>
+              <Text>Books</Text>
+            </Link>
 
-          <Link href="/freeBlogs/FreeBlogs" style={styles.link}>
-            <Text>Blogs</Text>
-          </Link>
-
-          <Link href="/books" style={styles.link}>
-            <Text>Books</Text>
-          </Link>
-
-          <Link href="/privecy" style={styles.link}>
-            <Text>Privacy Policy</Text>
-          </Link>
+            <Link href="/privecy" style={styles.link}>
+              <Text>Privacy Policy</Text>
+            </Link>
+          </View>
         </View>
 
         {/* Contact Section */}

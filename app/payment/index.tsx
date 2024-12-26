@@ -1,6 +1,8 @@
 import useCustomHeader from "@/hooks/useCustomHeader";
 import { useGetUserInfoQuery } from "@/redux/api/authApi";
 import { usePaymentInitMutation } from "@/redux/api/payment";
+import { useAppDispatch } from "@/redux/hooks";
+import { storeUserInfo } from "@/redux/slice/authSlice";
 import { router, useNavigation } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -30,14 +32,15 @@ const PaymentPage = () => {
     },
   });
 
+  const dispatch = useAppDispatch();
+
   const [paymentInit] = usePaymentInitMutation();
   const [loading, setLoading] = useState(false);
   const [currency, setCurrency] = useState("BDT");
   const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
 
   // Get user info from Redux store
-  const userData = useGetUserInfoQuery();
-  const userInfo = userData.data;
+  const { data: userInfo, refetch } = useGetUserInfoQuery();
 
   const handleCurrencyChange = (value: string) => {
     setCurrency(value);
@@ -74,6 +77,25 @@ const PaymentPage = () => {
       setLoading(false);
     }
   };
+  const handlePaymentSuccess = async () => {
+    try {
+      await refetch(); // Refetch the user data
+      if (userInfo) {
+        dispatch(storeUserInfo(userInfo)); // Update Redux store with the latest user data
+        Alert.alert(
+          "Payment Successful",
+          "Thank you for your payment! Enjoy your course."
+        );
+        router.replace("/"); // Navigate to the home screen
+      }
+    } catch (error) {
+      console.error("Error updating user data after payment:", error);
+      Alert.alert(
+        "Error",
+        "Failed to update user data. Please refresh manually."
+      );
+    }
+  };
   console.log(paymentUrl, "PaymentUrl");
   if (paymentUrl) {
     return (
@@ -84,11 +106,7 @@ const PaymentPage = () => {
 
           if (navState.url.includes("redirectSuccess")) {
             setPaymentUrl(null); // Close WebView on success
-            Alert.alert(
-              "Payment Successful",
-              "Thank you for your payment! Enjoy your course."
-            );
-            router.replace("/");
+            handlePaymentSuccess();
           } else if (
             navState.url.includes("fail") ||
             navState.url.includes("cancel")
