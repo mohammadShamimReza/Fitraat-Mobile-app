@@ -1,6 +1,6 @@
 # Welcome Fitraat mobile app 👋
 
-This is an [Expo](https://expo.dev) project created with.
+This is an [Expo](https://expo.dev) project created for fitraat.
 
 ## Get started
 
