@@ -4,7 +4,7 @@ import { usePaymentInitMutation } from "@/redux/api/payment";
 import { useAppDispatch } from "@/redux/hooks";
 import { storeUserInfo } from "@/redux/slice/authSlice";
 import { router, useNavigation } from "expo-router";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -102,20 +102,20 @@ const PaymentPage = () => {
       <WebView
         source={{ uri: paymentUrl }}
         onNavigationStateChange={(navState) => {
-          console.log(navState, "PaymentUrl, navState");
-
           if (navState.url.includes("redirectSuccess")) {
-            setPaymentUrl(null); // Close WebView on success
-            handlePaymentSuccess();
-          } else if (
-            navState.url.includes("fail") ||
-            navState.url.includes("cancel")
-          ) {
-            setPaymentUrl(null); // Close WebView on failure
-            Alert.alert("Payment Failed", "Please try again.");
+            setPaymentUrl(null);
+            Alert.alert("Payment Successful", "Thank you for your payment!");
             router.replace("/");
+          } else if (navState.url.includes("payment-failure")) {
+            setPaymentUrl(null);
+            Alert.alert("Payment Failed", "Please try again.");
+          } else if (navState.url.includes("error")) {
+            setPaymentUrl(null);
+            Alert.alert("Error", "There was an issue processing the payment.");
           }
         }}
+        onLoadStart={() => setLoading(true)}
+        onLoadEnd={() => setLoading(false)}
         style={{ flex: 1 }}
       />
     );
