@@ -47,11 +47,10 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 10,
     marginHorizontal: 16,
-    elevation: 4, // Shadow for Android
-    shadowColor: "#000", // Shadow for iOS
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
+    elevation: 1000, // For Android layering
+    zIndex: 1000, // Higher than any other UI element
+    position: "absolute", // Ensure it layers correctly
+    top: 0, // Prevent it from being constrained
   },
   background: {
     padding: 8,
