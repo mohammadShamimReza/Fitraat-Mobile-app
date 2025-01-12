@@ -45,7 +45,7 @@ const PostComments = ({
 
   const dropdownRef = useRef<View>(null);
 
-  const isValidComment = (comment: string) => /\w/.test(comment);
+  const isValidComment = (comment: string) => /\S/.test(comment);
 
   const handleAddComment = async () => {
     if (!currentUserId) {
